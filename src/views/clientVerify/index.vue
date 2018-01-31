@@ -51,9 +51,8 @@
           </table>
         </el-tab-pane>
       </el-tabs>
-
     </div>
-    <modal>
+    <modal v-if="pass">
       <div slot="header">
         <span class="fl">请选择账号有效日期</span>
         <span class="fr" @click="close">X</span>
@@ -82,7 +81,7 @@
   export default {
     data () {
       return {
-        passVerify:false,
+        pass:false,
         activeName:'first',
         options: [{
           value: '正常'
@@ -97,6 +96,10 @@
     methods:{
       passVerify () {
         console.log('passVerify')
+        this.pass = true
+      },
+      close () {
+        this.pass = false
       }
     },
     components:{

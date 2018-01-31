@@ -22,7 +22,7 @@
 
 </template>
 <script>
-import Dialog from 'components/dialog'
+import Dialog from 'components/Dialog'
 
 let exampleData = [
   {num:'01',text:'超级大转盘'},

@@ -63,7 +63,7 @@ let exampleData = [
   {num:'03',text:'欢乐拼图'},
   {num:'04',text:'开宝箱'}
 ]
-import Dialog from 'components/dialog'
+import Dialog from 'components/Dialog'
 
 export default {
   name: 'AppMain',
@@ -80,7 +80,6 @@ export default {
       this.showModal = true
       this.title = item.text
       this.num = item.num
-      // this.item = item
     }
   },
   components:{

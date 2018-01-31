@@ -15,10 +15,8 @@
 
           <div class="modal-footer">
             <slot name="footer">
-              
             </slot>
           </div>
-       
         </div>
       </div>
     </div>
@@ -30,7 +28,6 @@
       
     },
     created () {
-      console.log('title', this.title)
     },
     methods: {
 
@@ -40,7 +37,7 @@
 <style lang="stylus" scoped>
   .modal-mask {
   position: fixed;
-  z-index: 9998;
+  z-index: 1999;
   top: 0;
   left: 0;
   width: 100%;
