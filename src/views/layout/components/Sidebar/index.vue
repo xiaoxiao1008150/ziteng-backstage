@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <el-menu mode="vertical" :default-active="$route.path"  background-color="#304156" text-color="#bfcbd9" active-text-color="#409EFF">
+    <el-menu mode="vertical" :default-active="$route.path">
       <sidebar-item :routes="permission_routers"></sidebar-item>
     </el-menu>
   </div>
@@ -28,5 +28,5 @@ export default {
     left: 0;
     top: 70px;
     bottom: 0;
-    background: #2e363f;
+    background: #19adf0;
 </style>

@@ -9,12 +9,15 @@
         <el-button @click="login">登录</el-button>
       </div>
     </header>
-<!--     <div class="banner">
-      <img id="background" src="../../common/images/background.jpg">
-    </div> -->
+    <div class="banner">
+      <!-- <img id="background" src="../../common/images/background.jpg"> -->
+    </div>
     <div class="example-wrapper layout">
       <p class="title title-english">HOT GAMES</p>
-      <p class="title title-chinese">热门游戏</p>
+      <div class="title-content">
+        <p class="title title-chinese">热门游戏</p>
+        <span class="bar bar-first"></span><span class="bar bar-second"></span>
+      </div>
       <div class="example-item">
         <example></example>
       </div>
@@ -97,9 +100,11 @@ export default {
   height:80px
   vertical-align:sub
 .banner
-  height:600px
-  background:#ccc
+  height:300px
   background:url(../../common/images/background.jpg) no-repeat center
+  background-size:100% 100%
+  @media screen and (min-width: 1200px)
+    height:500px
 .client-management
   display:table-cell
   button
@@ -109,19 +114,25 @@ export default {
     vertical-align:middle
 .example-wrapper
   padding-top:50px
+  font-size:20px
+  .title-content
+    padding-bottom:20px
   .title
     text-align:center
   .title-english
-    color:#ccc
+    color:#c9c9c9
+    margin-bottom:23px
+    letter-spacing: 1px;
   .title-chinese
-    font-size:20px
-    line-height:40px
-    margin-bottom:20px
-    position:relative
-    &:after
-      content:'-'
-      position:absolute
-      height:3px
-
+    // margin-bottom:10px
+    // position:relative
+  .bar
+    width:25px
+    height:5px
+    display:inline-block
+  .bar.bar-first
+    background:#1b8fd5
+  .bar.bar-second
+    background:#6fbc56
 </style>
 

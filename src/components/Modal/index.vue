@@ -2,8 +2,8 @@
   <transition name="modal">
     <div class="modal-mask">
       <div class="modal-wrapper">
-        <div class="modal-container">
-          <div class="modal-header">
+        <div class="modal-container" :style="styleObject1">
+          <div class="modal-header" :style="styleObject">
             <slot name="header">
             </slot>
           </div>
@@ -25,12 +25,33 @@
 <script>
   export default {
     props: {
-      
+      styleObject1:{
+        type: Object,
+          default () {
+            return {
+              height:'',
+          }
+        }
+      },
+      styleObject:{
+        type: Object,
+          default () {
+            return {
+              background:'#f5f5f5',
+              height:'50px',
+              lineHeight:'50px'
+          }
+        }
+      }
     },
-    created () {
-    },
-    methods: {
-
+    data () {
+      return {
+      //   styleObject:{
+      //     background:'#f5f5f5',
+      //     height:'50px',
+      //     lineHeight:'50px'
+      //   }
+      }
     }
   }
 </script>
@@ -56,16 +77,16 @@
   width: 400px;
   margin: 0px auto;
   background-color: #fff;
-  border-radius: 2px;
+  border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease;
   font-family: Helvetica, Arial, sans-serif;
   position:relative
 }
 .modal-header
-  height:50px
-  line-height:50px
-  background:#ccc
+  // height:50px
+  // line-height:50px
+  // background:#ccc
   padding:0 15px
 .modal-body
   padding:30px

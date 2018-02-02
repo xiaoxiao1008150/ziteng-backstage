@@ -1,9 +1,10 @@
 <template>
   <div>
     <el-menu
-      background-color="#545c64" 
+      background-color="#19adf0" 
       text-color="#fff"
-      active-text-color="#ffd04b">
+      active-text-color="#fff"
+      >
 
 <!--       <el-submenu index="1" v-for="item in routes"  v-if="item.meta && item.meta.title && item.children && item.children.length>1">
         <template slot="title">

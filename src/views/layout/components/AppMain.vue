@@ -15,14 +15,14 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .app-main
-  background:#ccc
+  background:#f3f3f3
   position: absolute;
   left: 150px;
   right: 0;
   top: 70px;
   bottom: 0;
   width: auto;
-  padding: 20px 30px;
+  padding: 0px 30px 20px 30px;
   box-sizing: border-box;
   overflow-y: scroll;
 </style>

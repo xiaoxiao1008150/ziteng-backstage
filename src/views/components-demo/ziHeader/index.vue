@@ -4,8 +4,8 @@
     <span>|</span>
     <span>大转盘抽奖</span>
     <div class="fr preview">
-      <el-button type="primary">预览</el-button>
-      <el-button >保存</el-button>
+      <el-button class="small-btn" id="preview-btn" type="primary">预览</el-button>
+      <el-button class="small-btn" id="save-btn">保存</el-button>
     </div>
   </div>
 </template>
@@ -25,4 +25,7 @@ export default {
   vertical-align :middle
 .preview
   display:inline-block
+.small-btn
+  padding:0 20px
+  height:30px
 </style>

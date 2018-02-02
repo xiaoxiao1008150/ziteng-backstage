@@ -134,7 +134,7 @@ export default {
   data() {
     return {
       tableData:tableData,
-      activeName2: 'third',
+      activeName2: 'first',
       // value1:'',
       // value2:'',
       textarea: '',
@@ -173,7 +173,7 @@ export default {
   padding-top:20px
   .input-item
     height:30px
-    line-height:30px
+    // line-height:30px
     font-size :0
     margin-bottom:20px
     text-align:left
@@ -238,6 +238,8 @@ export default {
   height:30px
   line-height:30px
   background:#ccc
+  position:relative
+  top:10px
 .tab-img
   position:absolute
   top:30px

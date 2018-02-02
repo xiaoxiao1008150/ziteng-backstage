@@ -1,11 +1,13 @@
 <template>
 <div>
   <el-row :gutter="20" style="margin-bottom:140px">
-    <el-col :span="6"  v-for="(item,index) in exampleData" :key="index">
+    <el-col :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in exampleData" :key="index">
       <el-card :body-style="{ padding: '0px' }">
         <img class="example-img" :src="'/static/images/' + item.num + '.jpg'">
         <div class="example-text">
+          <span class="dot">.</span>
           <span>{{item.text}}</span>
+          <span class="dot">.</span>
         </div>
       </el-card>
       <el-button type="primary" class="example-btn" @click="openModel(item)">创建活动</el-button>
@@ -57,12 +59,19 @@ export default {
 <style lang="stylus" scoped>
 .example-img
   width:100%
+  // height:250px
   display:block
 .example-text
   height:50px
   line-height:50px
   font-size:14px
-  color:#ccc
+  color:#424242
+  span
+    vertical-align :middle
+  .dot
+    font-size: 35px;
+    position: relative;
+    top: -9px;
 .grid-content
   line-height:0
 .example-btn
