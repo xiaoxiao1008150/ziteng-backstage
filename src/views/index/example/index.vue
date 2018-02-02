@@ -10,21 +10,28 @@
           <span class="dot">.</span>
         </div>
       </el-card>
-      <el-button type="primary" class="example-btn" @click="openModel(item)">创建活动</el-button>
+    <!--   <el-button type="primary" class="example-btn" @click="openModel(item)">创建活动</el-button> -->
+      <el-button type="primary" class="example-btn" @click="openModel">创建活动</el-button>
     </el-col>
   </el-row>
-  <zi-dialog
+  <modal v-if="showModal" :styleObject="styleObject">
+    <div slot="body">
+      <div class="close-tep"><span>请您先登录</span><span class="fr" @click="close">X</span></div>
+    </div>
+  </modal>
+<!--   <zi-dialog
   :imgUrl=num
   :title=title
   v-if="showModal"
   @close="showModal = false" 
   >
-  </zi-dialog>
+  </zi-dialog> -->
 </div>
 
 </template>
 <script>
-import Dialog from 'components/Dialog'
+// import Dialog from 'components/Dialog'
+import Modal from 'components/Modal'
 
 let exampleData = [
   {num:'01',text:'超级大转盘'},
@@ -38,21 +45,32 @@ export default {
     return {
       exampleData:exampleData,
       showModal:false,
-      // item:{num:'01',text:'超级大转盘'},
-      title:'超级大转盘',
-      num:'01'
+      styleObject:{
+          // background:'#f5f5f5',
+          height:'0',
+      },
+      // // item:{num:'01',text:'超级大转盘'},
+      // title:'超级大转盘',
+      // num:'01'
     }
   },
    methods: {
-    openModel(item) {
+    // openModel(item) {
+    //   this.showModal = true
+    //   this.title = item.text
+    //   this.num = item.num
+    //   // this.item = item
+    // }
+    openModel () {
       this.showModal = true
-      this.title = item.text
-      this.num = item.num
-      // this.item = item
+    },
+    close () {
+      this.showModal = false
     }
   },
   components:{
-   ziDialog:Dialog
+   // ziDialog:Dialog
+   Modal
   }
 }
 </script>
@@ -83,5 +101,8 @@ export default {
       margin-bottom: 0;
     }
   }
+.close-tep
+  height:25px
+  line-height:35px
 </style>
 

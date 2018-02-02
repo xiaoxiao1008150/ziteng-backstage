@@ -35,6 +35,7 @@ import SignUp from './example/Signup'
 import Login from './example/Login'
 import Password from './example/Password'
 
+
 export default {
   name: 'Index',
   data () {
@@ -43,6 +44,8 @@ export default {
       showLogin:false,
       showPassword:false
     }
+  },
+  created() {
   },
   methods:{
     close (item) {

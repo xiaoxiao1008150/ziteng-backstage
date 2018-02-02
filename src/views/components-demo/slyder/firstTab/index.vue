@@ -6,106 +6,108 @@
       <div class="rule-content">{{textarea}}</div>
     </div>
     <div class="slyder-first-wrapper">
-      <el-tabs v-model="activeName2" type="card">
-        <el-tab-pane label="基础设置" name="first" class="mytag">
-          <form action="" id="base-form" class="slyder-form form">
-              <div class="input-item"><span>活动名称</span><el-input class="input-self" placeholder="请输入活动名称"></el-input></div>
-              <div class="input-item">
-                  <span>开始时间</span> 
+      <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
+        <el-tabs v-model="activeName2" type="card">
+          <el-tab-pane label="基础设置" name="first" class="mytag">
+            <form action="" id="base-form" class="slyder-form form">
+                <div class="input-item"><span>活动名称</span><el-input class="input-self" placeholder="请输入活动名称"></el-input></div>
+                <div class="input-item">
+                    <span>开始时间</span> 
+                    <!-- <el-date-picker
+                      v-model="value1"
+                      type="date"
+                      placeholder="选择日期">
+                    </el-date-picker> -->
+                    <date></date>
+                </div>
+                <div class="input-item">
+                  <span>结束时间</span>
                   <!-- <el-date-picker
-                    v-model="value1"
-                    type="date"
-                    placeholder="选择日期">
-                  </el-date-picker> -->
-                  <date></date>
+                      v-model="value2"
+                      type="date"
+                      placeholder="选择日期">
+                    </el-date-picker> -->
+                    <date></date>
+                </div>
+              <div class="input-item" id="rule-area">
+                    <span>活动规则</span> 
+                    <el-input
+                      type="textarea"
+                      id="textarea"
+                      placeholder="请输入内容"
+                      v-model="textarea">
+                    </el-input>
+                </div>
+            </form>
+          </el-tab-pane>
+          <el-tab-pane label="限制条件" name="second" class="mytag">
+             <form action="" class="slyder-form form">
+              <div class="input-item">
+                <span>手机号地域</span>
+                <v-distpicker hide-area id="distpicker"></v-distpicker>
               </div>
               <div class="input-item">
-                <span>结束时间</span>
-                <!-- <el-date-picker
-                    v-model="value2"
-                    type="date"
-                    placeholder="选择日期">
-                  </el-date-picker> -->
-                  <date></date>
+                <span>手机号次数</span>
+                <div class="mobile">
+                  <span id="reduce">-</span>
+                  <el-input class="input-self" id="input-self"></el-input>
+                  <span id="plus">+</span>
+                </div>
               </div>
-            <div class="input-item" id="rule-area">
-                  <span>活动规则</span> 
-                  <el-input
-                    type="textarea"
-                    id="textarea"
-                    placeholder="请输入内容"
-                    v-model="textarea">
-                  </el-input>
+              <div class="input-item">
+                <span>验证码</span>
+                <button class="code-btn">发送验证码</button>
+                <span id="refresh">刷新</span>
               </div>
-          </form>
-        </el-tab-pane>
-        <el-tab-pane label="限制条件" name="second" class="mytag">
-           <form action="" class="slyder-form form">
-            <div class="input-item">
-              <span>手机号地域</span>
-              <v-distpicker hide-area id="distpicker"></v-distpicker>
-            </div>
-            <div class="input-item">
-              <span>手机号次数</span>
-              <div class="mobile">
-                <span id="reduce">-</span>
-                <el-input class="input-self" id="input-self"></el-input>
-                <span id="plus">+</span>
-              </div>
-            </div>
-            <div class="input-item">
-              <span>验证码</span>
-              <button class="code-btn">发送验证码</button>
-              <span id="refresh">刷新</span>
-            </div>
-          </form>
-        </el-tab-pane>
-        <el-tab-pane label="奖项设置" name="third" class="mytag">
-          <table id="six-table">
-              <tr class="tr-head">
-                <th>奖品名称</th>
-                <th>奖品种类</th>
-                <th>奖品面额</th>
-                <th>奖品数量</th>
-                <th>中奖概率</th>
-                <th>奖品估算</th>
-              </tr>
-              <tr v-for="(item,index) in tableData.name" :key="index">
-                <td><span>{{item.level}}</span></td>
-                <td>
-                  <el-select id="select-six" v-model="tableData.sort[item.svalue]"  placeholder="请选择" @change="change">
-                    <el-option
-                      v-for="item in tableData.type"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </td>
-                <td ><el-input class="td-six" placeholder="面额"></el-input></td>
-                <td> <el-input class="td-six" placeholder="数量"></el-input></td>
-                <td><el-input  class="td-six" placeholder="概率"></el-input></td>
-                <td><span class="estimate"></span></td>
-              </tr>
-              <tr>
-                <td>谢谢参与</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><el-input  class="td-six" placeholder=""></el-input></td>
-                <td><span class="estimate"></span></td>
-              </tr>
-              <tr>
-                <td>合计</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>100%</td>
-                <td><span class="estimate"></span></td>
-              </tr>
-            </table>
-        </el-tab-pane>
-      </el-tabs>
+            </form>
+          </el-tab-pane>
+          <el-tab-pane label="奖项设置" name="third" class="mytag">
+            <table id="six-table">
+                <tr class="tr-head">
+                  <th>奖品名称</th>
+                  <th>奖品种类</th>
+                  <th>奖品面额</th>
+                  <th>奖品数量</th>
+                  <th>中奖概率</th>
+                  <th>奖品估算</th>
+                </tr>
+                <tr v-for="(item,index) in tableData.name" :key="index">
+                  <td><span>{{item.level}}</span></td>
+                  <td>
+                    <el-select id="select-six" v-model="tableData.sort[item.svalue]"  placeholder="请选择" @change="change">
+                      <el-option
+                        v-for="item in tableData.type"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td ><el-input class="td-six" placeholder="面额"></el-input></td>
+                  <td> <el-input class="td-six" placeholder="数量"></el-input></td>
+                  <td><el-input  class="td-six" placeholder="概率"></el-input></td>
+                  <td><span class="estimate"></span></td>
+                </tr>
+                <tr>
+                  <td>谢谢参与</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><el-input  class="td-six" placeholder=""></el-input></td>
+                  <td><span class="estimate"></span></td>
+                </tr>
+                <tr>
+                  <td>合计</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>100%</td>
+                  <td><span class="estimate"></span></td>
+                </tr>
+              </table>
+          </el-tab-pane>
+        </el-tabs>
+      </el-form>
     </div>
   </div>
 </template>
@@ -172,7 +174,7 @@ export default {
   text-align :center
   padding-top:20px
   .input-item
-    height:30px
+    height:40px
     // line-height:30px
     font-size :0
     margin-bottom:20px

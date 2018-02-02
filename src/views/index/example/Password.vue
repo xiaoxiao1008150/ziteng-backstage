@@ -5,28 +5,40 @@
         <span class="fr" @click="close">X</span>
   </div>
   <div class="" slot="body" v-if="showInfo">
-    <form action="" class="form-signup form">
-      <div class="input-item"><span>企业名称</span><el-input class="input-self" placeholder="请输入购买合同中的企业名称"></el-input></div>
-      <div class="input-item"><span>联系人</span><el-input class="input-self" placeholder="请输入联系人"></el-input></div>
-      <div class="input-item"><span>手机号码</span><el-input class="input-self" placeholder="请输入手机号码"></el-input></div>
-      <div class="input-item">
-        <span>验证码</span>
-        <el-input class="input-self code" placeholder="请确认验证码"></el-input>
+    <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
+       <el-form-item label="联系人" prop="contact">
+        <el-input v-model="ruleForm.contact" placeholder="请输入联系人" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="手机号码" prop="tel">
+        <el-input v-model="ruleForm.tel" placeholder="请输入手机号码" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="验证码" prop="captcha">
+        <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
         <button class="code-btn">发送验证码</button>
-      </div>
-    </form>
+      </el-form-item>
+      <!--  <el-form-item label="验证码">
+        <el-input v-model="form.captcha" placeholder="请确认验证码"></el-input>
+        <button class="code-btn">发送验证码</button>
+      </el-form-item> -->
+        <el-button type="primary"  class="info-btn" @click="goToConfirmPassword('ruleForm')">下一步</el-button>
+    </el-form>
   </div>
   <div class="" slot="body" v-else>
-    <form action="" class="form-signup form">
-      <div class="input-item"><span>密码</span><el-input class="input-self" placeholder="请输入密码"></el-input></div>
-      <div class="input-item"><span>确认密码</span><el-input class="input-self" placeholder="请确认密码"></el-input></div>
-    </form>
+    <el-form status-icon :model="ruleForm1" :rules="rules1"  ref="ruleForm1"  label-width="80px" label-position ="left">
+       <el-form-item label="密码" prop="password">
+        <el-input  type="password" v-model="ruleForm1.password" placeholder="请输入密码" auto-complete="off"></el-input>
+        </el-form-item>
+       <el-form-item label="确认密码" prop="confirmPassword">
+        <el-input type="password" v-model="ruleForm1.confirmPassword" placeholder="请确认密码" auto-complete="off"></el-input>
+      </el-form-item>
+        <el-button type="primary" class="info-btn" @click="submitForm('ruleForm1')">完成</el-button>
+    </el-form>
   </div>
-  <div slot="footer" class="next">
+<!--   <div slot="footer" class="next">
     <el-button  class="info-btn" type="primary"  @click="goToConfirmPassword">
         下一步
       </el-button>
-  </div>
+  </div> -->
 </modal>
 </template>
 <script>
@@ -35,19 +47,75 @@
 
   export default {
     data () {
+      var validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        } else {
+          if (this.ruleForm1.confirmPassword !== '') {
+            this.$refs.ruleForm1.validateField('confirmPassword');
+          }
+          callback();
+        }
+      };
+      var validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.ruleForm1.password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
       return {
-        showInfo:true
+        showInfo:true,
         // showPassword:false
-      }
+          ruleForm: {
+            tel: '',
+            contact: '',
+            captcha: '',
+          },
+          ruleForm1: {
+            password: '',
+            confirmPassword: '',
+          },
+          rules: {
+            contact: [
+              { required: true, message: '请输入联系人', trigger: 'blur' },
+            ],
+            tel: [
+              { required: true, message: '请输入手机号码', trigger: 'blur' },
+              { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+            ]
+          },
+          rules1: {
+            password: [
+              { required: true,validator: validatePass, trigger: 'blur' }
+            ],
+            confirmPassword: [
+              { required: true, validator: validatePass2, trigger: 'blur' }
+            ]
+          }
+        }
     },
     methods: {
-      goToConfirmPassword() {
+      goToConfirmPassword(formName) {
         if(this.showInfo) {
           this.showInfo = false
+          this.$refs[formName].resetFields();
         }
       },
       close () {
         this.$emit('close')
+      },
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       }
     },
     components:{

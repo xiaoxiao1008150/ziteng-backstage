@@ -5,32 +5,31 @@
         <span class="fr" @click="close">X</span>
   </div>
   <div class="" slot="body">
-    <form method="POST" class="form-signup form" @submit.prevent="onSubmit">
-      <div class="input-item">
-        <span>企业名称</span>
-        <el-input class="input-self" placeholder="请输入购买合同中的企业名称"></el-input></div>
-      <div class="input-item">
-          <span>联系人</span>
-          <el-input class="input-self" placeholder="请输入联系人"></el-input></div>
-      <div class="input-item">
-          <span>手机号码</span>
-          <el-input class="input-self" placeholder="请输入手机号码"></el-input></div>
-      <div class="input-item">
-          <span>密码</span>
-          <el-input class="input-self" placeholder="请输入密码"></el-input></div>
-      <div class="input-item">
-        <span>确认密码</span>
-        <el-input class="input-self" placeholder="请确认密码"></el-input></div>
-      <div class="input-item">
-        <span>验证码</span>
-        <el-input class="input-self code" placeholder="请确认验证码"></el-input>
+    <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
+      <el-form-item label="企业名称" prop="name">
+        <el-input v-model="ruleForm.name" placeholder="请输入购买合同中的企业名称" auto-complete="off"></el-input>
+      </el-form-item>
+       <el-form-item label="联系人" prop="contact">
+        <el-input v-model="ruleForm.contact" placeholder="请输入联系人" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="手机号码" prop="tel">
+        <el-input v-model="ruleForm.tel" placeholder="请输入手机号码" auto-complete="off"></el-input>
+      </el-form-item>
+       <el-form-item label="密码" prop="password">
+        <el-input   type="password" v-model="ruleForm.password" placeholder="请输入密码" auto-complete="off"></el-input>
+      </el-form-item>
+       <el-form-item label="确认密码" prop="confirmPassword">
+        <el-input type="password" v-model="ruleForm.confirmPassword" placeholder="请确认密码" auto-complete="off"></el-input>
+      </el-form-item>
+       <el-form-item label="验证码" prop="captcha">
+        <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
         <button class="code-btn">发送验证码</button>
-      </div>
-      <el-button  class="sign-btn info-btn" type="primary">
-        注册
-      </el-button>
+      </el-form-item>
+       <!-- <el-form-item class="zi-btn"> -->
+        <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">注册</el-button>
+      <!-- </el-form-item> -->
+    </el-form>
       <div class="skip">已有账号,<span href="" @click="$emit('close','login')">去登录</span></div>
-    </form>
   </div>
   <!-- <div slot="footer"> -->
     <!-- <el-button  class="sign-btn info-btn" type="primary">
@@ -42,15 +41,86 @@
 </template>
 <script>
   import Modal from 'components/Modal'
-  import Errors from 'utils/validate'
+  import { createUser } from 'api/user'
+
 
   export default {
-    methods: {
+    data() {
+      var validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        } else {
+          if (this.ruleForm.confirmPassword !== '') {
+            this.$refs.ruleForm.validateField('confirmPassword');
+          }
+          callback();
+        }
+      };
+      var validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.ruleForm.password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
+      return {
+        ruleForm: {
+          name: '',
+          contact: '',
+          tel: '',
+          password: '',
+          confirmPassword: '',
+          captcha: '',
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+          ],
+          contact: [
+            { required: true, message: '请输入联系人', trigger: 'blur' },
+          ],
+          tel: [
+            { required: true, message: '请输入手机号码', trigger: 'blur' }
+            // { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+          ],
+          password: [
+            { required: true,validator: validatePass, trigger: 'blur' }
+          ],
+          confirmPassword: [
+            { required: true, validator: validatePass2, trigger: 'blur' }
+          ],
+          captcha: [
+            { required: true, message: '请输入验证码', trigger: 'blur' },
+          ],
+        }
+      }
+    },
+    methods:{
       close () {
         this.$emit('close')
       },
-      onSubmit () {
-        console.log(this.$data)
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // console.log('valid', this.$refs[formName].model)
+            let data = this.$refs[formName].model
+            createUser(data).then((response) => {
+              // console.log('kk', response) response data是post的数据
+              this.$notify({
+                title: '成功',
+                message: '注册成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.close()//这里注意顺序
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       }
     },
     components:{
@@ -60,7 +130,8 @@
 </script>
 <style lang="stylus" scoped>
 @import "~common/stylus/modal"
-
+.captcha input
+  width:100px
 // .form
 //   .input-item
 //     height:30px

@@ -38,8 +38,8 @@
           default () {
             return {
               background:'#f5f5f5',
-              height:'50px',
-              lineHeight:'50px'
+              height:'45px',
+              lineHeight:'45px'
           }
         }
       }
@@ -89,7 +89,7 @@
   // background:#ccc
   padding:0 15px
 .modal-body
-  padding:30px
+  padding:15px 30px 30px
 .modal-enter {
   opacity: 0;
 }

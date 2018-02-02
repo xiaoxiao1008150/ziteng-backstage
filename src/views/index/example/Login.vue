@@ -5,33 +5,79 @@
         <span class="fr" @click="close">X</span>
   </div>
   <div class="" slot="body">
-    <form action="" class="form-signup form">
-      <div class="input-item"><span>手机号码</span><el-input class="input-self" placeholder="请输入手机号码"></el-input></div>
-      <div class="input-item no-margin"><span>密码</span><el-input class="input-self" placeholder="请输入密码"></el-input></div>
-      <div class="f-password"><span @click="$emit('close','password')">登录忘记密码？</span></div>
-      <div class="input-item">
-        <span>验证码</span>
-        <el-input class="input-self code" placeholder="请确认验证码"></el-input>
+    <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
+      </el-form-item>
+      <el-form-item label="手机号码" prop="tel">
+        <el-input v-model="ruleForm.tel" placeholder="请输入手机号码" auto-complete="off"></el-input>
+      </el-form-item>
+       <el-form-item label="密码" prop="password">
+        <el-input   type="password" v-model="ruleForm.password" placeholder="请输入密码" auto-complete="off"></el-input>
+      </el-form-item>
+      <div id="f-password"><span @click="$emit('close','password')">忘记密码</span></div>
+      <el-form-item label="验证码" prop="captcha">
+        <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
         <button class="code-btn">发送验证码</button>
-      </div>
-    </form>
+      </el-form-item>
+        <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">登录</el-button>
+    </el-form>
+    <div class="skip">没有账号,<span href="" @click="$emit('close','signup')">点击注册</span></div>
   </div>
-  <div slot="footer">
+<!--   <div slot="footer">
   <el-button  type="primary" class="login-btn info-btn">
     登录
   </el-button>
   <div class="skip">没有账号,<span href="" @click="$emit('close','signup')">点击注册</span></div>
-  </div>
+  </div> -->
 </modal>
 </template>
 <script>
   // import formBase from './formBase'
   import Modal from 'components/Modal'
-
+  import { Login } from 'api/user'
   export default {
+    data () {
+      return {
+          ruleForm: {
+            tel: '',
+            password: '',
+            captcha: '',
+          },
+          rules: {
+            tel: [
+              { required: true, message: '请输入手机号码', trigger: 'blur' },
+              // { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+            ],
+            password: [
+              { required: true,message: '请输入密码', trigger: 'blur' }
+            ],
+            captcha: [
+              { required: true,message: '请输入验证码', trigger: 'blur' }
+            ],
+          }
+      }
+    },
     methods: {
       close () {
         this.$emit('close')
+      },
+      submitForm(formName) {
+        this.$router.push({ path: '/create-project/index' })
+
+        // this.$refs[formName].validate((valid) => {
+        //   if (valid) {
+        //     // 在这里post数据
+        //     let data = this.$refs[formName].model
+        //     createUser(data).then((response) => {
+        //       // console.log('kk', response) response data是post的数据
+        //       this.close()//这里注意顺序
+        //       //登录成功跳转到创建活动页面
+        //       this.$router.push({ path: '/create-project/index' })
+        //     })
+        //   } else {
+        //     console.log('error submit!!');
+        //     return false;
+        //   }
+        // });
       }
     },
     components:{
