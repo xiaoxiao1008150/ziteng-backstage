@@ -33,7 +33,7 @@ export default {
   name: '',
   data() {
     return {
-      activeName: 'first',
+      activeName: 'second',
       tabData:tabData
     };
   },

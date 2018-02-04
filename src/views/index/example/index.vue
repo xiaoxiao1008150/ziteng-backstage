@@ -76,7 +76,9 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .example-img
+  // width:250px
   width:100%
+  // height:447px
   // height:250px
   display:block
 .example-text
