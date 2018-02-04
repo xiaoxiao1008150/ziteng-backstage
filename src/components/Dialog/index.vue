@@ -80,7 +80,6 @@
         this.$emit('close')
         // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
         if(name){
-          //
           this.$router.push(({ path: `/create-project/${name}` }))
         }
       }

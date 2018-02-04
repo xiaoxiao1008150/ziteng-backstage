@@ -1,23 +1,13 @@
 <template>
   <div class="zi-content">
-    <el-tabs v-model="activeName" @tab-click="toggleTab">
-      <el-tab-pane
-      v-for="(item,index) in tabData"
-      :label="item.label"
-      :name="item.name"
-      :key="index"
-      >
-        <first-tab :activeName="activeName"></first-tab>
-      </el-tab-pane>
-        <!-- <first-tab></first-tab>
-      <el-tab-pane label="抽奖页" name="second"></el-tab-pane>
-        <first-tab></first-tab>
-      <el-tab-pane label="中奖页" name="third"></el-tab-pane>
-        <first-tab></first-tab>
-      <el-tab-pane label="未中奖" name="fourth"></el-tab-pane>
-        <first-tab></first-tab>
-      <el-tab-pane label="结束页" name="five"></el-tab-pane> -->
-    </el-tabs>
+    <div class="zitab">
+      <div class="zitab-bar" :style="{ transform:transNum}"></div>
+      <div  class="zitab-item"
+      v-for="(item,index) in tabData" :key="index" 
+      @click="tabChange(index)"
+      >{{item.label}}</div>
+    </div>
+    <slot><first-tab :activeName="activeName"></first-tab></slot>
   </div>
 </template>
 <script>
@@ -33,13 +23,23 @@ export default {
   name: '',
   data() {
     return {
-      activeName: 'second',
-      tabData:tabData
+      activeName: 'first',
+      tabData:tabData,
+      index:0,
+      styleObject: {
+        transform: `translateX(85*${this.index}px)`
+      }
     };
   },
+  computed:{
+    transNum () {
+      return 'translateX(' + this.index * 85 + 'px)'
+    }
+  },
   methods:{
-    toggleTab () {
-      console.log(this.activeName)
+    tabChange (index) {
+      this.index= index
+      this.activeName = this.tabData[index].name
     }
   },
   components:{
@@ -50,4 +50,28 @@ export default {
 <style lang="stylus" scoped>
 .zi-content
   background:#fff
+.zitab
+  text-align:left
+  position:relative
+.zitab-bar
+  position :absolute
+  left:0
+  bottom:0
+  border:2px solid red
+  width:85px
+  transition:0.3s all
+.zitab-item
+  padding: 0 20px;
+  height: 40px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  line-height: 40px;
+  display: inline-block;
+  list-style: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #303133;
+  position: relative;
+  width:85px
+  text-align :center
 </style>

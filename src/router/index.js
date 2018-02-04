@@ -27,7 +27,7 @@ export const constantRouterMap = [
     children:[
        { path: 'index', component: _import('createProject/index'), name: 'create-project', meta: { title: '创建活动' }},
        { path: 'slyder', component: _import('components-demo/slyder/index'), name: 'slyder-demo', meta: { title: '大转盘' }},
-       { path: 'envelope', component: _import('components-demo/envelope'), name: 'envelope-demo', meta: { title: '红包抽奖' }},
+       { path: 'envelope', component: _import('components-demo/envelope/index'), name: 'envelope-demo', meta: { title: '红包抽奖' }},
        { path: 'box', component: _import('components-demo/box'), name: 'box-demo', meta: { title: '开宝箱' }},
        { path: 'jigsaw', component: _import('components-demo/jigsaw'), name: 'jigsaw-demo', meta: { title: '欢乐拼图' }}
     ]

@@ -36,7 +36,6 @@
              <el-card>
               <img src="/static/images/sort.jpg" class="image">
               <div>
-                <!-- <span>好吃的汉堡</span> -->
                 <div class="bottom clearfix">
                   <span class="re-name">{{ item.text }}</span>
                   <el-button type="primary" class="button fr" @click="openModel(item)">马上创建</el-button>

@@ -4,10 +4,10 @@
     <div class="tab-img">
       <!-- <img :src=" '/static/images/slyder-' + activeName + '.jpg' "> -->
       <img :src=" '/static/images/slyder-' + activeName + '.png' ">
-      <pre class="rule-content" v-html="ruleForm.desc" ></pre>
-      <div class="rule-area">
+      <pre v-show="activeName==='second' || activeName==='first'"class="rule-content" v-html="ruleForm.desc" ></pre>
+      <div v-show="activeName==='second'" class="rule-area">
         <ul>
-           <li id="area-first-li">
+          <li id="area-first-li">
               <p><span>{{lotteryData[0] && lotteryData[0].deno}}</span></p><p class="cost">{{lotteryData[0] && lotteryData[0].sort}}</p>
           </li>
            <li id="area-two-li">
@@ -31,7 +31,7 @@
     <div class="slyder-first-wrapper">
       <el-form  :model="ruleForm"  ref="ruleForm"  label-width="80px" label-position ="left">
         <el-tabs v-model="activeName2" type="card">
-          <el-tab-pane label="基础设置" name="first" class="mytag">
+          <el-tab-pane label="基础设置" name="first" class="tag-base">
             <!-- <form action="" id="base-form" class="slyder-form form"> -->
                 <el-form-item label="活动名称">
                  <el-input v-model="ruleForm.name" placeholder="请输入活动名称" auto-complete="off"></el-input>
@@ -43,9 +43,6 @@
                   <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.endTime" style="width: 100%;"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="活动规则">
-                  <!-- <markdown-editor
-                  v-model="content"
-                  :configs="configs"></markdown-editor> -->
                   <el-input type="textarea" v-model="ruleForm.desc"></el-input>
                 </el-form-item>
           </el-tab-pane>
@@ -68,7 +65,6 @@
                 <button class="code-btn">发送验证码</button>
                 <span id="refresh">刷新</span>
                 <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">测试按钮提交</el-button>
-
               </div>
             </form>
           </el-tab-pane>
@@ -82,23 +78,12 @@
                   <th>中奖概率</th>
                   <th>奖品估算</th>
                 </tr>
-                <tr v-for="(item,index) in tableData.name" :key="index">
+                <tr v-for="(item,index) in tableData.lottery" :key="index">
                   <td class="spc-width-select"><span>{{item.level}}</span></td>
-                  <td class="spc-width-select" @click="setPosition(index)">
-                    <el-select  v-model="tableData.sort[item.svalue]"  placeholder="请选择" @change="change">
+                  <td class="spc-width-select" @click="setPosition(index,item.level)">
+                    <el-select  v-show="item.level!=='谢谢参与'" v-model="item.detail && item.detail['sort']"  placeholder="请选择" @change="change">
                       <el-option
-                        v-for="item in tableData.type"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                        >
-                      </el-option>
-                    </el-select>
-                  </td>
-                  <td class="spc-width">
-                  <el-select  v-model="tableData.deno[item.dvalue]"  placeholder="请选择" @change="change1">
-                    <el-option
-                        v-for="item1 in tableData.denomination[currentSelectOption]"
+                        v-for="item1 in tableData.type"
                         :key="item1.value"
                         :label="item1.label"
                         :value="item1.value"
@@ -106,18 +91,34 @@
                       </el-option>
                     </el-select>
                   </td>
-                  <td class="spc-width"> <el-input class="td-six" placeholder="数量"></el-input></td>
-                  <td class="spc-width"><el-input  class="td-six" placeholder="概率"></el-input></td>
+                  <td class="spc-width">
+                  <el-select v-show="item.level!=='谢谢参与'" v-model="item.detail && item.detail['deno']"  placeholder="请选择" @change="change1">
+                    <el-option
+                        v-for="item2 in tableData.denomination[currentSelectOption]"
+                        :key="item2.value"
+                        :label="item2.label"
+                        :value="item2.value"
+                        >
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td class="spc-width">
+                    <el-input  class="td-six" placeholder="数量" v-model="item.detail && item.detail['num']">
+                    </el-input>
+                  </td>
+                  <td class="spc-width">
+                      <el-input  v-model="item.detail && item.detail['change']" class="td-six" placeholder="概率"></el-input>
+                  </td>
                   <td class="spc-width"><span class="estimate"></span></td>
                 </tr>
-                <tr>
+                <!-- <tr>
                   <td>谢谢参与</td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td><el-input  class="td-six" placeholder=""></el-input></td>
                   <td><span class="estimate"></span></td>
-                </tr>
+                </tr> -->
                 <tr>
                   <td>合计</td>
                   <td></td>
@@ -137,22 +138,39 @@
 import VDistpicker from 'v-distpicker'//城市选择
 import Date from 'components/Date'
 
+// data:{
+//   name:''
+//   time:''
+//   num:'',
+//   lottery:[
+//     {level:'一等奖',detail:{sort:'话费'deno:'10元',num:20,change:10%,value:},
+//     {level:'二等奖',detail:{sort:'话费'deno:'10元',num:20,change:10%,value:},
+//   ]
+// }
 let tableData = {
-  name:[
-  {svalue: 'svalue1', dvalue: 'dvalue1',level:'一等奖'},
-  {svalue: 'svalue2', dvalue: 'dvalue2',level:'二等奖'},
-  {svalue: 'svalue3', dvalue: 'dvalue3',level:'三等奖'},
-  {svalue: 'svalue4', dvalue: 'dvalue4',level:'四等奖'},
-  {svalue: 'svalue5', dvalue: 'dvalue5',level:'五等奖'},
-  ],
+  // name:[
+  // {svalue: 'svalue1', dvalue: 'dvalue1',level:'一等奖'},
+  // {svalue: 'svalue2', dvalue: 'dvalue2',level:'二等奖'},
+  // {svalue: 'svalue3', dvalue: 'dvalue3',level:'三等奖'},
+  // {svalue: 'svalue4', dvalue: 'dvalue4',level:'四等奖'},
+  // {svalue: 'svalue5', dvalue: 'dvalue5',level:'五等奖'},
+  // ],
   type:[{value: '流量'}, {value: '话费'}, {value: '视频券'}],
   denomination:{
     '视频券': [{value: '200元'},{value: '180元'},{value: '100元'}],
     '话费': [{value: '10元'},{value: '2元'},{value: '1元'}],
     '流量': [{value: '10M'},{value: '2M'},{value: '1M'}]
   },
-  sort:{svalue1: '',svalue2: '',svalue3: '',svalue4: '',svalue5: ''},
-  deno:{dvalue1: '',dvalue2: '',dvalue3: '',dvalue4: '',dvalue5: ''}
+  lottery:[
+    {level:'奖项一',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+    {level:'奖项二',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+    {level:'奖项三',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+    {level:'奖项四',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+    {level:'奖项五',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+    {level:'谢谢参与'}
+  ]
+  // sort:{svalue1: '',svalue2: '',svalue3: '',svalue4: '',svalue5: ''},
+  // deno:{dvalue1: '',dvalue2: '',dvalue3: '',dvalue4: '',dvalue5: ''}
 }
 export default {
   name: '',
@@ -168,29 +186,25 @@ export default {
           name: '',
           startTime: '',
           endTime: '',
-          desc:''
+          desc:'',
+          level:{}
       },
       tableData:tableData,
       activeName2: 'third',
-      // value1:'',
-      // value2:'',
       textarea: '',
-      // svalue1: '',
-      // svalue2: '',
       currentSelectOption: '话费',
       lotteryData:[],
-      position:0//默认从一等奖开始选择
+      position:0,//默认从一等奖开始选择
     }
   },
   methods:{
     change (value) {
-      console.log('value',value)
       this.currentSelectOption = value
       //在这里处理奖盘 种类
       this.sort = value
     },
     change1 (value) {
-      // 这里确定奖品的面额
+      // 这里确定奖品的面额 
       this.deno = value
       this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
       if(this.position===4){
@@ -199,10 +213,12 @@ export default {
         this.deno='谢谢'
       }
       this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
+      console.log('suc', this.tableData)
     },
-    setPosition (index) {
+    setPosition (index,level) {
       // 确定是几等奖
       this.position = index
+      // this.ruleForm[level] = level
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -210,7 +226,6 @@ export default {
             // 在这里post数据
             let data = this.$refs[formName].model
             console.log('test',data)
-
           }
         });
     }
@@ -228,10 +243,11 @@ export default {
   position:relative
   height:800px
 .slyder-first-wrapper
-  position :absolute
-  left:350px
-  top:30px
-  bottom:0
+  // position :absolute
+  // left:350px
+  // top:30px
+  // bottom:0
+  margin: 30px 0 0 350px;
 .slyder-form
   text-align :center
   padding-top:20px
@@ -333,6 +349,8 @@ export default {
   background:#ccc
   position:relative
   top:10px
+.tag-base
+ max-width:400px
 .tab-img
   position:absolute
   top:30px
