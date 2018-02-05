@@ -5,11 +5,11 @@
   </div>
     <div slot="body" class="index-dialog">
       <div class="index-img">
-        <img class="item-img" :src="'/static/images/' + imgUrl + '-scan.jpg' ">
+        <img class="item-img" :src="'/static/images/' + currentLotteryItem.num + '-scan.jpg' ">
         <img class="arrow" src="/static/images/arrow.jpg ">
       </div>
       <div class="qrcode-wrapper">
-        <div class="index-title">活动名称：{{title}}</div>
+        <div class="index-title">活动名称：{{currentLotteryItem.text}}</div>
         <div class="qrcode">
           <img class="qrcode-img" src="/static/images/qrcode.jpg">
           <div class="qrcode-text">微信扫一扫体验活动</div>
@@ -21,16 +21,18 @@
 </template>
 <script>
   import Modal from '../Modal'
+  import { mapGetters} from 'vuex'
+
   export default {
     props:{
-      title:{
-        type:String,
-        default:'超级大转盘'
-      },
-      imgUrl:{
-        type:String,
-        default:'01'
-      },
+      // title:{
+      //   type:String,
+      //   default:'超级大转盘'
+      // },
+      // imgUrl:{
+      //   type:String,
+      //   default:'01'
+      // },
       hasCreated:{
         type:Boolean,
         default:false
@@ -49,9 +51,15 @@
         }
       }
     },
+    computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+      ...mapGetters([
+        'currentLotteryItem'
+      ])
+    },
     methods:{
       setRouterName () {
-        let n = this.title
+        let n = this.currentLotteryItem && this.currentLotteryItem.text
         let result
         switch(n)
         {

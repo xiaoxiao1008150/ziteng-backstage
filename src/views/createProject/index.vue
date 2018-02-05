@@ -32,7 +32,7 @@
       <div class="re-title">活动推荐</div>
       <div class="re-classify">
         <el-row :gutter="20">
-          <el-col :span="6" v-for="(item, index) in listData" :key="index">
+          <el-col :span="6" v-for="(item, index) in lotteryData" :key="index">
              <el-card>
               <img src="/static/images/sort.jpg" class="image">
               <div>
@@ -47,8 +47,8 @@
       </div>
     </div>
     <zi-dialog
-  :imgUrl=num
-  :title=title
+  :imgUrl=currentLotteryItem.num
+  :title=currentLotteryItem.text
   v-if="showModal"
   @close="showModal = false" 
   >
@@ -56,29 +56,46 @@
   </div>
 </template>
 <script>
-let exampleData = [
-  {num:'01',text:'超级大转盘'},
-  {num:'02',text:'抽红包'},
-  {num:'03',text:'欢乐拼图'},
-  {num:'04',text:'开宝箱'}
-]
+// let exampleData = [
+//   {num:'01',text:'超级大转盘'},
+//   {num:'02',text:'抽红包'},
+//   {num:'03',text:'欢乐拼图'},
+//   {num:'04',text:'开宝箱'}
+// ]
 import Dialog from 'components/Dialog'
+import { mapGetters,mapMutations } from 'vuex'
 
 export default {
   name: 'AppMain',
   data () {
     return {
-      listData:exampleData,
+      // listData:exampleData,
       showModal:false,
-      title:'超级大转盘',
-      num:'01'
+      // title:'超级大转盘',
+      // num:'01'
     }
   },
+  computed: {
+  // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      'lotteryData',
+      'currentLotteryItem'
+    ])
+  },
+  created () {
+    console.log('ff',this.lotteryData)
+  },
   methods: {
+    ...mapMutations([
+      'setCurrentLottery', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+    ]),
     openModel(item) {
       this.showModal = true
-      this.title = item.text
-      this.num = item.num
+      this.setCurrentLottery(item)
+      console.log('this', this.currentLotteryItem)
+      // this.title = item.text
+      // this.num = item.num
+
     }
   },
   components:{

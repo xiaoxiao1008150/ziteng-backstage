@@ -18,7 +18,7 @@ let tabData = [
   {label:'未中奖', name:'four'},
   {label:'结束页', name:'five'},
 ]
-import FirstTab from './firstTab'
+import FirstTab from '../firstTab'
 export default {
   name: '',
   data() {

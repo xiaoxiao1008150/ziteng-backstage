@@ -2,7 +2,7 @@
   <div class="zi-header">
     <span>活动分类</span>
     <span>|</span>
-    <span>大转盘抽奖</span>
+    <span>{{currentLotteryItem.text}}</span>
     <div class="fr preview">
       <el-button class="small-btn" id="preview-btn" type="primary">预览</el-button>
       <el-button class="small-btn" id="save-btn">保存</el-button>
@@ -10,8 +10,16 @@
   </div>
 </template>
 <script>
+import { mapGetters} from 'vuex'
+
 export default {
   name: 'ziHeader',
+  computed: {
+  // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      'currentLotteryItem'
+    ])
+  },
   components:{
   }
 }

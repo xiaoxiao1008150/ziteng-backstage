@@ -6,7 +6,7 @@
 </template>
 <script>
 import ziHeader from '../ziHeader'
-import ziTab from './Tab'
+import ziTab from '../ziTab'
 export default {
   name: 'slyder',
   components:{
