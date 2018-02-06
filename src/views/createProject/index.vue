@@ -3,27 +3,21 @@
     <div class="sort-wrapper tep">
       <div class="sort-top clearfix">
         <span class="fl">活动分类</span>
-        <div class="fr"><el-input  placeholder="请输入关键字搜索"></el-input></div>
+        <!-- <div class="fr"><el-input  placeholder="请输入关键字搜索"></el-input></div> -->
       </div>
       <div class="sort-bottom">
         <div class="festival sort">
           <span>节日:</span>
-          <span class="all">全部</span>
+          <span class="all" @click="openFullScreen" >全部</span>
           <ul class="sort-ul">
-            <li>春节</li>
-            <li>情人节</li>
-            <li>中秋节</li>
-            <li>母亲节</li>
-            <li>父亲节</li>
+            <li  @click="openFullScreen" v-for="(item,index) in festivalData" :key="index">{{item}}</li>
           </ul>
         </div>
         <div class="sort">
             <span>类型:</span>
-            <span class="all">全部</span>
+            <span class="all" @click="openFullScreen" >全部</span>
             <ul class="sort-ul">
-              <li>抽奖活动</li>
-              <li>签到活动</li>
-              <li>游戏活动</li>
+             <li @click="openFullScreen" v-for="(item,index) in levelData" :key="index">{{item}}</li>
             </ul>
         </div>
       </div>
@@ -38,7 +32,7 @@
               <div>
                 <div class="bottom clearfix">
                   <span class="re-name">{{ item.text }}</span>
-                  <el-button type="primary" class="button fr" @click="openModel(item)">马上创建</el-button>
+                  <el-button type="primary" class="create-btn fr" @click="openModel(item)">马上创建</el-button>
                 </div>
               </div>
             </el-card>
@@ -47,21 +41,17 @@
       </div>
     </div>
     <zi-dialog
-  :imgUrl=currentLotteryItem.num
-  :title=currentLotteryItem.text
-  v-if="showModal"
-  @close="showModal = false" 
-  >
+      :imgUrl=currentLotteryItem.num
+      :title=currentLotteryItem.text
+      v-if="showModal"
+      @close="showModal = false" 
+      >
   </zi-dialog>
   </div>
 </template>
 <script>
-// let exampleData = [
-//   {num:'01',text:'超级大转盘'},
-//   {num:'02',text:'抽红包'},
-//   {num:'03',text:'欢乐拼图'},
-//   {num:'04',text:'开宝箱'}
-// ]
+let festivalData = ['春节','情人节','中秋节','母亲节','父亲节']
+let levelData = ['抽奖活动', '签到活动','游戏活动']
 import Dialog from 'components/Dialog'
 import { mapGetters,mapMutations } from 'vuex'
 
@@ -69,10 +59,9 @@ export default {
   name: 'AppMain',
   data () {
     return {
-      // listData:exampleData,
       showModal:false,
-      // title:'超级大转盘',
-      // num:'01'
+      festivalData: festivalData,
+      levelData:levelData
     }
   },
   computed: {
@@ -83,7 +72,6 @@ export default {
     ])
   },
   created () {
-    console.log('ff',this.lotteryData)
   },
   methods: {
     ...mapMutations([
@@ -92,10 +80,17 @@ export default {
     openModel(item) {
       this.showModal = true
       this.setCurrentLottery(item)
-      console.log('this', this.currentLotteryItem)
-      // this.title = item.text
-      // this.num = item.num
-
+    },
+    openFullScreen() {
+      const loading = this.$loading({
+        lock: true,
+        text: '加载中',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 500);
     }
   },
   components:{
@@ -107,9 +102,12 @@ export default {
 .bottom
     margin-top: 13px;
     text-align:left
-    padding-left:8px
-    height: 40px;
-    line-height: 40px;
+    // padding-left:8px
+    height: 30px;
+    line-height: 30px;
+.create-btn
+  height:30px
+  line-height:3px
 .dashboard-container
   background:#ccc
 .tep
@@ -139,6 +137,7 @@ export default {
   vertical-align:middle
 .sort-ul li
   float:left
+  cursor:pointer
 .sort span,.sort-ul li
   padding: 0 10px
 .sort span:first-child
@@ -147,6 +146,7 @@ export default {
   margin-bottom:20px
 .all
   color:#0dc1f1
+  cursor:pointer
 .recommend
   padding: 0 10px
 .re-title

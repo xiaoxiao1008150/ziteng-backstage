@@ -61,8 +61,24 @@
         this.$emit('close')
       },
       submitForm(formName) {
-        this.$router.push({ path: '/create-project/index' })
-
+        // this.$router.push({ path: '/create-project/index' })
+        this.$refs.ruleForm.validate(valid => {
+          // console.log('rule', this.ruleForm)
+          if (valid) {
+            // this.loading = true
+            this.$store.dispatch('LoginByUsername', this.ruleForm).then(() => {
+              this.$router.push({ path: '/create-project' });
+              // this.loading = false
+              // this.$router.push({ path: '/' })
+              // this.$router.push({ path: '/create-project/index' })
+            }).catch(() => {
+              // this.loading = false
+            })
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
         // this.$refs[formName].validate((valid) => {
         //   if (valid) {
         //     // 在这里post数据

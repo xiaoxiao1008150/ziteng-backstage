@@ -1,7 +1,7 @@
 <template>
 <div>
   <el-row :gutter="20" style="margin-bottom:140px">
-    <el-col :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in exampleData" :key="index">
+    <el-col :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in lotteryData" :key="index">
       <el-card :body-style="{ padding: '0px' }">
         <img class="example-img" :src="'/static/images/' + item.num + '.jpg'">
         <div class="example-text">
@@ -14,53 +14,41 @@
       <el-button type="primary" class="example-btn" @click="openModel">创建活动</el-button>
     </el-col>
   </el-row>
-  <modal v-if="showModal" :styleObject="styleObject">
+  <!-- <modal v-if="showModal">
     <div slot="body">
       <div class="close-tep"><span>请您先登录</span><span class="fr" @click="close">X</span></div>
     </div>
-  </modal>
-<!--   <zi-dialog
-  :imgUrl=num
-  :title=title
+  </modal> -->
+  <zi-dialog
+  :imgUrl=currentLotteryItem.num
+  :title=currentLotteryItem.text
   v-if="showModal"
   @close="showModal = false" 
   >
-  </zi-dialog> -->
+  </zi-dialog>
 </div>
 
 </template>
 <script>
-// import Dialog from 'components/Dialog'
+import Dialog from 'components/Dialog'
 import Modal from 'components/Modal'
+import { mapGetters} from 'vuex'
 
-let exampleData = [
-  {num:'01',text:'超级大转盘'},
-  {num:'02',text:'抽红包'},
-  {num:'03',text:'欢乐拼图'},
-  {num:'04',text:'开宝箱'}
-]
+
+// let exampleData = [
+//   {num:'01',text:'超级大转盘'},
+//   {num:'02',text:'抽红包'},
+//   {num:'03',text:'欢乐拼图'},
+//   {num:'04',text:'开宝箱'}
+// ]
 export default {
   name: 'example',
   data() {
     return {
-      exampleData:exampleData,
       showModal:false,
-      styleObject:{
-          // background:'#f5f5f5',
-          height:'0',
-      },
-      // // item:{num:'01',text:'超级大转盘'},
-      // title:'超级大转盘',
-      // num:'01'
     }
   },
    methods: {
-    // openModel(item) {
-    //   this.showModal = true
-    //   this.title = item.text
-    //   this.num = item.num
-    //   // this.item = item
-    // }
     openModel () {
       this.showModal = true
     },
@@ -68,9 +56,16 @@ export default {
       this.showModal = false
     }
   },
+  computed: {
+  // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      'lotteryData',
+      'currentLotteryItem'
+    ])
+  },
   components:{
-   // ziDialog:Dialog
-   Modal
+   ziDialog:Dialog
+   // Modal
   }
 }
 </script>

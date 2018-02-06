@@ -1,8 +1,8 @@
 let lotteryData = [
-  {num:'01',text:'超级大转盘'},
-  {num:'02',text:'抽红包'},
-  {num:'03',text:'欢乐拼图'},
-  {num:'04',text:'开宝箱'}
+  {num:'01',text:'超级大转盘',type:'slyder'},
+  {num:'02',text:'抽红包',type:'envelope'},
+  {num:'03',text:'欢乐拼图',type:'jigsaw'},
+  {num:'04',text:'开宝箱',type:'box'}
 ]
 // let tabData = [
 //   {label:'首页', name:'first'},
@@ -14,7 +14,7 @@ let lotteryData = [
 const lottery = {
   state: {
     lotteryData:lotteryData,
-    currentLotteryItem: {num:'01',text:'超级大转盘'}
+    currentLotteryItem: {num:'01',text:'超级大转盘',type:'slyder'}
   },
 
   mutations: {

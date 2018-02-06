@@ -3,7 +3,7 @@
     <!-- <tab-img :data="textarea" :activeName="activeName"></tab-img> -->
     <div class="tab-img">
       <!-- <img :src=" '/static/images/slyder-' + activeName + '.jpg' "> -->
-      <img :src=" '/static/images/slyder-' + activeName + '.png' ">
+      <img :src=" '/static/images/' + currentLotteryItem.type + '-' + activeName + '.png' ">
       <pre v-show="activeName==='second' || activeName==='first'"class="rule-content" v-html="ruleForm.desc" ></pre>
       <div v-show="activeName==='second'" class="rule-area">
         <ul>
@@ -32,7 +32,6 @@
       <el-form  :model="ruleForm"  ref="ruleForm"  label-width="80px" label-position ="left">
         <el-tabs v-model="activeName2" type="card">
           <el-tab-pane label="基础设置" name="first" class="tag-base">
-            <!-- <form action="" id="base-form" class="slyder-form form"> -->
                 <el-form-item label="活动名称">
                  <el-input v-model="ruleForm.name" placeholder="请输入活动名称" auto-complete="off"></el-input>
                 </el-form-item>
@@ -43,11 +42,10 @@
                   <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.endTime" style="width: 100%;"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="活动规则">
-                  <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+                  <el-input :autosize='{ minRows: 5}' resize='none' type="textarea"  v-model="ruleForm.desc"></el-input>
                 </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="限制条件" name="second" class="mytag">
-             <!-- <form action="" class="slyder-form form"> -->
               <div class="input-item">
                 <span>手机号地域</span>
                 <v-distpicker hide-area id="distpicker"></v-distpicker>
@@ -137,6 +135,8 @@
 <script>
 import VDistpicker from 'v-distpicker'//城市选择
 import Date from 'components/Date'
+import { mapGetters} from 'vuex'
+
 
 // data:{
 //   name:''
@@ -148,13 +148,6 @@ import Date from 'components/Date'
 //   ]
 // }
 let tableData = {
-  // name:[
-  // {svalue: 'svalue1', dvalue: 'dvalue1',level:'一等奖'},
-  // {svalue: 'svalue2', dvalue: 'dvalue2',level:'二等奖'},
-  // {svalue: 'svalue3', dvalue: 'dvalue3',level:'三等奖'},
-  // {svalue: 'svalue4', dvalue: 'dvalue4',level:'四等奖'},
-  // {svalue: 'svalue5', dvalue: 'dvalue5',level:'五等奖'},
-  // ],
   type:[{value: '流量'}, {value: '话费'}, {value: '视频券'}],
   denomination:{
     '视频券': [{value: '200元'},{value: '180元'},{value: '100元'}],
@@ -169,8 +162,6 @@ let tableData = {
     {level:'奖项五',detail:{sort:'',deno:'',num:'',change:'',value:''}},
     {level:'谢谢参与'}
   ]
-  // sort:{svalue1: '',svalue2: '',svalue3: '',svalue4: '',svalue5: ''},
-  // deno:{dvalue1: '',dvalue2: '',dvalue3: '',dvalue4: '',dvalue5: ''}
 }
 export default {
   name: '',
@@ -193,27 +184,43 @@ export default {
       activeName2: 'third',
       textarea: '',
       currentSelectOption: '话费',
-      lotteryData:[],
+      lotteryData:tableData.lottery,
       position:0,//默认从一等奖开始选择
+      help:0
     }
+  },
+  computed: {
+  // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      'currentLotteryItem'
+      // 'status'
+    ])
   },
   methods:{
     change (value) {
       this.currentSelectOption = value
-      //在这里处理奖盘 种类
+      //在这里处理奖品 种类
       this.sort = value
+      console.log(this.lotteryData[this.position])
+      this.lotteryData[this.position].detail.sort = this.sort
     },
     change1 (value) {
       // 这里确定奖品的面额 
       this.deno = value
-      this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
-      if(this.position===4){
-        this.position++
-        this.sort='参与'
-        this.deno='谢谢'
-      }
-      this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
-      console.log('suc', this.tableData)
+      // this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
+      this.lotteryData[this.position].detail.deno = this.deno
+
+      // this.help++
+      // if(this.help===5){
+      //   this.position++
+      //   this.sort='参与'
+      //   this.deno='谢谢'
+      // }
+
+      // this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
+      // console.log('help', this.help)
+      console.log('test', this.lotteryData)
+
     },
     setPosition (index,level) {
       // 确定是几等奖
@@ -362,12 +369,12 @@ export default {
     height:510px
   .rule-content
     position :absolute
-    background:rgba(0,0,0,0.5)
+    // background:rgba(0,0,0,0.5)
     padding:5px
     top: 350px;
     width: 190px;
     margin-left: 30px;
-    height:90px
+    height:74px
     color:#fff
     text-align:left
     font-size:12px

@@ -1,11 +1,12 @@
-import {constantRouterMap } from 'router/index'
-// import { asyncRouterMap, constantRouterMap } from 'router/index'
+// import {constantRouterMap } from 'router/index'
+import { asyncRouterMap, constantRouterMap } from 'router/index'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
  * @param roles
  * @param route
  */
+ // 对应的是异步加载路由是否有roles: ['admin']字段
 function hasPermission(roles, route) {
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.indexOf(role) >= 0)
@@ -48,6 +49,7 @@ const permission = {
       return new Promise(resolve => {
         const { roles } = data
         let accessedRouters
+        console.log('roles', roles)
         if (roles.indexOf('admin') >= 0) {
           accessedRouters = asyncRouterMap
         } else {

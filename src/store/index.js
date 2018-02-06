@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 // import errorLog from './modules/errorLog'
 import permission from './modules/permission';
 import lottery from './modules/lottery'
-// import user from './modules/user'
+import user from './modules/user'
 import getters from './getters';
 
 Vue.use(Vuex);
@@ -14,9 +14,9 @@ const store = new Vuex.Store({
     // app,
     // errorLog,
     permission,
-    lottery
+    lottery,
     // tagsView,
-    // user
+    user
   },
   getters
 });

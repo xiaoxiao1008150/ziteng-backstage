@@ -12,17 +12,18 @@ import Layout from '../views/layout/Layout'
 export const constantRouterMap = [
 
   {
-    path: '/',
+    path: '/login',
+    // redirect: '/login',
     component: _import('index/Index'),//整体架构
     // redirect: 'dashboard',
   },
   {
     path: '/create-project',
     component: Layout,
-    // redirect: 'noredirect',
+    redirect: '/create-project/index',
     meta: {
       title: '创建活动',
-      icon: 'create-project'
+      icon: 'order-add'
     },
     children:[
        { path: 'index', component: _import('createProject/index'), name: 'create-project', meta: { title: '创建活动' }},
@@ -39,36 +40,10 @@ export const constantRouterMap = [
     // redirect: 'noredirect',
     meta: {
       title: '活动管理',
-      icon: 'management'
+      icon: 'huodongguanli'
     },
     children:[
        { path: 'index', component: _import('management/index'), name: 'management', meta: { title: '活动管理' }},
-    ]
-  },
-  {
-    path: '/client-verify',
-    component: Layout,
-    redirect: '/client-verify/index',
-    // redirect: 'noredirect',
-    meta: {
-      title: '活动管理',
-      icon: 'client-verify'
-    },
-    children:[
-       { path: 'index', component: _import('clientVerify/index'), name: 'client-verify', meta: { title: '客户审核' }},
-    ]
-  },
-  {
-    path: '/project-verify',
-    component: Layout,
-    redirect: '/project-verify/index',
-    // redirect: 'noredirect',
-    meta: {
-      title: '活动管理',
-      icon: 'project-verify'
-    },
-    children:[
-       { path: 'index', component: _import('projectVerify/index'), name: 'project-verify', meta: { title: '活动审核' }},
     ]
   }
 ]
@@ -79,3 +54,46 @@ export default new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
+
+export const asyncRouterMap = [
+    {
+    path: '/client-verify',
+    component: Layout,
+    redirect: '/client-verify/index',
+    // redirect: 'noredirect',
+    meta: {
+      roles: ['admin'],
+      title: '客户审核',
+      icon: 'kehu'
+    },
+    children:[
+       { path: 'index', component: _import('clientVerify/index'),
+         name: 'client-verify',
+         meta: {
+          title: '客户审核',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+  {
+    path: '/project-verify',
+    component: Layout,
+    redirect: '/project-verify/index',
+    // redirect: 'noredirect',
+    meta: {
+      roles: ['admin'],
+      title: '活动审核',
+      icon: 'plus-activity'
+    },
+    children:[
+       {  path: 'index', component: _import('projectVerify/index'),
+          name: 'project-verify',
+          meta: { 
+            title: '活动审核',
+            roles: ['admin']
+          }
+      }
+    ]
+  }
+]

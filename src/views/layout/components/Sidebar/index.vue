@@ -14,9 +14,8 @@ export default {
     ...mapGetters([
       'permission_routers'
     ])
-    // isCollapse() {
-    //   return !this.sidebar.opened
-    // }
+  },
+  created () {
   }
 }
 </script>

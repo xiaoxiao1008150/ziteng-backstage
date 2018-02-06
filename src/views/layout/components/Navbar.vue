@@ -1,7 +1,7 @@
 <template>
   <header class="navbar">
     <div class="fl">
-        <a href=""><img id="background" src="../../../common/images/logo.png"></a>
+        <a href="/login"><img id="background" src="../../../common/images/logo.png"></a>
     </div>
     <div class="fr client-management">
       <el-button type="primary">用户名</el-button>

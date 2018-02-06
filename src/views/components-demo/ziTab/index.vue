@@ -57,7 +57,7 @@ export default {
   position :absolute
   left:0
   bottom:0
-  border:2px solid red
+  border:2px solid #409EFF
   width:85px
   transition:0.3s all
 .zitab-item

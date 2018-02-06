@@ -15,11 +15,3 @@ export function createUser(data) {
     data
   })
 }
-//user登录post
-export function Login(data) {
-  return http({
-    url: '/user',
-    method: 'post',
-    data
-  })
-}

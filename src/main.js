@@ -8,6 +8,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import VDistpicker from 'v-distpicker'
+import './permission' // permission control
 
 Vue.component('v-distpicker', VDistpicker)
 Vue.config.productionTip = false
