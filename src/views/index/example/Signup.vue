@@ -16,14 +16,15 @@
         <el-input v-model="ruleForm.tel" placeholder="请输入手机号码" auto-complete="off"></el-input>
       </el-form-item>
        <el-form-item label="密码" prop="password">
-        <el-input   type="password" v-model="ruleForm.password" placeholder="请输入密码" auto-complete="off"></el-input>
+        <el-input  type="password" v-model="ruleForm.password" placeholder="请输入密码" auto-complete="off"></el-input>
       </el-form-item>
        <el-form-item label="确认密码" prop="confirmPassword">
         <el-input type="password" v-model="ruleForm.confirmPassword" placeholder="请确认密码" auto-complete="off"></el-input>
       </el-form-item>
        <el-form-item label="验证码" prop="captcha">
         <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
-        <button class="code-btn">发送验证码</button>
+        <captcha @click.native="getCaptcha" :countDown="countDown" @stop="stop"></captcha>
+        <!-- <button class="code-btn" @click="getCaptcha">发送验证码</button> -->
       </el-form-item>
        <!-- <el-form-item class="zi-btn"> -->
         <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">注册</el-button>
@@ -41,8 +42,8 @@
 </template>
 <script>
   import Modal from 'components/Modal'
-  import { createUser } from 'api/user'
-
+  import  Captcha from 'components/Captcha'
+  import { createUser, getCaptcha } from 'api/user'
 
   export default {
     data() {
@@ -66,6 +67,8 @@
         }
       };
       return {
+        countDown:false,
+        captchaValue:null,
         ruleForm: {
           name: '',
           contact: '',
@@ -98,6 +101,18 @@
       }
     },
     methods:{
+      stop () {
+        this.countDown = false
+      },
+      getCaptcha () {
+        this.countDown = true
+        //在这里post短信验证码，data mobileNumber
+        // getCaptcha(data).then((res)=>{
+        //   if(res.data.code==='ok'){
+        //     this.countDown = true
+        //   }
+        // })
+      },
       close () {
         this.$emit('close')
       },
@@ -124,7 +139,8 @@
       }
     },
     components:{
-      Modal
+      Modal,
+      Captcha
     }
   }
 </script>

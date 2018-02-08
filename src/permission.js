@@ -29,6 +29,7 @@ router.beforeEach((to, from, next) => {
         store.dispatch('GetUserInfo').then(res => { // 拉取user_info
           // const roles = res.data.roles // note: roles must be a array! such as: ['editor','develop']
           const roles = ['admin']
+          // console.log(1)
           store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
             // console.log('mytesr', store.getters.addRouters)
             // console.log('mytesr', store.getters.permission_routers)

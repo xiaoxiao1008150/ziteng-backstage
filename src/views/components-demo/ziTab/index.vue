@@ -7,7 +7,7 @@
       @click="tabChange(index)"
       >{{item.label}}</div>
     </div>
-    <slot><first-tab :activeName="activeName"></first-tab></slot>
+    <slot><first-tab :activeName="activeName" :hasClickSave="hasClickSave"></first-tab></slot>
   </div>
 </template>
 <script>
@@ -21,6 +21,12 @@ let tabData = [
 import FirstTab from '../firstTab'
 export default {
   name: '',
+  props:{
+    hasClickSave: {
+      type: Boolean,
+      defautl: false
+    }
+  },
   data() {
     return {
       activeName: 'first',

@@ -41,7 +41,12 @@ const permission = {
   mutations: {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
-      state.routers = constantRouterMap.concat(routers)
+      // state.routers = constantRouterMap.concat(routers)//
+      //在这步将个人中心模块调到routers数组的最后面
+      let center = constantRouterMap.pop()
+      state.routers = constantRouterMap.concat(routers).concat(center)
+      console.log('router', state.routers)
+
     }
   },
   actions: {
@@ -49,7 +54,6 @@ const permission = {
       return new Promise(resolve => {
         const { roles } = data
         let accessedRouters
-        console.log('roles', roles)
         if (roles.indexOf('admin') >= 0) {
           accessedRouters = asyncRouterMap
         } else {

@@ -186,39 +186,49 @@ export default {
       currentSelectOption: '话费',
       lotteryData:tableData.lottery,
       position:0,//默认从一等奖开始选择
-      help:0
+      help:0,
+      tep :[true,true,true,true,true]
+    }
+  },
+  watch: {
+    hasClickSave: function (value) {
+     //提交表格
+     console.log('fjd ', value)
+     // this.submitForm()
     }
   },
   computed: {
   // 使用对象展开运算符将 getter 混入 computed 对象中
     ...mapGetters([
-      'currentLotteryItem'
-      // 'status'
+      'currentLotteryItem',
+      'hasClickSave'
     ])
   },
   methods:{
+    setlotteryData (key,value) {
+      this.lotteryData[this.position].detail[key] = value
+      if(this.tep[this.position]) {
+        if(this.lotteryData[this.position].detail.sort && this.lotteryData[this.position].detail.deno ) {
+          this.help++
+          this.tep[this.position] = false
+          console.log(this.tep[this.position])
+        }
+      }
+    },
     change (value) {
       this.currentSelectOption = value
       //在这里处理奖品 种类
       this.sort = value
-      console.log(this.lotteryData[this.position])
-      this.lotteryData[this.position].detail.sort = this.sort
+      this.setlotteryData('sort',value)
+      // console.log(this.lotteryData[this.position])
+      // this.lotteryData[this.position].detail.sort = this.sort
     },
     change1 (value) {
-      // 这里确定奖品的面额 
+      // 这里确定奖品的面额
       this.deno = value
+      this.setlotteryData('deno',value)
       // this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
-      this.lotteryData[this.position].detail.deno = this.deno
-
-      // this.help++
-      // if(this.help===5){
-      //   this.position++
-      //   this.sort='参与'
-      //   this.deno='谢谢'
-      // }
-
-      // this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
-      // console.log('help', this.help)
+      console.log('help', this.help)
       console.log('test', this.lotteryData)
 
     },
@@ -231,8 +241,8 @@ export default {
       this.$refs[formName].validate((valid) => {
           if (valid) {
             // 在这里post数据
-            let data = this.$refs[formName].model
-            console.log('test',data)
+            // let data = this.$refs[formName].model
+            console.log('test',this.ruleForm)
           }
         });
     }

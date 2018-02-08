@@ -8,7 +8,7 @@
       <div class="sort-bottom">
         <div class="festival sort">
           <span>节日:</span>
-          <span class="all" @click="openFullScreen" >全部</span>
+          <span class="all" @click="openFullScreen">全部</span>
           <ul class="sort-ul">
             <li  @click="openFullScreen" v-for="(item,index) in festivalData" :key="index">{{item}}</li>
           </ul>
@@ -109,7 +109,8 @@ export default {
   height:30px
   line-height:3px
 .dashboard-container
-  background:#ccc
+  background:#f3f3f3
+  margin-top:60px
 .tep
   border:1px solid #adadad
   background:#fff

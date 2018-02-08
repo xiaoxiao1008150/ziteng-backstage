@@ -1,0 +1,100 @@
+
+用户状态
+	0 - 审核中
+	1 - 正常
+	2 - 禁用
+	3 - 未通过
+	9 - 已删除
+	
+	
+待审核
+	url：http://192.168.31.241:8888/marketing/userClient/getUserByStatus
+	post：参数 _status ="0" [只传一个状态]
+	返回格式
+{
+    "code": "ok",
+    "list": [
+        {
+            "id": "143e09bb-82ae-494f-8dc2-3c01212033d3",
+            "login_name": "13029499222",
+            "mobile_number": "13029499222",
+            "contract_name": "天津支行",
+            "contact_name": "张霄峰",
+            "status": "0",
+            "password": "",
+            "authorities": [
+                {
+                    "authority": "AUTHORITY_DEFAULT"
+                }
+            ]
+        },
+        {
+            "id": "7317106a-b6f6-4193-81a3-bf5b1b3aa081",
+            "login_name": "13029499224",
+            "mobile_number": "13029499224",
+            "contract_name": "天津支行",
+            "contact_name": "张霄峰",
+            "status": "0",
+            "password": "",
+            "authorities": [
+                {
+                    "authority": "AUTHORITY_DEFAULT"
+                }
+            ]
+        },
+        {
+            "id": "e0688b7b-546e-470c-b4f6-3e777c3da220",
+            "login_name": "13029499223",
+            "mobile_number": "13029499223",
+            "contract_name": "天津支行",
+            "contact_name": "张霄峰",
+            "status": "0",
+            "password": "",
+            "authorities": [
+                {
+                    "authority": "AUTHORITY_DEFAULT"
+                }
+            ]
+        }
+    ]
+}	
+	
+==============================================================================================================================================================================	
+
+客户列表
+	url：http://192.168.31.241:8888/marketing/userClient/getUserWithStatus
+	post：参数 _status ="1,2,3" [多个状态逗号隔开]
+	返回格式
+{
+    "code": "ok",
+    "list": [
+        {
+            "id": "56dc9b47-c948-426b-996a-2c4d134349d8",
+            "login_name": "13029499221",
+            "mobile_number": "13029499221",
+            "contract_name": "天津支行",
+            "contact_name": "张霄峰",
+            "status": "1",
+            "password": "",
+            "authorities": [
+                {
+                    "authority": "AUTHORITY_DEFAULT"
+                }
+            ]
+        },
+        {
+            "id": "e1bcd774-c44e-4183-9ec8-c093ed53ac1a",
+            "login_name": "13029499225",
+            "mobile_number": "13029499225",
+            "contract_name": "天津支行",
+            "contact_name": "张霄峰",
+            "status": "1",
+            "password": "",
+            "authorities": [
+                {
+                    "authority": "AUTHORITY_DEFAULT"
+                }
+            ]
+        }
+    ]
+}

@@ -16,7 +16,8 @@
       <div id="f-password"><span @click="$emit('close','password')">忘记密码</span></div>
       <el-form-item label="验证码" prop="captcha">
         <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
-        <button class="code-btn">发送验证码</button>
+        <!-- <button class="code-btn">发送验证码</button> -->
+        <captcha @click.native="getCaptcha" :countDown="countDown" @stop="stop"></captcha>
       </el-form-item>
         <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">登录</el-button>
     </el-form>
@@ -33,10 +34,12 @@
 <script>
   // import formBase from './formBase'
   import Modal from 'components/Modal'
-  import { Login } from 'api/user'
+  import  Captcha from 'components/Captcha'
+  import { Login,getCaptcha } from 'api/user'
   export default {
     data () {
       return {
+          countDown:false,
           ruleForm: {
             tel: '',
             password: '',
@@ -59,6 +62,18 @@
     methods: {
       close () {
         this.$emit('close')
+      },
+      stop () {
+        this.countDown = false
+      },
+      getCaptcha () {
+        this.countDown = true
+        //在这里post短信验证码，data mobileNumber
+        // getCaptcha(data).then((res)=>{
+        //   if(res.data.code==='ok'){
+        //     this.countDown = true
+        //   }
+        // })
       },
       submitForm(formName) {
         // this.$router.push({ path: '/create-project/index' })
@@ -97,7 +112,8 @@
       }
     },
     components:{
-     Modal
+      Modal,
+      Captcha
     }
   }
 </script>

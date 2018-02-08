@@ -5,6 +5,7 @@ import Vuex from 'vuex';
 import permission from './modules/permission';
 import lottery from './modules/lottery'
 import user from './modules/user'
+import globalSave from './modules/globalSave'
 import getters from './getters';
 
 Vue.use(Vuex);
@@ -16,7 +17,8 @@ const store = new Vuex.Store({
     permission,
     lottery,
     // tagsView,
-    user
+    user,
+    globalSave
   },
   getters
 });

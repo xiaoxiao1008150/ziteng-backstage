@@ -5,12 +5,12 @@
     <span>{{currentLotteryItem.text}}</span>
     <div class="fr preview">
       <el-button class="small-btn" id="preview-btn" type="primary">预览</el-button>
-      <el-button class="small-btn" id="save-btn">保存</el-button>
+      <el-button class="small-btn" id="save-btn" @click="save">保存</el-button>
     </div>
   </div>
 </template>
 <script>
-import { mapGetters} from 'vuex'
+import { mapGetters, mapMutations} from 'vuex'
 
 export default {
   name: 'ziHeader',
@@ -19,6 +19,14 @@ export default {
     ...mapGetters([
       'currentLotteryItem'
     ])
+  },
+  methods:{
+    ...mapMutations([
+      'setClickSave', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+    ]),
+    save () {
+      this.setClickSave(true)
+    }
   },
   components:{
   }

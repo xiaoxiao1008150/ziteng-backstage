@@ -22,7 +22,7 @@
                 <td>大转盘抽奖</td>
                 <td><div class="time">2018-01-10 09：00：00</div><div class="time">2018-01-10 09：00：00</div></td>
                 <td>
-                  <span class="verify-aciton verify-aciton-pass">通过</span>
+                  <span class="verify-aciton verify-aciton-pass" @click="openFullScreen">通过</span>
                   <span class="verify-aciton verify-aciton-reject">拒绝</span>
                   <span class="verify-aciton verify-aciton-preview" @click="openDialog">预览</span>
                   </td>
@@ -67,20 +67,29 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <zi-dialog
+     <zi-dialog
+      :hasCreated="hasCreated"
+      v-if="showModal"
+      @close="showModal = false" 
+      >
+      </zi-dialog>
+
+    <!-- <zi-dialog
       :imgUrl=num
       :title=title
       :hasCreated=hasCreated
       v-if="showModal"
       @close="showModal = false" 
       >
-      </zi-dialog>
+      </zi-dialog> -->
   </div>
 </template>
 <script>
   import Date from 'components/Date'
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
+  import { mapGetters,mapMutations } from 'vuex'
+
   export default {
     data () {
       return {
@@ -88,14 +97,36 @@
         // edit:false,
         activeName:'first',
         showModal:false,
-        title:'超级大转盘',
-        num:'01',
         hasCreated:true
       }
     },
+    computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+      ...mapGetters([
+        'lotteryData',
+        'currentLotteryItem'
+      ])
+    },
     methods:{
+      ...mapMutations([
+        'setCurrentLottery', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+      ]),
       openDialog () {
         this.showModal = true
+        // 在这里获取活动名称
+        // this.setCurrentLottery(item)
+      },
+      openFullScreen() {
+        //需要在这里处理通过之后与后台交互逻辑
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        setTimeout(() => {
+          loading.close();
+        }, 500);
       }
       // passVerify () {
       //   console.log('passVerify')

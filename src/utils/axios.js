@@ -5,7 +5,7 @@ import { Message } from 'element-ui'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://5a73fdb161c2a40012894a49.mockapi.io', // api的base_url
+  baseURL: 'http://192.168.31.241:9999/', // api的base_url
   timeout: 5000 // request timeout
 })
 

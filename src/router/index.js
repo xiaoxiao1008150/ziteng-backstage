@@ -26,11 +26,11 @@ export const constantRouterMap = [
       icon: 'order-add'
     },
     children:[
-       { path: 'index', component: _import('createProject/index'), name: 'create-project', meta: { title: '创建活动' }},
-       { path: 'slyder', component: _import('components-demo/slyder/index'), name: 'slyder-demo', meta: { title: '大转盘' }},
-       { path: 'envelope', component: _import('components-demo/envelope/index'), name: 'envelope-demo', meta: { title: '红包抽奖' }},
+       { path: 'index', component: _import('createProject/index'),  meta: { title: '创建活动' }},
+       { path: 'slyder', component: _import('components-demo/slyder/index'),  meta: { title: '大转盘' }},
+       { path: 'envelope', component: _import('components-demo/envelope/index'),  meta: { title: '红包抽奖' }},
        { path: 'box', component: _import('components-demo/box'), name: 'box-demo', meta: { title: '开宝箱' }},
-       { path: 'jigsaw', component: _import('components-demo/jigsaw'), name: 'jigsaw-demo', meta: { title: '欢乐拼图' }}
+       { path: 'jigsaw', component: _import('components-demo/jigsaw'), meta: { title: '欢乐拼图' }}
     ]
   },
   {
@@ -44,6 +44,59 @@ export const constantRouterMap = [
     },
     children:[
        { path: 'index', component: _import('management/index'), name: 'management', meta: { title: '活动管理' }},
+    ]
+  },
+  {
+    path: '/center',
+    component: Layout,
+    redirect: '/center/index',
+    // redirect: 'noredirect',
+    meta: {
+      title: '个人中心',
+      icon: 'huodongguanli'
+    },
+    children:[
+       { path: 'index', component: _import('center/index'),meta: { title: '个人中心' }}
+    ]
+  },
+  {
+    path: '/client-verify',
+    component: Layout,
+    redirect: '/client-verify/index',
+    // redirect: 'noredirect',
+    meta: {
+      roles: ['admin'],
+      title: '客户审核',
+      icon: 'kehu'
+    },
+    children:[
+       { path: 'index', component: _import('clientVerify/index'),
+         name: 'client-verify',
+         meta: {
+          title: '客户审核',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+  {
+    path: '/project-verify',
+    component: Layout,
+    redirect: '/project-verify/index',
+    // redirect: 'noredirect',
+    meta: {
+      roles: ['admin'],
+      title: '活动审核',
+      icon: 'plus-activity'
+    },
+    children:[
+       {  path: 'index', component: _import('projectVerify/index'),
+          name: 'project-verify',
+          meta: { 
+            title: '活动审核',
+            roles: ['admin']
+          }
+      }
     ]
   }
 ]

@@ -13,8 +13,9 @@
         <el-input v-model="ruleForm.tel" placeholder="请输入手机号码" auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="验证码" prop="captcha">
-        <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
-        <button class="code-btn">发送验证码</button>
+        <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码" auto-complete="off"></el-input>
+        <captcha @click.native="getCaptcha" :countDown="countDown" @stop="stop"></captcha>
+        <!-- <button class="code-btn">发送验证码</button> -->
       </el-form-item>
       <!--  <el-form-item label="验证码">
         <el-input v-model="form.captcha" placeholder="请确认验证码"></el-input>
@@ -44,6 +45,7 @@
 <script>
   // import formBase from './formBase'
   import Modal from 'components/Modal'
+  import  Captcha from 'components/Captcha'
 
   export default {
     data () {
@@ -67,6 +69,7 @@
         }
       };
       return {
+        countDown:false,
         showInfo:true,
         // showPassword:false
           ruleForm: {
@@ -85,6 +88,9 @@
             tel: [
               { required: true, message: '请输入手机号码', trigger: 'blur' },
               { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+            ],
+            captcha: [
+              { required: true, message: '请输入验证码', trigger: 'blur' },
             ]
           },
           rules1: {
@@ -98,11 +104,42 @@
         }
     },
     methods: {
+      stop () {
+        this.countDown = false
+      },
+      getCaptcha () {
+        this.countDown = true
+        //在这里post短信验证码，data mobileNumber
+        // getCaptcha(data).then((res)=>{
+        //   if(res.data.code==='ok'){
+        //     this.countDown = true
+        //   }
+        // })
+      },
       goToConfirmPassword(formName) {
-        if(this.showInfo) {
-          this.showInfo = false
-          this.$refs[formName].resetFields();
-        }
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            if(this.showInfo) {
+              this.showInfo = false
+              this.$refs[formName].resetFields();
+            }
+            // console.log('valid', this.$refs[formName].model)
+            // let data = this.$refs[formName].model
+            // createUser(data).then((response) => {
+            //   // console.log('kk', response) response data是post的数据
+            //   this.$notify({
+            //     title: '成功',
+            //     message: '注册成功',
+            //     type: 'success',
+            //     duration: 2000
+            //   })
+            //   this.close()//这里注意顺序
+            // })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
       close () {
         this.$emit('close')
@@ -119,7 +156,8 @@
       }
     },
     components:{
-     Modal
+     Modal,
+     Captcha
     }
   }
 </script>

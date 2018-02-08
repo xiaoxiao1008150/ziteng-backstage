@@ -14,8 +14,24 @@
             <img class="qrcode-img" src="/static/images/qrcode.jpg">
             <div class="qrcode-text">微信扫一扫体验活动</div>
           </div>
-          <el-button v-if="!hasCreated" id="create-btn" type="primary" @click='createProject'>创建活动</el-button>
+          <div v-if="!hasCreated">
+            <el-button  id="create-btn" type="primary" @click='createProject'>创建活动</el-button>
+          </div>
         </div>
+        <div v-if="hasCreated" class="url-item">
+            <input id="url-input" v-model="url"></input>
+             <el-tooltip :disabled="disabled" content="链接已复制" placement="bottom">
+              <el-button
+              type="primary"
+              v-clipboard:copy="url"
+              v-clipboard:success="onCopy"
+              style="height:35px;display:inline-block;width:60px;padding:0">复制</el-button>
+            </el-tooltip>
+            <!-- <button type="button"
+            v-clipboard:copy="url"
+            v-clipboard:success="onCopy">Copy!</button> -->
+            <!-- <el-button style="height:35px;display:inline-block;width:60px;padding:0" id="create-btn" type="primary" @click='copyUrl'>复制</el-button> -->
+         </div>
       </div>
     </div>
     <div slot="body" v-if="showLoginPop">
@@ -26,6 +42,7 @@
 <script>
   import Modal from '../Modal'
   import { mapGetters} from 'vuex'
+  // import VueClipboard from 'vue-clipboard2'
 
   export default {
     props:{
@@ -36,6 +53,8 @@
     },
     data () {
       return {
+        disabled:true,
+        url:'http://www.ziteng.com',
         styleObject:{
           height:'0',
         },
@@ -43,14 +62,22 @@
         showMainPop:true
       }
     },
+    created () {
+    },
     computed: {
     // 使用对象展开运算符将 getter 混入 computed 对象中
       ...mapGetters([
         'currentLotteryItem',
-        'status'
+        'status',
       ])
     },
     methods:{
+      onCopy: function (e) {
+        console.log(e.text)
+        this.disabled = false
+      },
+      copyUrl () {
+      },
       setRouterName () {
         let n = this.currentLotteryItem && this.currentLotteryItem.text
         let result
@@ -151,4 +178,27 @@
 .close-tep
   height:25px
   line-height:35px
+#url-input
+  border-radius:4px
+  font-size:14px
+  color:#606266
+  width:110px
+  -webkit-appearance: none;
+  // -webkit-box-sizing: border-box;
+  // box-sizing: border-box;
+  color: #606266;
+  display: inline-block;
+  vertical-align:middle
+  height: 35px;
+  line-height: 35px;
+  // outline: 0;
+  padding: 0 15px;
+  border:1px solid #ccc
+  -webkit-transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+.url-item
+  position :absolute
+  top: 240px;
+  left: 180px;
+  width:180px
 </style>
