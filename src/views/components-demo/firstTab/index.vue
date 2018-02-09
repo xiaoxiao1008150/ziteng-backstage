@@ -6,7 +6,7 @@
       <img :src=" '/static/images/' + currentLotteryItem.type + '-' + activeName + '.png' ">
       <pre v-show="activeName==='second' || activeName==='first'"class="rule-content" v-html="ruleForm.desc" ></pre>
       <div v-show="activeName==='second'" class="rule-area">
-        <ul>
+     <!--    <ul>
           <li id="area-first-li">
               <p><span>{{lotteryData[0] && lotteryData[0].deno}}</span></p><p class="cost">{{lotteryData[0] && lotteryData[0].sort}}</p>
           </li>
@@ -25,7 +25,7 @@
            <li id="area-six-li">
               <p><span>{{lotteryData[5] && lotteryData[5].deno}}</span></p><p class="cost">{{lotteryData[5] && lotteryData[5].sort}}</p>
            </li>
-        </ul>
+        </ul> -->
       </div>
     </div>
     <div class="slyder-first-wrapper">
@@ -64,7 +64,6 @@
                 <span id="refresh">刷新</span>
                 <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">测试按钮提交</el-button>
               </div>
-            </form>
           </el-tab-pane>
           <el-tab-pane label="奖项设置" name="third" class="mytag">
             <table id="six-table">
@@ -76,7 +75,7 @@
                   <th>中奖概率</th>
                   <th>奖品估算</th>
                 </tr>
-                <tr v-for="(item,index) in tableData.lottery" :key="index">
+                <tr v-for="(item,index) in ruleForm.lottery" :key="index">
                   <td class="spc-width-select"><span>{{item.level}}</span></td>
                   <td class="spc-width-select" @click="setPosition(index,item.level)">
                     <el-select  v-show="item.level!=='谢谢参与'" v-model="item.detail && item.detail['sort']"  placeholder="请选择" @change="change">
@@ -135,33 +134,23 @@
 <script>
 import VDistpicker from 'v-distpicker'//城市选择
 import Date from 'components/Date'
-import { mapGetters} from 'vuex'
+import { mapGetters,mapMutations} from 'vuex'
 
-
-// data:{
-//   name:''
-//   time:''
-//   num:'',
-//   lottery:[
-//     {level:'一等奖',detail:{sort:'话费'deno:'10元',num:20,change:10%,value:},
-//     {level:'二等奖',detail:{sort:'话费'deno:'10元',num:20,change:10%,value:},
-//   ]
-// }
 let tableData = {
   type:[{value: '流量'}, {value: '话费'}, {value: '视频券'}],
   denomination:{
     '视频券': [{value: '200元'},{value: '180元'},{value: '100元'}],
     '话费': [{value: '10元'},{value: '2元'},{value: '1元'}],
     '流量': [{value: '10M'},{value: '2M'},{value: '1M'}]
-  },
-  lottery:[
-    {level:'奖项一',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-    {level:'奖项二',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-    {level:'奖项三',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-    {level:'奖项四',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-    {level:'奖项五',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-    {level:'谢谢参与'}
-  ]
+  }
+  // lottery:[
+  //   {level:'奖项一',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+  //   {level:'奖项二',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+  //   {level:'奖项三',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+  //   {level:'奖项四',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+  //   {level:'奖项五',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+  //   {level:'谢谢参与'}
+  // ]
 }
 export default {
   name: '',
@@ -178,13 +167,20 @@ export default {
           startTime: '',
           endTime: '',
           desc:'',
-          level:{}
+          lottery:[
+            {level:'奖项一',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+            {level:'奖项二',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+            {level:'奖项三',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+            {level:'奖项四',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+            {level:'奖项五',detail:{sort:'',deno:'',num:'',change:'',value:''}},
+            {level:'谢谢参与'}
+          ]
       },
       tableData:tableData,
       activeName2: 'third',
       textarea: '',
       currentSelectOption: '话费',
-      lotteryData:tableData.lottery,
+      // lotteryData:tableData.lottery,
       position:0,//默认从一等奖开始选择
       help:0,
       tep :[true,true,true,true,true]
@@ -192,9 +188,10 @@ export default {
   },
   watch: {
     hasClickSave: function (value) {
-     //提交表格
+     //提交表格 先进行验证
      console.log('fjd ', value)
-     // this.submitForm()
+     this.submitForm('ruleForm')
+     this.setClickSave(false)
     }
   },
   computed: {
@@ -205,31 +202,34 @@ export default {
     ])
   },
   methods:{
-    setlotteryData (key,value) {
-      this.lotteryData[this.position].detail[key] = value
-      if(this.tep[this.position]) {
-        if(this.lotteryData[this.position].detail.sort && this.lotteryData[this.position].detail.deno ) {
-          this.help++
-          this.tep[this.position] = false
-          console.log(this.tep[this.position])
-        }
-      }
-    },
+    ...mapMutations([
+      'setClickSave', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+    ]),
+    // setlotteryData (key,value) {
+    //   this.lotteryData[this.position].detail[key] = value
+    //   if(this.tep[this.position]) {
+    //     if(this.lotteryData[this.position].detail.sort && this.lotteryData[this.position].detail.deno ) {
+    //       this.help++
+    //       this.tep[this.position] = false
+    //       console.log(this.tep[this.position])
+    //     }
+    //   }
+    // },
     change (value) {
       this.currentSelectOption = value
       //在这里处理奖品 种类
       this.sort = value
-      this.setlotteryData('sort',value)
+      // this.setlotteryData('sort',value)
       // console.log(this.lotteryData[this.position])
       // this.lotteryData[this.position].detail.sort = this.sort
     },
     change1 (value) {
       // 这里确定奖品的面额
       this.deno = value
-      this.setlotteryData('deno',value)
+      // this.setlotteryData('deno',value)
       // this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
       console.log('help', this.help)
-      console.log('test', this.lotteryData)
+      // console.log('test', this.lotteryData)
 
     },
     setPosition (index,level) {
@@ -237,12 +237,40 @@ export default {
       this.position = index
       // this.ruleForm[level] = level
     },
+    switchKeyName (value) {
+      let result
+      switch(value)
+        {
+        case 'name':
+          result = '活动名称'
+          break;
+        case 'startTime':
+          result = '开始时间'
+          break;
+        case 'endTime':
+          result = '结束时间'
+          break;
+        case 'num':
+          result = '手机号次数'
+          break;
+        default:
+          result = '暂无'
+        }
+        return result
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
           if (valid) {
             // 在这里post数据
             // let data = this.$refs[formName].model
-            console.log('test',this.ruleForm)
+            let data = this.ruleForm
+            console.log('data', data)
+            for (var prop in data) {
+              if(!data[prop]){
+                console.log(this.switchKeyName(prop)+ '是空')
+                return
+              }
+            }
           }
         });
     }

@@ -1,8 +1,8 @@
 <template>
   <div class="sidebar">
-    <el-menu mode="vertical" :default-active="$route.path">
+    <!-- <el-menu mode="vertical" :default-active="$route.path"> -->
       <sidebar-item :routes="permission_routers"></sidebar-item>
-    </el-menu>
+    <!-- </el-menu> -->
   </div>
 </template>
 <script>
