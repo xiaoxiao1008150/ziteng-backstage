@@ -42,6 +42,7 @@
 <script>
   import Modal from '../Modal'
   import { mapGetters} from 'vuex'
+  // import { mapGetters,mapMutations} from 'vuex'
   // import VueClipboard from 'vue-clipboard2'
 
   export default {
@@ -78,28 +79,28 @@
       },
       copyUrl () {
       },
-      setRouterName () {
-        let n = this.currentLotteryItem && this.currentLotteryItem.text
-        let result
-        switch(n)
-        {
-        case '超级大转盘':
-          result = 'slyder'
-          break;
-        case '抽红包':
-          result = 'envelope'
-          break;
-        case '欢乐拼图':
-          result = 'jigsaw'
-          break;
-        case '开宝箱':
-          result = 'box'
-          break;
-        default:
-          result = false
-        }
-        return result
-      },
+      // setRouterName () {
+      //   let n = this.currentLotteryItem && this.currentLotteryItem.text
+      //   let result
+      //   switch(n)
+      //   {
+      //   case '超级大转盘':
+      //     result = 'slyder'
+      //     break;
+      //   case '抽红包':
+      //     result = 'envelope'
+      //     break;
+      //   case '欢乐拼图':
+      //     result = 'jigsaw'
+      //     break;
+      //   case '开宝箱':
+      //     result = 'box'
+      //     break;
+      //   default:
+      //     result = false
+      //   }
+      //   return result
+      // },
       close () {
         this.$emit('close')
       },
@@ -109,12 +110,12 @@
         //   this.showMainPop = false
         //   this.showLoginPop = true
         // }else{
-          let name = this.setRouterName()
+          // let name = this.setRouterName()
           this.$emit('close')
           // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
-          if(name){
-            this.$router.push(({ path: `/create-project/${name}` }))
-          }
+          // if(name){
+            this.$router.push(({ path: `/create-project/content` }))
+          // }
         // }
       }
     },

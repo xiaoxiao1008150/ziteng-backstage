@@ -1,7 +1,9 @@
 import http from 'utils/axios'
 
-// 获取user列表 _status ="1,2,3"
-export function fetchUsers(data) {
+// 获取user列表 只是注册过的用户 客户审核->待审核
+//http://192.168.31.241:8888/marketing/userClient/getUserByStatus
+export function fetchUserByStatusNum(num) {
+  let data = {_status: num}
   return http({
     url: '/user',
     method: 'post',
@@ -9,8 +11,9 @@ export function fetchUsers(data) {
   })
 }
 
-// 获取user列表 单一状态 _status = 0
-export function fetchUserByStatus(data) {
+// 获取user列表 所有状态
+// http://192.168.31.241:8888/marketing/userClient/getUserWithStatus
+export function fetchUser(data) {
   return http({
     url: '/user',
     method: 'post',

@@ -8,19 +8,30 @@
 .verify-content
   padding: 0 10px
 .verify-table
-  font-size:13px
+  font-size:14px
   margin:30px 5%
   width:90%
+  color:#606266
   tr:first-child
     border-bottom:1px solid #ccc
-    color:#000
     font-weight:bold
+    color:#000
+    transition: none
+  tr:first-child:hover
+    background-color: #fff
   tr
-    height:40px
-    color:#454545
+    height:55px
+    line-height:55px
+    // box-sizing :border-box
+    // -webkit-box-sizing :border-box
+    border-bottom:1px solid #ebeef5
+    transition: background-color .25s ease
+  tr:hover
+    background-color: #f5f7fa
   td
-    padding:8px 10px
-    vertical-align :middle
+    // padding:12px 0
+    // vertical-align :middle
+    text-overflow: ellipsis
   .verify-aciton
     display:inline-block
     width:40px
@@ -31,6 +42,8 @@
     color:red
   .time
     height:20px
+    position:relative
+    top:-10px
 #edit-select
   width:250px
   vertical-align :middle

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="verify-header">客户审核</div>
     <div class="verify-content">
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" @tab-click="tabChange">
         <el-tab-pane label="待审核" name="first">
           <table class="verify-table">
                <tr>
@@ -12,7 +12,7 @@
                  <th>注册时间</th>
                  <th>操作</th>
                </tr>
-              <tr v-for="(item,index) in userList" :key="index">
+              <tr v-for="(item,index) in vertifyData" :key="index">
                 <td>{{item.contract_name}}</td>
                 <td>{{item.contact_name}}</td>
                 <td>{{item.mobile_number}}</td>
@@ -29,14 +29,16 @@
                  <th>手机号</th>
                  <th>账号有效期</th>
                  <th>
-                    <el-dropdown>
+                    <el-dropdown @command="toggleStatus">
                       <span class="el-dropdown-link">
                         全部状态<i class="el-icon-arrow-down el-icon--right"></i>
                       </span>
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>正常</el-dropdown-item>
-                        <el-dropdown-item>暂停</el-dropdown-item>
-                        <el-dropdown-item>已到期</el-dropdown-item>
+                        <el-dropdown-item command="正常">正常</el-dropdown-item>
+                        <el-dropdown-item command="禁用">禁用</el-dropdown-item>
+                        <el-dropdown-item command="审核中">审核中</el-dropdown-item>
+                        <el-dropdown-item command="未通过">未通过</el-dropdown-item>
+                        <el-dropdown-item command="已删除">已删除</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                  </th>
@@ -46,7 +48,7 @@
                 <td>中国农业银行天津分行</td>
                 <td>韩语太</td>
                 <td>11111111111</td>
-                <td><div class="time">2018-01-10 09：00：00</div><div class="time">2018-01-10 09：00：00</div></td>
+                <td class="table-tep"><div class="time">2018-01-10 09：00：00</div><div class="time">2018-01-10 09：00：00</div></td>
                 <td>正常</td>
                 <td><span @click="startEdit" class="verify-aciton">编辑</span></td>
               </tr>
@@ -100,13 +102,13 @@
 <script>
   import Date from 'components/Date'
   import Modal from 'components/Modal'
-  import { fetchUsers } from 'api/user'
+  import { fetchUsers, fetchUserByStatusNum } from 'api/user'
 
   export default {
     data () {
       return {
         loading:false,
-        userList: [
+        vertifyData: [
           {
               "id": "56dc9b47-c948-426b-996a-2c4d134349d8",
               "login_name": "13029499221",
@@ -171,6 +173,15 @@
       }
     },
     methods:{
+      toggleStatus (item) {
+        // item返回状态 commond，请求相关数据
+        console.log('te', item)
+      },
+      tabChange (tab) {
+        if(tab.active && tab.name === 'second'){
+          //fetchUsers
+        }
+      },
       passVerify () {
         this.pass = true
       },
@@ -181,7 +192,7 @@
       startEdit () {
         this.edit = true
       },
-      fetchUsers () {
+      fetchUserByStatusZero () {
         // let data = {_status: "1,2,3"}
         // fetchUsers(data).then((res) =>{
         //   let this.userList = res.list
@@ -205,7 +216,7 @@
       }
     },
     created () {
-      this.fetchUsers()
+      // this.fetchUserByStatusNum(0)
     },
     components:{
       Date,

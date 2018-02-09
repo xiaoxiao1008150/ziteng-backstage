@@ -6,26 +6,11 @@
       <img :src=" '/static/images/' + currentLotteryItem.type + '-' + activeName + '.png' ">
       <pre v-show="activeName==='second' || activeName==='first'"class="rule-content" v-html="ruleForm.desc" ></pre>
       <div v-show="activeName==='second'" class="rule-area">
-     <!--    <ul>
-          <li id="area-first-li">
-              <p><span>{{lotteryData[0] && lotteryData[0].deno}}</span></p><p class="cost">{{lotteryData[0] && lotteryData[0].sort}}</p>
+        <ul class="lottery-area">
+          <li v-for="(item,index) in lotteryList" v-show="item.deno && item.sort">
+              <p class="lottery-deno"><span>{{item.deno}}</span></p><p class="lottery-sort">{{item.sort}}</p>
           </li>
-           <li id="area-two-li">
-              <p><span>{{lotteryData[1] && lotteryData[1].deno}}</span></p><p class="cost">{{lotteryData[1] && lotteryData[1].sort}}</p>
-           </li>
-           <li id="area-three-li">
-              <p><span>{{lotteryData[2] && lotteryData[2].deno}}</span></p><p class="cost">{{lotteryData[2] && lotteryData[2].sort}}</p>
-           </li>
-          <li id="area-four-li">
-             <p><span>{{lotteryData[3] && lotteryData[3].deno}}</span></p><p class="cost">{{lotteryData[3] && lotteryData[3].sort}}</p>
-          </li>
-           <li id="area-five-li">
-              <p><span>{{lotteryData[4] && lotteryData[4].deno}}</span></p><p class="cost">{{lotteryData[4] && lotteryData[4].sort}}</p>
-           </li>
-           <li id="area-six-li">
-              <p><span>{{lotteryData[5] && lotteryData[5].deno}}</span></p><p class="cost">{{lotteryData[5] && lotteryData[5].sort}}</p>
-           </li>
-        </ul> -->
+        </ul>
       </div>
     </div>
     <div class="slyder-first-wrapper">
@@ -53,17 +38,17 @@
               <div class="input-item">
                 <span>手机号次数</span>
                 <div class="mobile">
-                  <span id="reduce">-</span>
+                  <span id="reduce" @click="reduce">-</span>
                   <input class="input-self" v-model="ruleForm.num" id="input-self"></input>
-                  <span id="plus">+</span>
+                  <span id="plus" @click="plus">+</span>
                 </div>
               </div>
-              <div class="input-item">
+              <!-- <div class="input-item">
                 <span>验证码</span>
                 <button class="code-btn">发送验证码</button>
                 <span id="refresh">刷新</span>
                 <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">测试按钮提交</el-button>
-              </div>
+              </div> -->
           </el-tab-pane>
           <el-tab-pane label="奖项设置" name="third" class="mytag">
             <table id="six-table">
@@ -75,10 +60,10 @@
                   <th>中奖概率</th>
                   <th>奖品估算</th>
                 </tr>
-                <tr v-for="(item,index) in ruleForm.lottery" :key="index">
+                <tr v-for="(item,index) in ruleForm.lottery" :key="index" @click="setPosition(index,item.level)">
                   <td class="spc-width-select"><span>{{item.level}}</span></td>
-                  <td class="spc-width-select" @click="setPosition(index,item.level)">
-                    <el-select  v-show="item.level!=='谢谢参与'" v-model="item.detail && item.detail['sort']"  placeholder="请选择" @change="change">
+                  <td class="spc-width-select" >
+                    <el-select  v-show="item.level!=='谢谢参与'" v-model="item['sort']"  placeholder="请选择" @change="change">
                       <el-option
                         v-for="item1 in tableData.type"
                         :key="item1.value"
@@ -89,7 +74,7 @@
                     </el-select>
                   </td>
                   <td class="spc-width">
-                  <el-select v-show="item.level!=='谢谢参与'" v-model="item.detail && item.detail['deno']"  placeholder="请选择" @change="change1">
+                  <el-select v-show="item.level!=='谢谢参与'" v-model="item['deno']" placeholder="请选择" @change="change1">
                     <el-option
                         v-for="item2 in tableData.denomination[currentSelectOption]"
                         :key="item2.value"
@@ -100,11 +85,11 @@
                     </el-select>
                   </td>
                   <td class="spc-width">
-                    <el-input  class="td-six" placeholder="数量" v-model="item.detail && item.detail['num']">
+                    <el-input type="number" class="td-six" placeholder="数量" v-model="item['num']">
                     </el-input>
                   </td>
                   <td class="spc-width">
-                      <el-input  v-model="item.detail && item.detail['change']" class="td-six" placeholder="概率"></el-input>
+                      <el-input  type="number" v-model="item['change']" class="td-six" placeholder="概率"></el-input>
                   </td>
                   <td class="spc-width"><span class="estimate"></span></td>
                 </tr>
@@ -143,14 +128,6 @@ let tableData = {
     '话费': [{value: '10元'},{value: '2元'},{value: '1元'}],
     '流量': [{value: '10M'},{value: '2M'},{value: '1M'}]
   }
-  // lottery:[
-  //   {level:'奖项一',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-  //   {level:'奖项二',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-  //   {level:'奖项三',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-  //   {level:'奖项四',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-  //   {level:'奖项五',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-  //   {level:'谢谢参与'}
-  // ]
 }
 export default {
   name: '',
@@ -167,31 +144,38 @@ export default {
           startTime: '',
           endTime: '',
           desc:'',
+          settings:[
+            {key:'areaCode', value:'0411,022'},
+            {key:'takeNum', value:'1'},
+            {key:'verifyCodeType', value:'IMAGE'},
+          ],
           lottery:[
-            {level:'奖项一',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-            {level:'奖项二',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-            {level:'奖项三',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-            {level:'奖项四',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-            {level:'奖项五',detail:{sort:'',deno:'',num:'',change:'',value:''}},
-            {level:'谢谢参与'}
+            {level:'奖项一',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'奖项二',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'奖项三',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'奖项四',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'奖项五',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'谢谢参与',sort:'',deno:'',num:'',change:'',value:''}
           ]
       },
       tableData:tableData,
       activeName2: 'third',
       textarea: '',
       currentSelectOption: '话费',
-      // lotteryData:tableData.lottery,
+      lotteryList:null,
       position:0,//默认从一等奖开始选择
       help:0,
-      tep :[true,true,true,true,true]
+      tep :[false,false,false,false],
+      aid :[true,true,true,true,true]
     }
   },
   watch: {
     hasClickSave: function (value) {
      //提交表格 先进行验证
-     console.log('fjd ', value)
-     this.submitForm('ruleForm')
-     this.setClickSave(false)
+     if(value) {
+       this.submitForm('ruleForm')
+       this.setClickSave(false)
+     }
     }
   },
   computed: {
@@ -205,37 +189,64 @@ export default {
     ...mapMutations([
       'setClickSave', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
     ]),
-    // setlotteryData (key,value) {
-    //   this.lotteryData[this.position].detail[key] = value
-    //   if(this.tep[this.position]) {
-    //     if(this.lotteryData[this.position].detail.sort && this.lotteryData[this.position].detail.deno ) {
-    //       this.help++
-    //       this.tep[this.position] = false
-    //       console.log(this.tep[this.position])
-    //     }
-    //   }
-    // },
+    plus (){
+      this.ruleForm.num++
+    },
+    reduce (){
+      this.ruleForm.num--
+      if(this.ruleForm.num<0){
+        this.ruleForm.num = 0
+      }
+    },
+    showLottery () {
+      // let formData = this.ruleForm.lottery
+      this.lotteryList = this.ruleForm.lottery
+      // console.log('lotteryList', this.lotteryList)
+      let item = this.lotteryList[this.position]
+      let {sort,deno} = item
+      if(this.aid[this.position]) {
+        if(sort && deno) {
+          this.help++
+          console.log('help', this.help)
+          this.aid[this.position] = false
+        }
+      }
+      if(this.help === 5) {
+        this.lotteryList[this.help].sort = '参与'
+        this.lotteryList[this.help].deno = '谢谢'
+      }
+    },
+    setlotteryData () {
+      let item = this.ruleForm.lottery
+      let len = item.length //去除最后一项”谢谢参与“
+      for(let i=0;i<len;i++){
+        // let detail = item[i].detail
+        if(i===len-1){
+          let {num, change} = item[i]
+          if( num && change ) {
+            this.tep[i] = true
+          }
+        }else{
+          let {sort, deno, num, change} = item[i]
+          if(sort && deno && num && change ) {
+            this.tep[i] = true
+          }
+        }
+      }
+    },
     change (value) {
       this.currentSelectOption = value
       //在这里处理奖品 种类
       this.sort = value
-      // this.setlotteryData('sort',value)
-      // console.log(this.lotteryData[this.position])
-      // this.lotteryData[this.position].detail.sort = this.sort
     },
     change1 (value) {
       // 这里确定奖品的面额
       this.deno = value
-      // this.setlotteryData('deno',value)
-      // this.lotteryData[this.position] = {sort:this.sort,deno:this.deno}
-      console.log('help', this.help)
-      // console.log('test', this.lotteryData)
-
+      this.showLottery()
     },
     setPosition (index,level) {
       // 确定是几等奖
       this.position = index
-      // this.ruleForm[level] = level
     },
     switchKeyName (value) {
       let result
@@ -253,6 +264,9 @@ export default {
         case 'num':
           result = '手机号次数'
           break;
+        case 'desc':
+          result = '活动规则未填写'
+          break;
         default:
           result = '暂无'
         }
@@ -260,18 +274,42 @@ export default {
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-          if (valid) {
+          // if (valid) {
             // 在这里post数据
             // let data = this.$refs[formName].model
             let data = this.ruleForm
-            console.log('data', data)
-            for (var prop in data) {
-              if(!data[prop]){
-                console.log(this.switchKeyName(prop)+ '是空')
+            //除”奖项设置“之外区域的验证
+            // for (var prop in data) {
+            //   if(!data[prop]){
+            //     let label = this.switchKeyName(prop)
+            //     // console.log(this.switchKeyName(prop)+ '是空')
+            //     this.$alert(`${label}未填写`,'提示', {
+            //         type:'error',
+            //         lockScroll:true,
+            //         showConfirmButton:false
+            //         // center:true
+            //         // confirmButtonText: '确定',
+            //     });
+            //     return
+            //   }
+            // }
+            // ”奖项设置“ 验证，借助 this.tep的值
+            console.log('ruleForm', this.ruleForm)
+            this.setlotteryData()
+            let len = this.tep.length
+            for(let i=0; i<len ;i++){
+              if(!this.tep[i]){
+                this.$alert(`奖项设置第${i+1}行未填写完整`,'提示', {
+                    type:'error',
+                    lockScroll:true,
+                    showConfirmButton:false
+                    // center:true
+                    // confirmButtonText: '确定',
+                });
                 return
               }
             }
-          }
+          // }
         });
     }
   },
@@ -430,7 +468,7 @@ export default {
     width:144px
     // background:rgba(0,0,0,0.5)
     z-index:1000
-    ul li span
+    ul > li > span
       font-size:16px
     // ul
     //   position: absolute;
@@ -450,18 +488,20 @@ export default {
       font-size: 11px;
       color: red;
       line-height:12px
-    .cost
-      line-height:18px
-    #area-first-li
+    .lottery-sort
+      line-height:22px
+    .lottery-area>li:nth-child(1)
       transform: rotate(0deg);
-    #area-two-li
+    .lottery-area>li:nth-child(2)
       transform: rotate(-60deg);
-    #area-three-li
+    .lottery-area>li:nth-child(3)
       transform: rotate(-120deg);
-    #area-four-li
+    .lottery-area>li:nth-child(4)
       transform: rotate(-180deg);
-    #area-five-li
+    .lottery-area>li:nth-child(5)
       transform: rotate(-240deg);
-    #area-six-li
+    .lottery-area>li:nth-child(6)
       transform: rotate(-300deg);
+.lottery-deno
+  font-size:15px
 </style>
