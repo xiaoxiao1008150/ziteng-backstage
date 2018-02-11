@@ -100,7 +100,7 @@
   </div>
 </template>
 <script>
-  import Date from 'components/Date'
+  // import Date from 'components/Date'
   import Modal from 'components/Modal'
   import { fetchUsers, fetchUserByStatusNum } from 'api/user'
 
@@ -219,7 +219,7 @@
       // this.fetchUserByStatusNum(0)
     },
     components:{
-      Date,
+      // Date,
       Modal
     }
   }

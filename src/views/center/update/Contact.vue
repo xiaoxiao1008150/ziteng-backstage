@@ -12,7 +12,10 @@
       </el-form-item>
       <el-form-item label="验证码" prop="captcha">
         <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
-        <button class="code-btn">发送验证码</button>
+        <captcha @click.native="getCaptcha" :countDown="countDown" @stop="stop"></captcha>
+
+        <!-- <button class="code-btn">发送验证码</butt
+        on> -->
       </el-form-item>
         <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">确认</el-button>
     </el-form>
@@ -21,9 +24,12 @@
 </template>
 <script>
   import Modal from 'components/Modal'
+  import Captcha from 'components/Captcha'
+
    export default {
      data () {
       return {
+          countDown:false,
           ruleForm: {
             tel: '',
             captcha: ''
@@ -40,12 +46,25 @@
       }
     },
     methods:{
+      stop () {
+        this.countDown = false
+      },
       close () {
         this.$emit('close')
+      },
+      getCaptcha () {
+        this.countDown = true
+        //在这里post短信验证码，data mobileNumber
+        // getCaptcha(data).then((res)=>{
+        //   if(res.data.code==='ok'){
+        //     this.countDown = true
+        //   }
+        // })
       }
     },
     components:{
-     Modal
+     Modal,
+     Captcha
     }
    }
 </script>

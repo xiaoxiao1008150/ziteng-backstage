@@ -28,7 +28,7 @@
         <el-row :gutter="20">
           <el-col :span="6" v-for="(item, index) in lotteryData" :key="index">
              <el-card>
-              <img src="/static/images/sort.jpg" class="image">
+              <img :src="'/static/create/' + item.type + '.jpg' " class="image">
               <div>
                 <div class="bottom clearfix">
                   <span class="re-name">{{ item.text }}</span>
@@ -47,18 +47,21 @@
       @close="showModal = false" 
       >
   </zi-dialog>
+  <!-- <loading :showLoading="showLoading"></loading> -->
   </div>
 </template>
 <script>
 let festivalData = ['春节','情人节','中秋节','母亲节','父亲节']
 let levelData = ['抽奖活动', '签到活动','游戏活动']
 import Dialog from 'components/Dialog'
+// import Loading from 'components/Loading'
 import { mapGetters,mapMutations } from 'vuex'
 
 export default {
   name: 'AppMain',
   data () {
     return {
+      showLoading:false,
       showModal:false,
       festivalData: festivalData,
       levelData:levelData
@@ -82,6 +85,7 @@ export default {
       this.setCurrentLottery(item)
     },
     openFullScreen() {
+      // this.showLoading = true
       const loading = this.$loading({
         lock: true,
         text: '加载中',
@@ -89,12 +93,14 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       });
       setTimeout(() => {
-        loading.close();
+        // this.showLoading = false
+        loading.close()
       }, 500);
     }
   },
   components:{
-   ziDialog:Dialog
+   ziDialog:Dialog,
+   // Loading
   }
 }
 </script>
@@ -162,7 +168,8 @@ export default {
   font-size: 13px;
   color: #999;
 .image
-  width: 100%;
-  display: block;
+  width: 100%
+  height:101px
+  display: block
 </style>
 

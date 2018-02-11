@@ -2,7 +2,7 @@
   <div class="zi-header">
     <span>活动分类</span>
     <span>|</span>
-    <span>{{currentLotteryItem.text}}</span>
+    <span>{{currentItemFromRouter}}</span>
     <div class="fr preview">
       <el-button class="small-btn" id="preview-btn" type="primary">预览</el-button>
       <el-button class="small-btn" id="save-btn" @click="save">保存</el-button>
@@ -27,6 +27,10 @@ export default {
     save () {
       this.setClickSave(true)
     }
+  },
+  created () {
+    let title = this.$route.meta.title
+    this.currentItemFromRouter = title
   },
   components:{
   }

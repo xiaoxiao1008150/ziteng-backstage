@@ -1,9 +1,10 @@
 <template>
   <div class="slyder-first">
+  <!-- <pre><code>{{select}}</code></pre> -->
     <!-- <tab-img :data="textarea" :activeName="activeName"></tab-img> -->
     <div class="tab-img">
       <!-- <img :src=" '/static/images/slyder-' + activeName + '.jpg' "> -->
-      <img :src=" '/static/images/' + currentLotteryItem.type + '-' + activeName + '.png' ">
+      <img :src=" '/static/images/' + currentItemFromRouter + '-' + activeName + '.png' ">
       <pre v-show="activeName==='second' || activeName==='first'"class="rule-content" v-html="ruleForm.desc" ></pre>
       <div v-show="activeName==='second'" class="rule-area">
         <ul class="lottery-area">
@@ -21,10 +22,18 @@
                  <el-input v-model="ruleForm.name" placeholder="请输入活动名称" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="开始时间">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.startTime" style="width: 100%;"></el-date-picker>
+                  <el-date-picker type="date" placeholder="选择日期" 
+                    v-model="ruleForm.startTime" 
+                    style="width: 100%;"
+                   :picker-options="pickerBeginDateBefore"
+                    ></el-date-picker>
                 </el-form-item>
                 <el-form-item label="结束时间">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.endTime" style="width: 100%;"></el-date-picker>
+                  <el-date-picker type="date" placeholder="选择日期" 
+                  v-model="ruleForm.endTime" 
+                  style="width: 100%;"
+                  :picker-options="pickerBeginDateAfter"
+                  ></el-date-picker>
                 </el-form-item>
                 <el-form-item label="活动规则">
                   <el-input :autosize='{ minRows: 5}' resize='none' type="textarea"  v-model="ruleForm.desc"></el-input>
@@ -33,24 +42,29 @@
           <el-tab-pane label="限制条件" name="second" class="mytag">
               <div class="input-item">
                 <span>手机号地域</span>
-                <v-distpicker hide-area id="distpicker"></v-distpicker>
+                <!-- <v-distpicker 
+                hide-area id="distpicker"
+                @province="selectProvince"
+                @city="selectCity"
+                ></v-distpicker> -->
+                <distpicker 
+                hide-area id="distpicker"
+                @province="selectProvince"
+                @city="selectCity"
+                @allCity="getAllCities"
+                ></distpicker>
               </div>
               <div class="input-item">
                 <span>手机号次数</span>
                 <div class="mobile">
                   <span id="reduce" @click="reduce">-</span>
-                  <input class="input-self" v-model="ruleForm.num" id="input-self"></input>
+                  <input class="input-self" v-model="ruleForm.settings[1].value" id="input-self"></input>
                   <span id="plus" @click="plus">+</span>
                 </div>
               </div>
-              <!-- <div class="input-item">
-                <span>验证码</span>
-                <button class="code-btn">发送验证码</button>
-                <span id="refresh">刷新</span>
-                <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">测试按钮提交</el-button>
-              </div> -->
           </el-tab-pane>
           <el-tab-pane label="奖项设置" name="third" class="mytag">
+          <div @click="addLottery">添加</div>
             <table id="six-table">
                 <tr class="tr-head">
                   <th>奖品名称</th>
@@ -61,7 +75,11 @@
                   <th>奖品估算</th>
                 </tr>
                 <tr v-for="(item,index) in ruleForm.lottery" :key="index" @click="setPosition(index,item.level)">
-                  <td class="spc-width-select"><span>{{item.level}}</span></td>
+                  <td class="spc-width-select">
+                    <el-input v-if="autoDefinie" class="td-six" placeholder="奖项名称" v-model="item['level']"/>
+                    <span v-else>{{item.level}}</span>
+                    </el-input>
+                  </td>
                   <td class="spc-width-select" >
                     <el-select  v-show="item.level!=='谢谢参与'" v-model="item['sort']"  placeholder="请选择" @change="change">
                       <el-option
@@ -85,11 +103,11 @@
                     </el-select>
                   </td>
                   <td class="spc-width">
-                    <el-input type="number" class="td-six" placeholder="数量" v-model="item['num']">
+                    <el-input type="number" min="0" class="td-six" placeholder="数量" v-model="item['num']">
                     </el-input>
                   </td>
                   <td class="spc-width">
-                      <el-input  type="number" v-model="item['change']" class="td-six" placeholder="概率"></el-input>
+                      <el-input  type="number" min="0" v-model="item['change']" class="td-six" placeholder="概率"></el-input>
                   </td>
                   <td class="spc-width"><span class="estimate"></span></td>
                 </tr>
@@ -117,8 +135,8 @@
   </div>
 </template>
 <script>
-import VDistpicker from 'v-distpicker'//城市选择
-import Date from 'components/Date'
+// import VDistpicker from 'v-distpicker'//城市选择
+import Distpicker from 'components/Distpicker/src/Distpicker'
 import { mapGetters,mapMutations} from 'vuex'
 
 let tableData = {
@@ -129,6 +147,19 @@ let tableData = {
     '流量': [{value: '10M'},{value: '2M'},{value: '1M'}]
   }
 }
+let slyderData = [
+            // {name:'奖项一',category:'',price:'',number:'',weight:'',value:''},
+            {level:'奖项一',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'奖项二',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'奖项三',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'奖项四',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'奖项五',sort:'',deno:'',num:'',change:'',value:''},
+            {level:'谢谢参与',sort:'',deno:'',num:'',change:'',value:''}
+          ]
+let lotteryBaseLine = 
+            // {name:'奖项一',category:'',price:'',number:'',weight:'',value:''},
+            {level:'',sort:'',deno:'',num:'',change:'',value:''}
+
 export default {
   name: '',
   props:{
@@ -139,6 +170,22 @@ export default {
   },
   data() {
     return {
+      // 日期 控制之后，只差一种情况，即当开始时间大于 结束时间
+       pickerBeginDateBefore:{
+            disabledDate: (time) => {
+              return time.getTime() < Date.now();
+            }
+        },
+        pickerBeginDateAfter:{
+            disabledDate: (time) => {
+                let beginDateVal = this.ruleForm.startTime;
+                if (beginDateVal) {
+                    return time.getTime() < beginDateVal;
+                }else{
+                   return time.getTime() < Date.now();
+                }
+            }
+        },
       ruleForm: {
           name: '',
           startTime: '',
@@ -149,14 +196,7 @@ export default {
             {key:'takeNum', value:'1'},
             {key:'verifyCodeType', value:'IMAGE'},
           ],
-          lottery:[
-            {level:'奖项一',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'奖项二',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'奖项三',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'奖项四',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'奖项五',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'谢谢参与',sort:'',deno:'',num:'',change:'',value:''}
-          ]
+          lottery:slyderData
       },
       tableData:tableData,
       activeName2: 'third',
@@ -165,8 +205,13 @@ export default {
       lotteryList:null,
       position:0,//默认从一等奖开始选择
       help:0,
-      tep :[false,false,false,false],
-      aid :[true,true,true,true,true]
+      tep :[],//因为“奖项设置行数是不固定的，所以tep的长度不要固定住”
+      aid :[true,true,true,true,true],
+      select: { province: '', city: '', area: '' },
+      cityArr:[],
+      resultSelect:'',
+      autoDefinie: false,
+      currentItemFromRouter:''
     }
   },
   watch: {
@@ -189,25 +234,33 @@ export default {
     ...mapMutations([
       'setClickSave', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
     ]),
+    selectProvince(value) {
+      this.select.province = value
+    },
+    selectCity(value) {
+      this.select.city = value
+    },
+    getAllCities (cities) {
+      for (let key in cities) {
+        this.cityArr.push(key)
+      }
+    },
     plus (){
-      this.ruleForm.num++
+      this.ruleForm.settings[1].value++
     },
     reduce (){
-      this.ruleForm.num--
-      if(this.ruleForm.num<0){
-        this.ruleForm.num = 0
+      this.ruleForm.settings[1].value--
+      if(this.ruleForm.settings[1].value<0){
+        this.ruleForm.settings[1].value = 0
       }
     },
     showLottery () {
-      // let formData = this.ruleForm.lottery
       this.lotteryList = this.ruleForm.lottery
-      // console.log('lotteryList', this.lotteryList)
       let item = this.lotteryList[this.position]
       let {sort,deno} = item
       if(this.aid[this.position]) {
         if(sort && deno) {
           this.help++
-          console.log('help', this.help)
           this.aid[this.position] = false
         }
       }
@@ -216,23 +269,59 @@ export default {
         this.lotteryList[this.help].deno = '谢谢'
       }
     },
-    setlotteryData () {
-      let item = this.ruleForm.lottery
-      let len = item.length //去除最后一项”谢谢参与“
+    setTepData (len) {
+      for(let i=0;i<len;i++) {
+        this.tep[i] = false
+      }
+    },
+    validate (len,item) {
       for(let i=0;i<len;i++){
-        // let detail = item[i].detail
-        if(i===len-1){
+        // len-1如果是大转盘的话，‘谢谢参与’是最后一行，只需要判断是否有num ,和 change即可，
+        // 如果不是大转盘的话，自动输入‘谢谢参与’就不一定是最后一行了,所以此处的条件需要再处理
+        if(false){ 
           let {num, change} = item[i]
           if( num && change ) {
             this.tep[i] = true
           }
         }else{
-          let {sort, deno, num, change} = item[i]
-          if(sort && deno && num && change ) {
-            this.tep[i] = true
+          console.log('this.autoDefinie', this.autoDefinie)
+          if(this.autoDefinie) { //奖项名称不不要自己
+              let {level,sort, deno, num, change} = item[i]
+              if(level && sort && deno && num && change ) {
+                  this.tep[i] = true
+                }
+          }else{
+              let { sort, deno, num, change} = item[i]
+              if( sort && deno && num && change ) {
+                console.log('import====', this.tep[i])
+                this.tep[i] = true
+              }
           }
         }
       }
+    },
+    setlotteryData () {
+      //获取最终“奖项设置”的行数
+      let item = this.ruleForm.lottery
+      let len = item.length
+      this.setTepData(len)
+      console.log('length======', this.tep.length)
+      this.validate(len, item)
+      // 必须自己输入奖项名称
+      // for(let i=0;i<len;i++){
+      //   // let detail = item[i].detail
+      //   if(i===len-1){
+      //     let {num, change} = item[i]
+      //     if( num && change ) {
+      //       this.tep[i] = true
+      //     }
+      //   }else{
+      //     let {sort, deno, num, change} = item[i]
+      //     if(sort && deno && num && change ) {
+      //       this.tep[i] = true
+      //     }
+      //   }
+      // }
     },
     change (value) {
       this.currentSelectOption = value
@@ -272,50 +361,105 @@ export default {
         }
         return result
     },
+    setAlert(text) {
+      this.$alert(text,'提示', {
+        type:'error',
+        lockScroll:true,
+        showConfirmButton:false
+      });
+    },
+    addLottery () {
+      this.ruleForm.lottery.push(lotteryBaseLine)
+    },
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-          // if (valid) {
-            // 在这里post数据
-            // let data = this.$refs[formName].model
-            let data = this.ruleForm
-            //除”奖项设置“之外区域的验证
-            // for (var prop in data) {
-            //   if(!data[prop]){
-            //     let label = this.switchKeyName(prop)
-            //     // console.log(this.switchKeyName(prop)+ '是空')
-            //     this.$alert(`${label}未填写`,'提示', {
-            //         type:'error',
-            //         lockScroll:true,
-            //         showConfirmButton:false
-            //         // center:true
-            //         // confirmButtonText: '确定',
-            //     });
-            //     return
-            //   }
-            // }
-            // ”奖项设置“ 验证，借助 this.tep的值
-            console.log('ruleForm', this.ruleForm)
-            this.setlotteryData()
-            let len = this.tep.length
-            for(let i=0; i<len ;i++){
-              if(!this.tep[i]){
-                this.$alert(`奖项设置第${i+1}行未填写完整`,'提示', {
-                    type:'error',
-                    lockScroll:true,
-                    showConfirmButton:false
-                    // center:true
-                    // confirmButtonText: '确定',
-                });
-                return
-              }
-            }
-          // }
-        });
+      let valid = false
+      // this.$refs[formName].validate((valid) => {
+        let data = this.ruleForm
+      //除”奖项设置“之外区域的验证
+      // for (var prop in data) {
+      //   if(!data[prop]){
+      //     let label = this.switchKeyName(prop)
+      //     this.setAlert(`${label}未填写`)
+      //     return
+      //   }
+      // }
+      // // 判断日期填写是否正确
+      // if(this.ruleForm.startTime > this.ruleForm.endTime){
+      //   this.setAlert(`开始时间不能大于结束时间`)
+      //   return
+      // }
+      // if(!this.select.province){
+      //   this.setAlert('手机号区域未填写')
+      //   return
+      // }
+      
+        // ”奖项设置“ 验证，借助 this.tep的值
+        // console.log('ruleForm', this.ruleForm)
+        this.setlotteryData()
+        let len = this.tep.length
+        console.log('哈哈哈哈',len)
+        let changeData = this.ruleForm.lottery
+        let changeAll = 0
+        for(let i=0; i<len ;i++){
+          if(!this.tep[i]){
+            this.setAlert(`奖项设置第${i+1}行未填写完整`)
+            return
+          }
+          console.log('key', parseInt(changeData[i].change))
+          changeAll += parseInt(changeData[i].change)
+          console.log('changeAll', changeAll)
+        }
+        if(changeAll!==100){  
+          this.setAlert(`中奖概率之和必须是100`)
+          return
+        }
+        //验证数据完毕，开始提交数据
+        // valid = true
+        // if(valid) {
+        //     const loading = this.$loading({
+        //       lock: true,
+        //       text: '正在提交...',
+        //       spinner: 'el-icon-loading',
+        //       background: 'rgba(0, 0, 0, 0.7)'
+        //   });
+        //     //处理城市选择区域数据
+        //   if(this.select.province .code && this.select.city){
+        //      this.resultSelect = this.select.province.code + ',' + this.select.city.code
+        //   }
+        //   if(this.select.province .code && !this.select.city){
+        //     let cityString = this.cityArr.join(',')
+        //     this.resultSelect = this.select.province.code + ',' + cityString
+        //   }
+        //   this.ruleForm.settings[0].value = this.resultSelect
+        //   //处理时间区域数据
+        //   this.ruleForm.startTime = this.ruleForm.startTime.getTime()
+        //   this.ruleForm.endTime = this.ruleForm.endTime.getTime()
+        //   setTimeout(() => {
+        //   // this.showLoading = false
+        //     loading.close()
+        //    }, 500);
+        // }
+        console.log('form', this.ruleForm)
+
+      }
+        // });
+    // }
+  },
+  created () {
+    let type = this.$route.meta.type
+    this.currentItemFromRouter = type
+    if(this.currentItemFromRouter !== 'slyder'){
+    this.ruleForm.lottery = [lotteryBaseLine]
+      this.autoDefinie = true
+    }else{
+      this.ruleForm.lottery = slyderData
+      this.autoDefinie = false
     }
   },
   components:{
-    VDistpicker,
-    Date,
+    // VDistpicker
+    Distpicker
+    // Date,
     // markdownEditor
   }
 }
@@ -363,6 +507,7 @@ export default {
   // outline: 0;
   padding: 0 15px;
   border:1px solid #ccc
+  text-align:center
   -webkit-transition: border-color .2s cubic-bezier(.645,.045,.355,1);
   transition: border-color .2s cubic-bezier(.645,.045,.355,1);
 .input-self:focus

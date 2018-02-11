@@ -34,13 +34,6 @@ import Dialog from 'components/Dialog'
 import Modal from 'components/Modal'
 import { mapGetters} from 'vuex'
 
-
-// let exampleData = [
-//   {num:'01',text:'超级大转盘'},
-//   {num:'02',text:'抽红包'},
-//   {num:'03',text:'欢乐拼图'},
-//   {num:'04',text:'开宝箱'}
-// ]
 export default {
   name: 'example',
   data() {
@@ -71,10 +64,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .example-img
-  // width:250px
   width:100%
-  // height:447px
-  // height:250px
   display:block
 .example-text
   height:50px

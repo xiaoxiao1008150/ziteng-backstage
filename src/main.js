@@ -7,17 +7,17 @@ import 'common/stylus/index.styl'
 import App from './App'
 import router from './router'
 import store from './store'
-import VDistpicker from 'v-distpicker'
+// import VDistpicker from 'v-distpicker'
 // import './permission' // permission control
 import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VueClipboard)
-Vue.component('v-distpicker', VDistpicker)
+// Vue.component('v-distpicker', VDistpicker)
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 
 /* eslint-disable no-new */
-new Vue({
+let a = new Vue({
   el: '#app',
   router,
   store,

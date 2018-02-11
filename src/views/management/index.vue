@@ -43,7 +43,7 @@
   </div>
 </template>
 <script>
-  import Date from 'components/Date'
+  // import Date from 'components/Date'
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
   export default {
@@ -77,7 +77,7 @@
       // }
     },
     components:{
-      Date,
+      // Date,
       Modal,
       ziDialog:Dialog
     }

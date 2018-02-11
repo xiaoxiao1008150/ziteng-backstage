@@ -1,4 +1,76 @@
 
+活动状态：
+  0 - 未发布
+  1 - 审核中
+  2 - 未开始
+  3 - 已激活
+  4 - 禁用
+  5 - 未通过
+  6 - 已结束
+  9 - 已关闭
+
+创建活动
+  url：192.168.31.241:9999/activityClient/createInfo?
+  post：参数
+    activityName=搞活动
+    templateNo=123456
+    activityRule=各种规则
+    settings=[{'key':'areaCode', 'value':'0411,022'},
+                               {'key':'takeNum', 'value':'1'},
+                               {'key':'verifyCodeType', 'value':'IMAGE'}]
+    prizeSettings=[{name:'奖项一',category:'1',price:'5',number:'10',weight:'1',value:'100'},
+                                      {name:'奖项二',category:'2',price:'10',number:'5',weight:'2',value:'100'},
+                                      {name:'奖项三',category:'3',price:'20',number:'10',weight:'3',value:'100'}]
+    startTime=1518451200000
+    expiredTime=1518451200000
+  返回格式：
+{
+    "code": "ok",
+    "data": {
+        "id": "f5acf273-d49f-4532-a0cf-aac270ce7933",
+        "activityNo": "",
+        "activityName": "搞活动",
+        "activityRule": "各种规则",
+        "startTime": "2018-02-13 00:00:00",
+        "expiredTime": "2018-02-13 00:00:00",
+        "status": "0"
+    }
+}
+用户注册：短信
+  http://192.168.31.241:9999/sms/verifyCode
+  post: 手机号码  mobileNumber
+  返回 {
+      “code”:”ok”,
+      “message”:”验证码发送成功”
+    }
+
+用户注册：
+  http://192.168.31.241:9999/userClient/createUser
+  post: 企业名称  contractName
+    联系人 contactName
+    手机号码  mobileNumber
+    密码    password
+    验证码 verifyCode
+
+  返回 
+    {
+        "code": "ok",
+        "data": {
+              "id": "56dc9b47-c948-426b-996a-2c4d134349d8",
+              "login_name": "13029499221",
+              "mobile_number": "13029499221",
+             "contract_name": "天津支行",
+              "contact_name": "张霄峰",
+              "status": "ENABLED",
+              "password": "$2a$10$vKZgXJGXsVamFNU971QveGMPg3buIDjceoKKN7Z./BpHWwBmpoz2",
+              "authorities": [
+                {
+                        "authority": "AUTHORITY_DEFAULT"
+                  }
+      ]
+        } 
+  }
+  
 用户状态
 	0 - 审核中
 	1 - 正常

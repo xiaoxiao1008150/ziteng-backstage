@@ -1,7 +1,7 @@
 
 const save = {
   state: {
-    hasClickSave:false
+    hasClickSave:false,
   },
 
   mutations: {

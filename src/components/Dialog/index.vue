@@ -27,10 +27,6 @@
               v-clipboard:success="onCopy"
               style="height:35px;display:inline-block;width:60px;padding:0">复制</el-button>
             </el-tooltip>
-            <!-- <button type="button"
-            v-clipboard:copy="url"
-            v-clipboard:success="onCopy">Copy!</button> -->
-            <!-- <el-button style="height:35px;display:inline-block;width:60px;padding:0" id="create-btn" type="primary" @click='copyUrl'>复制</el-button> -->
          </div>
       </div>
     </div>
@@ -74,7 +70,6 @@
     },
     methods:{
       onCopy: function (e) {
-        console.log(e.text)
         this.disabled = false
       },
       copyUrl () {
@@ -113,9 +108,10 @@
           // let name = this.setRouterName()
           this.$emit('close')
           // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
-          // if(name){
-            this.$router.push(({ path: `/create-project/content` }))
-          // }
+          let name = this.currentLotteryItem.type
+          if(name){
+            this.$router.push(({ path: `/create-project/${name}`,}))
+          }
         // }
       }
     },
