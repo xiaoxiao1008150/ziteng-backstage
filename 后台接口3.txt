@@ -1,4 +1,21 @@
 
+获取模板数据列表
+  url：192.168.31.241:8888/marketing/activityClient/getTemplate
+  返回格式：
+  {
+    "code": "ok",
+    "list": [
+        {
+            "id": "0e24b56d-efc7-435d-bc22-9778cd15f5a2",
+            "template_no": "123456",
+            "template_name": "测试模板",
+            "screen_shot": "/usr/img/a.jpg",
+            "template_category": "1:2:3",
+            "category_path": "2:3:4",
+            "status": "0"
+        }
+    ]
+}
 活动状态：
   0 - 未发布
   1 - 审核中
@@ -9,12 +26,13 @@
   6 - 已结束
   9 - 已关闭
 
+//手机号次数未验证********
 创建活动
   url：192.168.31.241:9999/activityClient/createInfo?
   post：参数
-    activityName=搞活动
+    activityName=搞活动 //已换
     templateNo=123456
-    activityRule=各种规则
+    activityRule=各种规则 // 已换
     settings=[{'key':'areaCode', 'value':'0411,022'},
                                {'key':'takeNum', 'value':'1'},
                                {'key':'verifyCodeType', 'value':'IMAGE'}]
@@ -22,7 +40,7 @@
                                       {name:'奖项二',category:'2',price:'10',number:'5',weight:'2',value:'100'},
                                       {name:'奖项三',category:'3',price:'20',number:'10',weight:'3',value:'100'}]
     startTime=1518451200000
-    expiredTime=1518451200000
+    expiredTime=1518451200000// 已换
   返回格式：
 {
     "code": "ok",

@@ -26,11 +26,11 @@ export const constantRouterMap = [
       icon: 'order-add'
     },
     children:[
-       { path: 'index', component: _import('createProject/index'),  meta: { type: '创建活动' ,title:''}},
+       { path: 'index', component: _import('createProject/index'),  meta: { type: '创建活动'}},
        { path: 'slyder', component: _import('components-demo/slyder/index'),  meta: { type: 'slyder',title:'超级大转盘' }},
        { path: 'envelope', component: _import('components-demo/envelope/index'),  meta: { type: 'envelope' ,title:'抽红包'}},
        { path: 'box', component: _import('components-demo/box/index'), name: 'box-demo', meta: { type: 'box',title:'欢乐拼图' }},
-       { path: 'jigsaw', component: _import('components-demo/jigsaw/index'), meta: { type: '开宝箱' }}
+       { path: 'jigsaw', component: _import('components-demo/jigsaw/index'), meta: { type: 'jigsaw',title:'开宝箱' }}
     ]
   },
   {

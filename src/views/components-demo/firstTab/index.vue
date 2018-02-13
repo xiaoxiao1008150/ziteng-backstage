@@ -5,11 +5,11 @@
     <div class="tab-img">
       <!-- <img :src=" '/static/images/slyder-' + activeName + '.jpg' "> -->
       <img :src=" '/static/images/' + currentItemFromRouter + '-' + activeName + '.png' ">
-      <pre v-show="activeName==='second' || activeName==='first'"class="rule-content" v-html="ruleForm.desc" ></pre>
+      <pre v-show="activeName==='second' || activeName==='first'"class="rule-content" v-html="ruleForm.activityRule" ></pre>
       <div v-show="activeName==='second'" class="rule-area">
         <ul class="lottery-area">
-          <li v-for="(item,index) in lotteryList" v-show="item.deno && item.sort">
-              <p class="lottery-deno"><span>{{item.deno}}</span></p><p class="lottery-sort">{{item.sort}}</p>
+          <li v-for="(item,index) in lotteryList" v-show="item.price && item.category">
+              <p class="lottery-deno"><span>{{item.price}}</span></p><p class="lottery-category">{{item.category}}</p>
           </li>
         </ul>
       </div>
@@ -19,7 +19,7 @@
         <el-tabs v-model="activeName2" type="card">
           <el-tab-pane label="基础设置" name="first" class="tag-base">
                 <el-form-item label="活动名称">
-                 <el-input v-model="ruleForm.name" placeholder="请输入活动名称" auto-complete="off"></el-input>
+                 <el-input v-model="ruleForm.activityName" placeholder="请输入活动名称" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="开始时间">
                   <el-date-picker type="date" placeholder="选择日期" 
@@ -30,13 +30,13 @@
                 </el-form-item>
                 <el-form-item label="结束时间">
                   <el-date-picker type="date" placeholder="选择日期" 
-                  v-model="ruleForm.endTime" 
+                  v-model="ruleForm.expiredTime" 
                   style="width: 100%;"
                   :picker-options="pickerBeginDateAfter"
                   ></el-date-picker>
                 </el-form-item>
                 <el-form-item label="活动规则">
-                  <el-input :autosize='{ minRows: 5}' resize='none' type="textarea"  v-model="ruleForm.desc"></el-input>
+                  <el-input :autosize='{ minRows: 5}' resize='none' type="textarea"  v-model="ruleForm.activityRule"></el-input>
                 </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="限制条件" name="second" class="mytag">
@@ -74,14 +74,14 @@
                   <th>中奖概率</th>
                   <th>奖品估算</th>
                 </tr>
-                <tr v-for="(item,index) in ruleForm.lottery" :key="index" @click="setPosition(index,item.level)">
+                <tr v-for="(item,index) in ruleForm.prizeSettings" :key="index" @click="setPosition(index,item.name)">
                   <td class="spc-width-select">
-                    <el-input v-if="autoDefinie" class="td-six" placeholder="奖项名称" v-model="item['level']"/>
-                    <span v-else>{{item.level}}</span>
+                    <el-input v-if="autoDefinie" class="td-six" placeholder="奖项名称" v-model="item['name']"/>
+                    <span v-else>{{item.name}}</span>
                     </el-input>
                   </td>
                   <td class="spc-width-select" >
-                    <el-select  v-show="item.level!=='谢谢参与'" v-model="item['sort']"  placeholder="请选择" @change="change">
+                    <el-select  v-show="item.name!=='谢谢参与'" v-model="item['category']"  placeholder="请选择" @change="change">
                       <el-option
                         v-for="item1 in tableData.type"
                         :key="item1.value"
@@ -92,7 +92,7 @@
                     </el-select>
                   </td>
                   <td class="spc-width">
-                  <el-select v-show="item.level!=='谢谢参与'" v-model="item['deno']" placeholder="请选择" @change="change1">
+                  <el-select v-show="item.name!=='谢谢参与'" v-model="item['price']" placeholder="请选择" @change="change1">
                     <el-option
                         v-for="item2 in tableData.denomination[currentSelectOption]"
                         :key="item2.value"
@@ -103,11 +103,11 @@
                     </el-select>
                   </td>
                   <td class="spc-width">
-                    <el-input type="number" min="0" class="td-six" placeholder="数量" v-model="item['num']">
+                    <el-input type="price" min="0" class="td-six" placeholder="数量" v-model="item['number']">
                     </el-input>
                   </td>
                   <td class="spc-width">
-                      <el-input  type="number" min="0" v-model="item['change']" class="td-six" placeholder="概率"></el-input>
+                      <el-input  type="price" min="0" v-model="item['weight']" class="td-six" placeholder="概率"></el-input>
                   </td>
                   <td class="spc-width"><span class="estimate"></span></td>
                 </tr>
@@ -148,17 +148,18 @@ let tableData = {
   }
 }
 let slyderData = [
-            // {name:'奖项一',category:'',price:'',number:'',weight:'',value:''},
-            {level:'奖项一',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'奖项二',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'奖项三',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'奖项四',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'奖项五',sort:'',deno:'',num:'',change:'',value:''},
-            {level:'谢谢参与',sort:'',deno:'',num:'',change:'',value:''}
+            // {name:'奖项一',category:'',price:'',price:'',weight:'',value:''},新
+            // {name:'奖项一',category:'',price:'',number:'',change:'',value:''},旧
+            {name:'奖项一',category:'',price:'',number:'',weight:'',value:''},
+            {name:'奖项二',category:'',price:'',number:'',weight:'',value:''},
+            {name:'奖项三',category:'',price:'',number:'',weight:'',value:''},
+            {name:'奖项四',category:'',price:'',number:'',weight:'',value:''},
+            {name:'奖项五',category:'',price:'',number:'',weight:'',value:''},
+            {name:'谢谢参与',category:'',price:'',number:'',weight:'',value:''}
           ]
 let lotteryBaseLine = 
-            // {name:'奖项一',category:'',price:'',number:'',weight:'',value:''},
-            {level:'',sort:'',deno:'',num:'',change:'',value:''}
+            // {name:'奖项一',category:'',price:'',price:'',weight:'',value:''},
+            {name:'',category:'',price:'',number:'',weight:'',value:''}
 
 export default {
   name: '',
@@ -187,16 +188,16 @@ export default {
             }
         },
       ruleForm: {
-          name: '',
+          activityName: '',
           startTime: '',
-          endTime: '',
-          desc:'',
+          expiredTime: '',
+          activityRule:'',
           settings:[
             {key:'areaCode', value:'0411,022'},
             {key:'takeNum', value:'1'},
             {key:'verifyCodeType', value:'IMAGE'},
           ],
-          lottery:slyderData
+          prizeSettings:slyderData
       },
       tableData:tableData,
       activeName2: 'third',
@@ -255,18 +256,18 @@ export default {
       }
     },
     showLottery () {
-      this.lotteryList = this.ruleForm.lottery
+      this.lotteryList = this.ruleForm.prizeSettings
       let item = this.lotteryList[this.position]
-      let {sort,deno} = item
+      let {category,price} = item
       if(this.aid[this.position]) {
-        if(sort && deno) {
+        if(category && price) {
           this.help++
           this.aid[this.position] = false
         }
       }
       if(this.help === 5) {
-        this.lotteryList[this.help].sort = '参与'
-        this.lotteryList[this.help].deno = '谢谢'
+        this.lotteryList[this.help].category = '参与'
+        this.lotteryList[this.help].price = '谢谢'
       }
     },
     setTepData (len) {
@@ -276,23 +277,23 @@ export default {
     },
     validate (len,item) {
       for(let i=0;i<len;i++){
-        // len-1如果是大转盘的话，‘谢谢参与’是最后一行，只需要判断是否有num ,和 change即可，
+        // len-1如果是大转盘的话，‘谢谢参与’是最后一行，只需要判断是否有number ,和 weight即可，
         // 如果不是大转盘的话，自动输入‘谢谢参与’就不一定是最后一行了,所以此处的条件需要再处理
         if(false){ 
-          let {num, change} = item[i]
-          if( num && change ) {
+          let {number, weight} = item[i]
+          if( number && weight ) {
             this.tep[i] = true
           }
         }else{
           console.log('this.autoDefinie', this.autoDefinie)
           if(this.autoDefinie) { //奖项名称不不要自己
-              let {level,sort, deno, num, change} = item[i]
-              if(level && sort && deno && num && change ) {
+              let {name,category, price, number, weight} = item[i]
+              if(name && category && price && number && weight ) {
                   this.tep[i] = true
                 }
           }else{
-              let { sort, deno, num, change} = item[i]
-              if( sort && deno && num && change ) {
+              let { category, price, number, weight} = item[i]
+              if( category && price && number && weight ) {
                 console.log('import====', this.tep[i])
                 this.tep[i] = true
               }
@@ -302,7 +303,7 @@ export default {
     },
     setlotteryData () {
       //获取最终“奖项设置”的行数
-      let item = this.ruleForm.lottery
+      let item = this.ruleForm.prizeSettings
       let len = item.length
       this.setTepData(len)
       console.log('length======', this.tep.length)
@@ -311,13 +312,13 @@ export default {
       // for(let i=0;i<len;i++){
       //   // let detail = item[i].detail
       //   if(i===len-1){
-      //     let {num, change} = item[i]
-      //     if( num && change ) {
+      //     let {number, weight} = item[i]
+      //     if( number && weight ) {
       //       this.tep[i] = true
       //     }
       //   }else{
-      //     let {sort, deno, num, change} = item[i]
-      //     if(sort && deno && num && change ) {
+      //     let {category, price, number, weight} = item[i]
+      //     if(category && price && number && weight ) {
       //       this.tep[i] = true
       //     }
       //   }
@@ -326,14 +327,14 @@ export default {
     change (value) {
       this.currentSelectOption = value
       //在这里处理奖品 种类
-      this.sort = value
+      this.category = value
     },
     change1 (value) {
       // 这里确定奖品的面额
-      this.deno = value
+      this.price = value
       this.showLottery()
     },
-    setPosition (index,level) {
+    setPosition (index,name) {
       // 确定是几等奖
       this.position = index
     },
@@ -341,19 +342,19 @@ export default {
       let result
       switch(value)
         {
-        case 'name':
+        case 'activityName':
           result = '活动名称'
           break;
         case 'startTime':
           result = '开始时间'
           break;
-        case 'endTime':
+        case 'expiredTime':
           result = '结束时间'
           break;
-        case 'num':
+        case 'number':
           result = '手机号次数'
           break;
-        case 'desc':
+        case 'activityRule':
           result = '活动规则未填写'
           break;
         default:
@@ -369,7 +370,8 @@ export default {
       });
     },
     addLottery () {
-      this.ruleForm.lottery.push(lotteryBaseLine)
+      this.ruleForm.prizeSettings.push(lotteryBaseLine)
+      console.log('importtant', this.ruleForm.prizeSettings)
     },
     submitForm(formName) {
       let valid = false
@@ -384,7 +386,7 @@ export default {
       //   }
       // }
       // // 判断日期填写是否正确
-      // if(this.ruleForm.startTime > this.ruleForm.endTime){
+      // if(this.ruleForm.startTime > this.ruleForm.expiredTime){
       //   this.setAlert(`开始时间不能大于结束时间`)
       //   return
       // }
@@ -398,15 +400,15 @@ export default {
         this.setlotteryData()
         let len = this.tep.length
         console.log('哈哈哈哈',len)
-        let changeData = this.ruleForm.lottery
+        let changeData = this.ruleForm.prizeSettings
         let changeAll = 0
         for(let i=0; i<len ;i++){
           if(!this.tep[i]){
             this.setAlert(`奖项设置第${i+1}行未填写完整`)
             return
           }
-          console.log('key', parseInt(changeData[i].change))
-          changeAll += parseInt(changeData[i].change)
+          console.log('key', parseInt(changeData[i].weight))
+          changeAll += parseInt(changeData[i].weight)
           console.log('changeAll', changeAll)
         }
         if(changeAll!==100){  
@@ -433,7 +435,7 @@ export default {
         //   this.ruleForm.settings[0].value = this.resultSelect
         //   //处理时间区域数据
         //   this.ruleForm.startTime = this.ruleForm.startTime.getTime()
-        //   this.ruleForm.endTime = this.ruleForm.endTime.getTime()
+        //   this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
         //   setTimeout(() => {
         //   // this.showLoading = false
         //     loading.close()
@@ -449,10 +451,10 @@ export default {
     let type = this.$route.meta.type
     this.currentItemFromRouter = type
     if(this.currentItemFromRouter !== 'slyder'){
-    this.ruleForm.lottery = [lotteryBaseLine]
+    this.ruleForm.prizeSettings = [lotteryBaseLine]
       this.autoDefinie = true
     }else{
-      this.ruleForm.lottery = slyderData
+      this.ruleForm.prizeSettings = slyderData
       this.autoDefinie = false
     }
   },
