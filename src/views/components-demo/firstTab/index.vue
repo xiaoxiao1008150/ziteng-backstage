@@ -77,8 +77,8 @@
                 <tr v-for="(item,index) in ruleForm.prizeSettings" :key="index" @click="setPosition(index,item.name)">
                   <td class="spc-width-select">
                     <el-input v-if="autoDefinie" class="td-six" placeholder="奖项名称" v-model="item['name']"/>
-                    <span v-else>{{item.name}}</span>
                     </el-input>
+                    <span v-else>{{item.name}}</span>
                   </td>
                   <td class="spc-width-select" >
                     <el-select  v-show="item.name!=='谢谢参与'" v-model="item['category']"  placeholder="请选择" @change="change">
@@ -157,9 +157,8 @@ let slyderData = [
             {name:'奖项五',category:'',price:'',number:'',weight:'',value:''},
             {name:'谢谢参与',category:'',price:'',number:'',weight:'',value:''}
           ]
-let lotteryBaseLine = 
+let lotteryBaseLine =  {name:'',category:'',price:'',number:'',weight:'',value:''}
             // {name:'奖项一',category:'',price:'',price:'',weight:'',value:''},
-            {name:'',category:'',price:'',number:'',weight:'',value:''}
 
 export default {
   name: '',
@@ -197,7 +196,7 @@ export default {
             {key:'takeNum', value:'1'},
             {key:'verifyCodeType', value:'IMAGE'},
           ],
-          prizeSettings:slyderData
+          prizeSettings:[]
       },
       tableData:tableData,
       activeName2: 'third',
@@ -370,30 +369,36 @@ export default {
       });
     },
     addLottery () {
-      this.ruleForm.prizeSettings.push(lotteryBaseLine)
+      // var testData = JSON.parse(lotteryBaseLine)
+      let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
+      this.ruleForm.prizeSettings.push(baseData)
       console.log('importtant', this.ruleForm.prizeSettings)
     },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+      Object.assign(this[formName], this.$options.data()[formName])
+    },
     submitForm(formName) {
-      let valid = false
-      // this.$refs[formName].validate((valid) => {
+        let valid = false
+        // this.$refs[formName].validate((valid) => {
         let data = this.ruleForm
-      //除”奖项设置“之外区域的验证
-      // for (var prop in data) {
-      //   if(!data[prop]){
-      //     let label = this.switchKeyName(prop)
-      //     this.setAlert(`${label}未填写`)
-      //     return
-      //   }
-      // }
-      // // 判断日期填写是否正确
-      // if(this.ruleForm.startTime > this.ruleForm.expiredTime){
-      //   this.setAlert(`开始时间不能大于结束时间`)
-      //   return
-      // }
-      // if(!this.select.province){
-      //   this.setAlert('手机号区域未填写')
-      //   return
-      // }
+        //除”奖项设置“之外区域的验证
+        for (var prop in data) {
+          if(!data[prop]){
+            let label = this.switchKeyName(prop)
+            this.setAlert(`${label}未填写`)
+            return
+          }
+        }
+        // 判断日期填写是否正确
+        if(this.ruleForm.startTime > this.ruleForm.expiredTime){
+          this.setAlert(`开始时间不能大于结束时间`)
+          return
+        }
+        if(!this.select.province){
+          this.setAlert('手机号区域未填写')
+          return
+        }
       
         // ”奖项设置“ 验证，借助 this.tep的值
         // console.log('ruleForm', this.ruleForm)
@@ -441,8 +446,12 @@ export default {
         //     loading.close()
         //    }, 500);
         // }
+        //数据提交之后 重置表单
+        // 跳转到客户审核页面
+        this.$router.push({ path: `/client-verify/`,})
+        // this.$refs.ruleForm.resetFields();
+        this.resetForm(formName)
         console.log('form', this.ruleForm)
-
       }
         // });
     // }
@@ -451,10 +460,22 @@ export default {
     let type = this.$route.meta.type
     this.currentItemFromRouter = type
     if(this.currentItemFromRouter !== 'slyder'){
-    this.ruleForm.prizeSettings = [lotteryBaseLine]
+
+    let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
+    // console.log('初始化之前', this.ruleForm.prizeSettings)
+    // console.log('lotteryBaseLine', lotteryBaseLine)
+    this.ruleForm.prizeSettings.push(baseData)
+    // console.log('初始化数据', this.ruleForm.prizeSettings)
       this.autoDefinie = true
     }else{
-      this.ruleForm.prizeSettings = slyderData
+
+      this.ruleForm.prizeSettings.concat(slyderData)
+      for(let i in slyderData){
+        this.$set(this.ruleForm.prizeSettings, i , slyderData[i]);
+      }
+
+      // console.log('test',this.ruleForm.prizeSettings )
+      // console.log('slyderData',slyderData )
       this.autoDefinie = false
     }
   },

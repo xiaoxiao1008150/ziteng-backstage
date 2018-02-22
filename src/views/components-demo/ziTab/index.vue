@@ -4,6 +4,7 @@
       <div class="zitab-bar" :style="{ transform:transNum}"></div>
       <div  class="zitab-item"
       v-for="(item,index) in tabData" :key="index" 
+      :class="{ active: index===jsIndex}"
       @click="tabChange(index)"
       >{{item.label}}</div>
     </div>
@@ -31,20 +32,20 @@ export default {
     return {
       activeName: 'first',
       tabData:tabData,
-      index:0,
+      jsIndex:0,
       styleObject: {
-        transform: `translateX(85*${this.index}px)`
+        transform: `translateX(85*${this.jsIndex}px)`
       }
     };
   },
   computed:{
     transNum () {
-      return 'translateX(' + this.index * 85 + 'px)'
+      return 'translateX(' + this.jsIndex * 85 + 'px)'
     }
   },
   methods:{
     tabChange (index) {
-      this.index= index
+      this.jsIndex= index
       this.activeName = this.tabData[index].name
     }
   },
@@ -63,7 +64,7 @@ export default {
   position :absolute
   left:0
   bottom:0
-  border:2px solid #409EFF
+  border:1px solid #409EFF
   width:85px
   transition:0.3s all
 .zitab-item
@@ -80,4 +81,9 @@ export default {
   position: relative;
   width:85px
   text-align :center
+  cursor :pointer
+.zitab-item:hover
+  color:rgb(64, 158, 255)
+.zitab-item.active
+  color:rgb(64, 158, 255)
 </style>
