@@ -130,6 +130,9 @@
 .close-icon
   position :absolute
   right:-10px
+  cursor :pointer
+  width: 50px;
+  text-align: right;
 .index-tep
   position :absolute
   top:15px

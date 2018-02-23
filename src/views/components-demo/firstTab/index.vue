@@ -64,7 +64,7 @@
               </div>
           </el-tab-pane>
           <el-tab-pane label="奖项设置" name="third" class="mytag">
-          <div @click="addLottery">添加</div>
+            <div @click="addLottery">添加</div>
             <table id="six-table">
                 <tr class="tr-head">
                   <th>奖品名称</th>
@@ -138,6 +138,8 @@
 // import VDistpicker from 'v-distpicker'//城市选择
 import Distpicker from 'components/Distpicker/src/Distpicker'
 import { mapGetters,mapMutations} from 'vuex'
+import Tab from 'components/Tab'
+
 
 let tableData = {
   type:[{value: '流量'}, {value: '话费'}, {value: '视频券'}],
@@ -481,7 +483,8 @@ export default {
   },
   components:{
     // VDistpicker
-    Distpicker
+    Distpicker,
+    Tab
     // Date,
     // markdownEditor
   }
@@ -672,4 +675,7 @@ export default {
       transform: rotate(-300deg);
 .lottery-deno
   font-size:15px
+  margin-top:2px
+.lottery-category
+  margin-top:6px
 </style>

@@ -44,6 +44,7 @@ export const constantRouterMap = [
     },
     children:[
        { path: 'index', component: _import('management/index'), name: 'management', meta: { title: '活动管理' }},
+       { path: 'info/:id', component: _import('management/Info'), name: 'management', meta: { title: '用户参与详情' }},
     ]
   },
   {

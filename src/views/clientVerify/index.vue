@@ -4,7 +4,30 @@
     <div class="verify-content">
       <el-tabs v-model="activeName" @tab-click="tabChange">
         <el-tab-pane label="待审核" name="first">
-          <table class="verify-table">
+           <el-table fit highlight-current-row :data="vertifyData" style="width: 100%">
+              <el-table-column align="center" width="180"
+                v-for="{ prop, label } in colConfigs"
+                :key="prop"
+                :prop="prop"
+                :label="label">
+              </el-table-column>
+            <el-table-column label="操作" align="center" width="270">
+              <template slot-scope="scope">
+              <el-button
+                  size="mini"
+                  type="primary"
+                  plain
+                  @click="passVerify"
+                  >通过</el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  plain
+                  >拒绝</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- <table class="verify-table">
                <tr>
                  <th>企业名称</th>
                  <th>联系人</th>
@@ -19,10 +42,37 @@
                 <td>2018-01-10 09：00：00</td>
                 <td><span class="verify-aciton verify-aciton-pass" @click="passVerify">通过</span><span class="verify-aciton verify-aciton-reject" >拒绝</span></td>
               </tr>
-          </table>
+          </table> -->
         </el-tab-pane>
         <el-tab-pane label="客户列表" name="second">
-              <table class="verify-table">
+            <el-table fit highlight-current-row :data="vertifyData" style="width: 100%">
+              <el-table-column align="center" width="180"
+                v-for="{ prop, label } in colConfigs"
+                :key="prop"
+                :prop="prop"
+                :label="label">
+              </el-table-column>
+            <el-table-column
+              label="全部状态"
+              prop="status"
+              align="center"
+              width="180"
+              :filters="filters"
+              :filter-method="filterTag"
+            >
+            </el-table-column>
+            <el-table-column label="操作" align="center" width="90">
+              <template slot-scope="scope">
+              <el-button
+                  size="mini"
+                  type="primary"
+                  plain
+                  @click="startEdit"
+                  >编辑</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+              <!-- <table class="verify-table">
                <tr>
                  <th>企业名称</th>
                  <th>联系人</th>
@@ -52,7 +102,7 @@
                 <td>正常</td>
                 <td><span @click="startEdit" class="verify-aciton">编辑</span></td>
               </tr>
-          </table>
+          </table> -->
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -83,9 +133,9 @@
             <el-form-item label="状态编辑" prop="status" >
               <el-select v-model="ruleForm1.status" style="width:100%" placeholder="请选择状态">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in filters"
                   :key="item.value"
-                  :label="item.label"
+                  :label="item.text"
                   :value="item.value">
                 </el-option>
               </el-select>
@@ -107,6 +157,18 @@
   export default {
     data () {
       return {
+        colConfigs:[
+          { prop: 'contract_name', label: '企业名称' },
+          { prop: 'contact_name', label: '联系人' },
+          { prop: 'mobile_number', label: '手机号' },
+          { prop: 'id', label: '注册时间' },
+        ],
+        colConfigs1:[
+          { prop: 'contract_name', label: '企业名称' },
+          { prop: 'contact_name', label: '联系人' },
+          { prop: 'mobile_number', label: '手机号' },
+          { prop: 'id', label: '账号有效期' },
+        ],
         loading:false,
         vertifyData: [
           {
@@ -114,7 +176,7 @@
               "login_name": "13029499221",
               "mobile_number": "13029499221",
               "contract_name": "天津支行",
-              "contact_name": "张霄峰",
+              "contact_name": "状态1",
               "status": "1",
               "password": "",
               "authorities": [
@@ -128,8 +190,8 @@
               "login_name": "13029499225",
               "mobile_number": "13029499225",
               "contract_name": "天津支行",
-              "contact_name": "张霄峰",
-              "status": "1",
+              "contact_name": "状态0",
+              "status": "0",
               "password": "",
               "authorities": [
                   {
@@ -167,12 +229,16 @@
         pass:false,
         edit:false,
         activeName:'first',
-        options: [{value: '正常'}, {value: '暂停'}, {value: '已到期'}],
+        //注意此处的value设置为数字，对应的是后台返回数据的status字段
+        filters: [{text: '正常',value: '1'}, {text: '禁用',value: '禁用'}, {text: '审核中',value: '0'},{text: '未通过',value: '未通过'},{text: '已删除',value: '已删除'}],
         value: '',
         value1:''//这个是弹窗编辑的选择框对应的数据
       }
     },
     methods:{
+       filterTag(value, row) {
+        return row.status === value;
+      },
       toggleStatus (item) {
         // item返回状态 commond，请求相关数据
         console.log('te', item)
@@ -226,7 +292,7 @@
 </script>
 <style lang="stylus" scoped>
 @import "~common/stylus/modal"
-@import "~common/stylus/table"
+// @import "~common/stylus/table"
 // .verify-header
 //   text-align:left
 //   height:60px
