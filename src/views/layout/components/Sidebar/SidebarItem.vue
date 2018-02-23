@@ -7,6 +7,8 @@
         v-if="item.children && item.children.length>=1" >
         <router-link
         class="side-link"
+        @click.native="setIndex(index)"
+        :class="{ active: index===jsIndex}"
         router-link-active
         :to="item.path+'/'+item.children[0].path" 
        >
@@ -43,7 +45,7 @@ export default {
   data () {
     return {
       index:0,
-      isActive:false
+      jsIndex:0
     }
   },
   props: {
@@ -54,6 +56,9 @@ export default {
   created () {
   },
   methods:{
+    setIndex(index){
+      this.jsIndex = index
+    }
   },
   components:{
     svgIcon
@@ -74,6 +79,7 @@ export default {
     width:100%
     height:100%
     transition:all 1s
+    position:relative
   .side-link:hover
     background:rgba(0,0,0,0.2)
   .router-link-active
@@ -81,5 +87,14 @@ export default {
   .side-link svg
       position:relative
       top:2px
-    // vertical-align :middle
+  .side-link.active:after
+    content:''
+    position:absolute
+    top:15px
+    right:0
+    width:0
+    height:0
+    border-top:7px solid transparent
+    border-bottom:7px solid transparent
+    border-right:7px solid #fff;
 </style>

@@ -28,11 +28,14 @@
         <el-row :gutter="20">
           <el-col :span="6" v-for="(item, index) in lotteryData" :key="index">
              <el-card>
-              <img :src="'/static/create/' + item.type + '.jpg' " class="image">
+              <div class="reco">
+                <img :src="'/static/create/' + item.type + '.jpg' " class="image">
+                <img class="reco-img" src="/static/create/reco.png">
+              </div>
               <div>
                 <div class="bottom clearfix">
                   <span class="re-name">{{ item.text }}</span>
-                  <el-button type="primary" class="create-btn fr" @click="openModel(item)">马上创建</el-button>
+                  <el-button  type="primary" class="create-btn fr" @click="openModel(item)">马上创建</el-button>
                 </div>
               </div>
             </el-card>
@@ -165,11 +168,19 @@ export default {
 .re-classify
   padding: 20px 0
 .re-name
-  font-size: 13px;
-  color: #999;
+  font-size: 13px
+  color: #999
+  margin-left:8px
 .image
   width: 100%
   height:101px
   display: block
+.reco
+  position:relative
+  .reco-img
+    position :absolute
+    width:40px
+    top:-10px
+    right:-10px
 </style>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="verify-header">活动管理</div>
+    <div class="verify-header">>活动管理</div>
     <div class="verify-content" style="padding:30px 5%">
       <el-table
         fit highlight-current-row
