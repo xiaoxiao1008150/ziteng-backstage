@@ -6,7 +6,7 @@
       </div>
       <div class="fr client-management">
         <el-button type="primary" @click="signUp">注册</el-button>
-        <el-button @click="login">登录</el-button>
+        <el-button class="login-btn" @click="login">登录</el-button>
       </div>
     </header>
     <div class="banner">

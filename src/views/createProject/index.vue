@@ -23,7 +23,9 @@
       </div>
     </div>
     <div class="recommend tep">
-      <div class="re-title">活动推荐</div>
+      <div class="re-title">
+      <!-- <span><svg-icon style="color:#1aadf0" :icon-class="user"></svg-icon></span> -->
+      <span>活动推荐</span></div>
       <div class="re-classify">
         <el-row :gutter="20">
           <el-col :span="6" v-for="(item, index) in lotteryData" :key="index">
@@ -57,7 +59,7 @@
 let festivalData = ['春节','情人节','中秋节','母亲节','父亲节']
 let levelData = ['抽奖活动', '签到活动','游戏活动']
 import Dialog from 'components/Dialog'
-// import Loading from 'components/Loading'
+import svgIcon from 'components/Icon'
 import { mapGetters,mapMutations } from 'vuex'
 
 export default {
@@ -103,7 +105,7 @@ export default {
   },
   components:{
    ziDialog:Dialog,
-   // Loading
+   svgIcon
   }
 }
 </script>

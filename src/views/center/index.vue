@@ -1,6 +1,9 @@
 <template>
 <div class="container" style="">
-  <div class="verify-header">个人中心</div>
+  <div class="verify-header">
+  <span><i class="el-icon-arrow-left
+"></i></span>
+  <span>个人中心</span></div>
   <div class="center-lay">
     <div class="item-wrapper">
       <div class="circle-tep">
@@ -91,7 +94,7 @@
     components:{
       Tel,
       Contact,
-      Password,
+      Password
     }
   }
 </script>
@@ -142,9 +145,11 @@
   left:64px
 .circle-text
   p
-    line-height :40px
+    font-size:20px
+    margin-bottom:15px
   span
     font-size:13px
+    color:#575757
 .center-info
   margin-bottom:20px
 .center-label

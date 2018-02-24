@@ -1,7 +1,7 @@
 <template>
 <div>
   <el-row :gutter="20" style="margin-bottom:140px">
-    <el-col :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in lotteryData" :key="index">
+    <el-col class="margin-col":xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in lotteryData" :key="index">
       <el-card :body-style="{ padding: '0px' }">
         <img class="example-img" :src="'/static/images/' + item.num + '.jpg'">
         <div class="example-text">
@@ -10,7 +10,6 @@
           <span class="dot">.</span>
         </div>
       </el-card>
-    <!--   <el-button type="primary" class="example-btn" @click="openModel(item)">创建活动</el-button> -->
       <el-button type="primary" class="example-btn" @click="openModel">创建活动</el-button>
     </el-col>
   </el-row>
@@ -74,22 +73,22 @@ export default {
   span
     vertical-align :middle
   .dot
-    font-size: 35px;
-    position: relative;
-    top: -9px;
+    font-size: 35px
+    position: relative
+    top: -9px
 .grid-content
   line-height:0
 .example-btn
   margin-top:30px
   width:130px
-.el-row {
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
+.el-row
+    margin-bottom: 20px
+    &:last-child
+      margin-bottom: 0
 .close-tep
   height:25px
   line-height:35px
+.margin-col
+  margin-bottom:20px
 </style>
 

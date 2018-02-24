@@ -2,7 +2,7 @@
 <modal>
   <div slot="header">
        <span class="fl">登录</span>
-        <span class="fr cursor" @click="close">X</span>
+        <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
   </div>
   <div class="" slot="body">
     <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">

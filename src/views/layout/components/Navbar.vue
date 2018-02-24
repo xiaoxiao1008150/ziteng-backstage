@@ -4,7 +4,7 @@
         <a href="/login"><img id="background" src="../../../common/images/logo.png"></a>
     </div>
     <div class="fr client-management">
-      <span class="client-name"><svg-icon style="color:#1aadf0" :icon-class="iconName.kehu"></svg-icon><i>用户名</i></span>
+      <span class="client-name"><svg-icon style="color:#1aadf0" :icon-class="iconName.user"></svg-icon><i>用户名</i></span>
       <span class="client-out"><svg-icon style="color:#ccc" :icon-class="iconName.tuichu"></svg-icon><i>退出</i></span>
     </div>
   </header>
@@ -17,7 +17,7 @@ export default {
   data () {
     return {
       iconName:{
-        kehu: 'kehu',
+        user: 'user',
         tuichu: 'tuichu'
       }
     }

@@ -1,5 +1,8 @@
 <template>
   <div class="zi-header">
+    <!-- <img src="/static/images/back.png"> -->
+    <span><i class="el-icon-arrow-left
+"></i></span>
     <span>活动分类</span>
     <span>|</span>
     <span>{{currentItemFromRouter}}</span>
@@ -10,16 +13,10 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations} from 'vuex'
+import {mapMutations} from 'vuex'
 
 export default {
   name: 'ziHeader',
-  computed: {
-  // 使用对象展开运算符将 getter 混入 computed 对象中
-    ...mapGetters([
-      'currentLotteryItem'
-    ])
-  },
   methods:{
     ...mapMutations([
       'setClickSave', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`

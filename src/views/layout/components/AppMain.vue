@@ -22,7 +22,6 @@ export default {
   top: 70px;
   bottom: 0;
   width: auto;
-  padding: 0px 30px 20px 30px;
   box-sizing: border-box;
   overflow-y: scroll;
 </style>

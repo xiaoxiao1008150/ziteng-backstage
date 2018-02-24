@@ -1,6 +1,7 @@
-//components/Icon-svg
 <template>
-  <svg class="svg-icon" aria-hidden="true">
+  <svg
+    :class="[classData ? 'svgicon' : 'svgneed', 'icon-base']"
+     aria-hidden="true">
     <use :xlink:href="iconName"></use>
   </svg>
 </template>
@@ -12,6 +13,10 @@ export default {
     iconClass: {
       type: String,
       required: true
+    },
+    classData: {
+      type: Boolean,
+      default:true
     }
   },
   computed: {
@@ -22,13 +27,18 @@ export default {
 }
 </script>
 
-<style>
-.svg-icon {
-  width: 14px;
-  height: 14px;
-  /*vertical-align: -0.15em;*/
-  fill: currentColor;
-  overflow: hidden;
-}
+<style lang="stylus" scoped>
+.icon-base
+  fill: currentColor
+  overflow: hidden
+.svgicon
+  width: 14px
+  height: 14px
+.svgneed
+  width:20px
+  height:20px
+  vertical-align:-4px
+  margin-right:5px
+  fill:red
 </style>
 

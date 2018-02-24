@@ -2,7 +2,9 @@
   <modal :styleObject="styleObject">
     <div slot="header"></div>
     <div slot="body" class="index-dialog" v-if="showMainPop">
-        <span class="close-icon" @click="close">X</span>
+        <span class="close-icon" @click="close">
+          <i class="el-icon-close"></i>
+</span>
       <div class="index-tep">
         <div class="index-img">
           <img class="item-img" :src="'/static/images/' + currentLotteryItem.num + '-scan.jpg' ">

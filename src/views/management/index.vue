@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <div class="verify-header">>活动管理</div>
+    <div class="verify-header">
+    <span><i class="el-icon-arrow-left
+"></i></span>
+    <span>活动管理</span>
+    </div>
     <div class="verify-content" style="padding:30px 5%">
       <el-table
         fit highlight-current-row
@@ -108,6 +112,7 @@
   // import Date from 'components/Date'
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
+
   export default {
     data () {
       return {
@@ -159,7 +164,7 @@
     components:{
       // Date,
       Modal,
-      ziDialog:Dialog
+      ziDialog:Dialog,
     }
   }
 </script>

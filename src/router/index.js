@@ -54,7 +54,7 @@ export const constantRouterMap = [
     // redirect: 'noredirect',
     meta: {
       title: '个人中心',
-      icon: 'huodongguanli'
+      icon: 'user'
     },
     children:[
        { path: 'index', component: _import('center/index'),meta: { title: '个人中心' }}

@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <div class="verify-header">客户审核</div>
+    <div class="verify-header">
+    <span><i class="el-icon-arrow-left
+"></i></span>
+    <span>客户审核</span></div>
     <div class="verify-content">
       <el-tabs v-model="activeName" @tab-click="tabChange">
         <el-tab-pane label="待审核" name="first">
