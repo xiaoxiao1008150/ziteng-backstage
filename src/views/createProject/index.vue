@@ -120,8 +120,12 @@ export default {
   height:30px
   line-height:3px
 .dashboard-container
+  position:absolute
   background:#f3f3f3
-  margin-top:60px
+  top:25px
+  left:25px
+  right:25px
+  bottom:25px
 .tep
   border:1px solid #adadad
   background:#fff

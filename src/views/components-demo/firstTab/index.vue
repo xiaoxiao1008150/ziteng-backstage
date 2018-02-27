@@ -64,9 +64,10 @@
               </div>
           </el-tab-pane>
           <el-tab-pane label="奖项设置" name="third" class="mytag">
-            <div @click="addLottery">添加</div>
+            <el-button v-show="autoDefinie" @click="addLottery">添加</el-button>
             <table id="six-table">
                 <tr class="tr-head">
+                  <th v-show="autoDefinie">操作</th>
                   <th>奖品名称</th>
                   <th>奖品种类</th>
                   <th>奖品面额</th>
@@ -75,6 +76,9 @@
                   <th>奖品估算</th>
                 </tr>
                 <tr v-for="(item,index) in ruleForm.prizeSettings" :key="index" @click="setPosition(index,item.name)">
+                  <td class="spc-width-select" @click="deleteLottery(index)">
+                  {{index===0 ? '' : '删除'}}
+                  </td>
                   <td class="spc-width-select">
                     <el-input v-if="autoDefinie" class="td-six" placeholder="奖项名称" v-model="item['name']"/>
                     </el-input>
@@ -120,6 +124,7 @@
                   <td><span class="estimate"></span></td>
                 </tr> -->
                 <tr>
+                  <td></td>
                   <td>合计</td>
                   <td></td>
                   <td></td>
@@ -280,25 +285,23 @@ export default {
       for(let i=0;i<len;i++){
         // len-1如果是大转盘的话，‘谢谢参与’是最后一行，只需要判断是否有number ,和 weight即可，
         // 如果不是大转盘的话，自动输入‘谢谢参与’就不一定是最后一行了,所以此处的条件需要再处理
-        if(false){ 
-          let {number, weight} = item[i]
-          if( number && weight ) {
-            this.tep[i] = true
-          }
-        }else{
-          console.log('this.autoDefinie', this.autoDefinie)
-          if(this.autoDefinie) { //奖项名称不不要自己
-              let {name,category, price, number, weight} = item[i]
-              if(name && category && price && number && weight ) {
-                  this.tep[i] = true
-                }
-          }else{
-              let { category, price, number, weight} = item[i]
-              if( category && price && number && weight ) {
-                console.log('import====', this.tep[i])
+          if(this.autoDefinie) { //奖项名称自己定义
+            let {name,category, price, number, weight} = item[i]
+            if(name && category && price && number && weight ) {
                 this.tep[i] = true
               }
-          }
+          }else{
+            if(i===len-1){//大转盘最后一行谢谢参与只需要验证两项
+              let {number, weight} = item[i]
+              if( number && weight ) {
+                this.tep[i] = true
+              }
+            }else{
+              let { category, price, number, weight} = item[i]
+              if( category && price && number && weight ) {
+                this.tep[i] = true
+              }
+            }
         }
       }
     },
@@ -309,21 +312,6 @@ export default {
       this.setTepData(len)
       console.log('length======', this.tep.length)
       this.validate(len, item)
-      // 必须自己输入奖项名称
-      // for(let i=0;i<len;i++){
-      //   // let detail = item[i].detail
-      //   if(i===len-1){
-      //     let {number, weight} = item[i]
-      //     if( number && weight ) {
-      //       this.tep[i] = true
-      //     }
-      //   }else{
-      //     let {category, price, number, weight} = item[i]
-      //     if(category && price && number && weight ) {
-      //       this.tep[i] = true
-      //     }
-      //   }
-      // }
     },
     change (value) {
       this.currentSelectOption = value
@@ -371,10 +359,22 @@ export default {
       });
     },
     addLottery () {
-      // var testData = JSON.parse(lotteryBaseLine)
-      let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
-      this.ruleForm.prizeSettings.push(baseData)
-      console.log('importtant', this.ruleForm.prizeSettings)
+      // 先验证第一行数据是否填写完整
+      this.setlotteryData()
+      let len = this.tep.length
+        if(this.tep[len-1]){
+          // console.log('hade', this.tep[i])
+          let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
+          this.ruleForm.prizeSettings.push(baseData)
+        }else{
+          console.log('未填写', this.tep[len-1])
+          this.setAlert(`请将奖项设置第${len}行填写完整`)
+        }
+    },
+    deleteLottery (index){
+      this.ruleForm.prizeSettings && this.ruleForm.prizeSettings.splice(index, 1)
+      // 删除数据之后重新获取 tep的值
+      this.setlotteryData()
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
@@ -384,6 +384,7 @@ export default {
         let valid = false
         // this.$refs[formName].validate((valid) => {
         let data = this.ruleForm
+        console.log('====', data)
         //除”奖项设置“之外区域的验证
         for (var prop in data) {
           if(!data[prop]){
@@ -406,7 +407,6 @@ export default {
         // console.log('ruleForm', this.ruleForm)
         this.setlotteryData()
         let len = this.tep.length
-        console.log('哈哈哈哈',len)
         let changeData = this.ruleForm.prizeSettings
         let changeAll = 0
         for(let i=0; i<len ;i++){
@@ -414,9 +414,7 @@ export default {
             this.setAlert(`奖项设置第${i+1}行未填写完整`)
             return
           }
-          console.log('key', parseInt(changeData[i].weight))
           changeAll += parseInt(changeData[i].weight)
-          console.log('changeAll', changeAll)
         }
         if(changeAll!==100){  
           this.setAlert(`中奖概率之和必须是100`)

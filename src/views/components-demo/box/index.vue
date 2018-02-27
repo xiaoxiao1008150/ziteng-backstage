@@ -1,5 +1,5 @@
 <template>
- <div class="slyder-container">
+ <div class="container">
   <zi-header></zi-header>
   <zi-tab></zi-tab>
 </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="zi-header">
+  <div class="zi-header verify-header">
     <!-- <img src="/static/images/back.png"> -->
     <span><i class="el-icon-arrow-left
 "></i></span>
@@ -34,10 +34,8 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.zi-header
-  text-align:left
-  height:60px
-  line-height:60px
+@import "~common/stylus/modal"
+
 .zi-header span
   vertical-align :middle
 .preview
