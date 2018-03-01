@@ -109,15 +109,12 @@
   </div>
 </template>
 <script>
-  // import Date from 'components/Date'
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
 
   export default {
     data () {
       return {
-        // pass:false,
-        // edit:false,
         tableData: [{
           name: '大转盘抽奖',
           time: '2018-01-10 09：00：00',

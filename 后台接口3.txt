@@ -84,10 +84,10 @@
               "authorities": [
                 {
                         "authority": "AUTHORITY_DEFAULT"
-                  }
-      ]
+                }
+              ]
         } 
-  }
+    }
   
 用户状态
 	0 - 审核中
@@ -97,7 +97,7 @@
 	9 - 已删除
 	
 	
-待审核
+待审核 // 注意：待审核列表暂时没有注册时间
 	url：http://192.168.31.241:8888/marketing/userClient/getUserByStatus
 	post：参数 _status ="0" [只传一个状态]
 	返回格式
@@ -227,7 +227,7 @@
 编辑
 	url http://192.168.31.241:8888/marketing/userClient/editUser
 	post：参数 startTime=2012-10-22 00:00:00
-				status=0	
+				status=0
 				expiredTime=2012-10-23 00:00:00
 				id=
 	返回格式

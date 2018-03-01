@@ -5,9 +5,11 @@
 "></i></span>
     <span>活动审核</span></div>
     <div class="verify-content">
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" @tab-click="tabChange">
         <el-tab-pane label="待审核" name="first">
-          <el-table fit highlight-current-row :data="vertifyData" style="width: 100%">
+          <el-table fit highlight-current-row 
+          v-loading.body="listLoading" element-loading-text="拼命加载中"
+          :data="vertifyData" style="width: 100%">
               <el-table-column align="center"
                 v-for="{ prop, label, width } in colConfigs"
                 :key="prop"
@@ -21,11 +23,13 @@
                     size="mini"
                     type="primary"
                     plain
+                    @click="openPass"
                     >通过</el-button>
                   <el-button
                     size="mini"
                     type="danger"
                     plain
+                    @click="openReject"
                     >拒绝</el-button>
                   <el-button
                     size="mini"
@@ -35,30 +39,6 @@
                 </template>
               </el-table-column>
           </el-table>
-          <!-- <table class="verify-table">
-               <tr>
-                 <th>发布时间</th>
-                 <th>客户名称</th>
-                 <th>用户名</th>
-                 <th>手机号</th>
-                 <th>活动名称</th>
-                 <th>活动时间</th>
-                 <th>操作</th>
-               </tr>
-              <tr>
-                <td>2018-01-10 09：00：00</td>
-                <td>中国农业银行天津分行</td>
-                <td>韩语太</td>
-                <td>11111111111</td>
-                <td>大转盘抽奖</td>
-                <td><div class="time">2018-01-10 09：00：00</div><div class="time">2018-01-10 09：00：00</div></td>
-                <td>
-                  <span class="verify-aciton verify-aciton-pass" @click="openFullScreen">通过</span>
-                  <span class="verify-aciton verify-aciton-reject">拒绝</span>
-                  <span class="verify-aciton verify-aciton-preview" @click="openDialog">预览</span>
-                  </td>
-              </tr>
-          </table> -->
         </el-tab-pane>
         <el-tab-pane label="客户列表" name="second">
           <el-table fit highlight-current-row :data="vertifyData" style="width: 100%">
@@ -93,52 +73,6 @@
                 </template>
               </el-table-column>
             </el-table>
-              <!-- <table class="verify-table">
-               <tr>
-                 <th>发布时间</th>
-                 <th>客户名称</th>
-                 <th>用户名</th>
-                 <th>手机号</th>
-                 <th>活动名称</th>
-                 <th>活动时间</th>
-                 <th>
-                  <el-dropdown @command="handleCommand">
-                    <span class="el-dropdown-link">
-                      全部状态<i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item
-                        v-for="(item,index) in options"
-                        :key="index"
-                        :command="item.value">{{item.value}}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                  </th>
-                 <th>
-                      <el-select id="verity-select" v-model="value" placeholder="请选择">
-                      <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                 </th>
-                 <th>用户参与详情</th>
-                 <th>操作</th>
-               </tr>
-              <tr>
-                <td>2018-01-10 09：00：00</td>
-                <td>中国农业银行天津分行</td>
-                <td>韩语太</td>
-                <td>11111111111</td>
-                <td>大转盘抽奖</td>
-                <td><div class="time">2018-01-10 09：00：00</div><div class="time">2018-01-10 09：00：00</div></td>
-                <td>进行中</td>
-                <td><span>查看</span></td>
-                <td><span>暂停/开始</span><span>预览</span></td>
-              </tr>
-          </table> -->
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -148,6 +82,32 @@
       @close="showModal = false" 
       >
       </zi-dialog>
+      <modal v-if="pass">
+       <div slot="header">
+        <span class="fl">提示</span>
+        <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
+      </div>
+      <div slot="body">
+        <div class="reject">确定通过吗？</div>
+        <div>
+           <el-button @click="close">取消</el-button>
+           <el-button type="primary" @click="activityPass" :loading="loading">确定</el-button>
+        </div>
+      </div>
+    </modal>
+    <modal v-if="reject">
+       <div slot="header">
+        <span class="fl">提示</span>
+        <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
+      </div>
+      <div slot="body">
+        <div class="reject">确定拒绝吗？</div>
+        <div>
+           <el-button @click="close">取消</el-button>
+           <el-button type="primary" @click="activityReject" :loading="loading">确定</el-button>
+        </div>
+      </div>
+    </modal>
 
     <!-- <zi-dialog
       :imgUrl=num
@@ -164,6 +124,8 @@
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
   import { mapGetters,mapMutations } from 'vuex'
+  import { fetchActivityList,fetchActivityByStatus } from 'api/activity'
+
 
   export default {
     data () {
@@ -206,11 +168,14 @@
               ]
           }
         ],
-        // pass:false,
-        // edit:false,
+        pass:false,
+        reject:false,
         activeName:'first',
+        listLoading: false,
+        loading: false,
         showModal:false,
         hasCreated:true,
+        tabHelp: true,
         filters: [{text: '未发布',value: '未发布'}, {text: '审核中',value: '审核中'}, {text: '未开始',value: '未开始'},{text: '已激活',value: '已激活'},{text: '禁用',value: '禁用'},{text: '未通过',value: '未通过'},{text: '已结束',value: '已结束'},{text: '已关闭',value: '已关闭'}]
       }
     },
@@ -225,6 +190,28 @@
       ...mapMutations([
         'setCurrentLottery', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
       ]),
+      //  fetchActivityList () {
+      //   this.listLoading = true
+      //   fetchActivityList().then((res) =>{
+      //     let this.userList = res.list
+      //       this.listLoading = false
+      //   })
+      // },
+      //  fetchActivityByStatus () {
+      //   this.listLoading = true
+      //   fetchActivityByStatus().then((res) =>{
+      //     let this.userList = res.list
+      //       this.listLoading = false
+      //   })
+      // },
+      //  fetchActivityByStatus1 () {
+      //   fetchActivityByStatus().then((res) =>{
+      //     let this.userList = res.list
+              // this.loading = false
+              // this.close()
+              // this.tepHelp = true 启动请求客户列表时候重新拉取数据的key
+      //   })
+      // },
       handleCommand(command) {
         this.$message('click on item ' + command);
       },
@@ -247,21 +234,50 @@
       },
       filterTag(value, row) {
         return row.status === value;
-      }
-      // passVerify () {
-      //   console.log('passVerify')
-      //   this.pass = true
-      // },
-      // close () {
-      //   this.pass = false
-      //   this.edit = false
-      // },
-      // startEdit () {
-      //   this.edit = true
-      // }
+      },
+      tabChange (tab) {
+        // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，/ 第一次切换到”客户列表“ 才需要重新拉取
+        // 第一次拉取客户列表
+        if(this.tabHelp && tab.active && tab.name === 'second'){
+          // 获取所有客户的活动列表 this.fetchActivityList()
+          this.tabHelp = false
+        }
+      },
+      activityPass () {
+        // 数据处理 1. 提交处理的待审核客户操作结果:取消不处理， 确定改变状态
+        //  跳转到活动列表(保留可以不跳转)
+        this.loading = true
+        setTimeout(()=>{
+          // 重新拉取活动审核 待审核列表数据 this.fetchActivityByStatus1
+          // this.fetchActivityByStatus1()
+          // this.loading = false
+          // this.close()
+          // this.activeName = 'second'
+        },1000)
+      },
+      activityReject () {
+        this.loading = true
+        setTimeout(()=>{
+          this.close()
+          this.loading = false
+        },1000)
+      },
+      close () {
+        this.pass = false
+        this.reject = false
+      },
+      openPass () {
+        this.pass = true
+      },
+      openReject () {
+        this.reject = true
+      },
+    },
+    created () {
+      // 获取活动审核 待审核列表
+      // this.fetchActivityByStatus()
     },
     components:{
-      // Date,
       Modal,
       ziDialog:Dialog
     }

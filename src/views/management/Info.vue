@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { fetchInfoList } from 'api/lottery'
+import { fetchInfoList } from 'api/activity'
 // import { parseTime } from '@/utils'
 
 export default {

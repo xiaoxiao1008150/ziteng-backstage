@@ -76,7 +76,7 @@
                   <th>奖品估算</th>
                 </tr>
                 <tr v-for="(item,index) in ruleForm.prizeSettings" :key="index" @click="setPosition(index,item.name)">
-                  <td class="spc-width-select" @click="deleteLottery(index)">
+                  <td class="spc-width-select" v-if="autoDefinie" @click="deleteLottery(index)">
                   {{index===0 ? '' : '删除'}}
                   </td>
                   <td class="spc-width-select">
@@ -115,14 +115,6 @@
                   </td>
                   <td class="spc-width"><span class="estimate"></span></td>
                 </tr>
-                <!-- <tr>
-                  <td>谢谢参与</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td><el-input  class="td-six" placeholder=""></el-input></td>
-                  <td><span class="estimate"></span></td>
-                </tr> -->
                 <tr>
                   <td></td>
                   <td>合计</td>
@@ -140,7 +132,6 @@
   </div>
 </template>
 <script>
-// import VDistpicker from 'v-distpicker'//城市选择
 import Distpicker from 'components/Distpicker/src/Distpicker'
 import { mapGetters,mapMutations} from 'vuex'
 import Tab from 'components/Tab'
@@ -172,7 +163,7 @@ export default {
   props:{
     activeName:{
       type:String,
-      dafault:''
+      default:'first'
     }
   },
   data() {
@@ -206,7 +197,7 @@ export default {
           prizeSettings:[]
       },
       tableData:tableData,
-      activeName2: 'third',
+      activeName2: 'first',
       textarea: '',
       currentSelectOption: '话费',
       lotteryList:null,
@@ -384,7 +375,6 @@ export default {
         let valid = false
         // this.$refs[formName].validate((valid) => {
         let data = this.ruleForm
-        console.log('====', data)
         //除”奖项设置“之外区域的验证
         for (var prop in data) {
           if(!data[prop]){
@@ -394,6 +384,7 @@ export default {
           }
         }
         // 判断日期填写是否正确
+        console.log('thie', this.ruleForm.startTime)
         if(this.ruleForm.startTime > this.ruleForm.expiredTime){
           this.setAlert(`开始时间不能大于结束时间`)
           return
@@ -405,52 +396,52 @@ export default {
       
         // ”奖项设置“ 验证，借助 this.tep的值
         // console.log('ruleForm', this.ruleForm)
-        this.setlotteryData()
-        let len = this.tep.length
-        let changeData = this.ruleForm.prizeSettings
-        let changeAll = 0
-        for(let i=0; i<len ;i++){
-          if(!this.tep[i]){
-            this.setAlert(`奖项设置第${i+1}行未填写完整`)
-            return
-          }
-          changeAll += parseInt(changeData[i].weight)
-        }
-        if(changeAll!==100){  
-          this.setAlert(`中奖概率之和必须是100`)
-          return
-        }
-        //验证数据完毕，开始提交数据
-        // valid = true
-        // if(valid) {
-        //     const loading = this.$loading({
-        //       lock: true,
-        //       text: '正在提交...',
-        //       spinner: 'el-icon-loading',
-        //       background: 'rgba(0, 0, 0, 0.7)'
-        //   });
-        //     //处理城市选择区域数据
-        //   if(this.select.province .code && this.select.city){
-        //      this.resultSelect = this.select.province.code + ',' + this.select.city.code
+        // this.setlotteryData()
+        // let len = this.tep.length
+        // let changeData = this.ruleForm.prizeSettings
+        // let changeAll = 0
+        // for(let i=0; i<len ;i++){
+        //   if(!this.tep[i]){
+        //     this.setAlert(`奖项设置第${i+1}行未填写完整`)
+        //     return
         //   }
-        //   if(this.select.province .code && !this.select.city){
-        //     let cityString = this.cityArr.join(',')
-        //     this.resultSelect = this.select.province.code + ',' + cityString
-        //   }
-        //   this.ruleForm.settings[0].value = this.resultSelect
-        //   //处理时间区域数据
-        //   this.ruleForm.startTime = this.ruleForm.startTime.getTime()
-        //   this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
-        //   setTimeout(() => {
-        //   // this.showLoading = false
-        //     loading.close()
-        //    }, 500);
+        //   changeAll += parseInt(changeData[i].weight)
         // }
+        // if(changeAll!==100){  
+        //   this.setAlert(`中奖概率之和必须是100`)
+        //   return
+        // }
+        //验证数据完毕，开始提交数据
+        valid = true
+        if(valid) {
+            const loading = this.$loading({
+              lock: true,
+              text: '正在提交...',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+          });
+            //处理城市选择区域数据
+          if(this.select.province .code && this.select.city){
+             this.resultSelect = this.select.province.code + ',' + this.select.city.code
+          }
+          if(this.select.province .code && !this.select.city){
+            let cityString = this.cityArr.join(',')
+            this.resultSelect = this.select.province.code + ',' + cityString
+          }
+          this.ruleForm.settings[0].value = this.resultSelect
+          //处理时间区域数据
+          this.ruleForm.startTime = this.ruleForm.startTime.getTime()
+          this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
+          setTimeout(() => {
+          // this.showLoading = false
+            loading.close()
+           }, 500);
+        }
         //数据提交之后 重置表单
         // 跳转到客户审核页面
         this.$router.push({ path: `/client-verify/`,})
         // this.$refs.ruleForm.resetFields();
-        this.resetForm(formName)
+        // this.resetForm(formName)
         console.log('form', this.ruleForm)
       }
         // });

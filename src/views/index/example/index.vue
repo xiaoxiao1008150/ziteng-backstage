@@ -1,7 +1,7 @@
 <template>
 <div>
   <el-row :gutter="20" style="margin-bottom:140px">
-    <el-col class="margin-col":xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in lotteryData" :key="index">
+    <el-col class="margin-col" :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in lotteryData" :key="index">
       <el-card :body-style="{ padding: '0px' }">
         <img class="example-img" :src="'/static/images/' + item.num + '.jpg'">
         <div class="example-text">

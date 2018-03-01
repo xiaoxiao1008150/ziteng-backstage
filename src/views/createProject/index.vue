@@ -28,7 +28,7 @@
       <span>活动推荐</span></div>
       <div class="re-classify">
         <el-row :gutter="20">
-          <el-col :span="6" v-for="(item, index) in lotteryData" :key="index">
+          <el-col class="test" :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}" v-for="(item, index) in lotteryData" :key="index">
              <el-card>
               <div class="reco">
                 <img :src="'/static/create/' + item.type + '.jpg' " class="image">
@@ -188,5 +188,7 @@ export default {
     width:40px
     top:-10px
     right:-10px
+.test
+  max-width:280px
 </style>
 
