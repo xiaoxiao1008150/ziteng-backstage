@@ -47,8 +47,6 @@
   }
 </script>
 <style lang="stylus" scoped>
-.zi-content
-  background:#fff
 .zitab
   text-align:left
   position:relative

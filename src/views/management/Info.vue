@@ -1,54 +1,66 @@
 <template>
  <!-- $t is vue-i18n global function to translate lang -->
-  <div class="app-container">
-    <!-- <el-input style='width:340px;' placeholder="导出excel" prefix-icon="el-icon-document" v-model="filename"></el-input> -->
-    <el-button style='margin-bottom:20px;' type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">导出excel</el-button>
-    <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit highlight-current-row height="450"
->
-      <el-table-column align="center" label='Id' width="95">
-        <template slot-scope="scope">
-          {{scope.$index}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label='用户手机号' width="95">
-        <template slot-scope="scope">
-          {{scope.row.tel}}
-        </template>
-      </el-table-column>
-      <el-table-column label="中奖时间">
-        <template slot-scope="scope">
-          {{scope.row.name}}
-        </template>
-      </el-table-column>
-      <el-table-column label="是否支付成功" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag>{{scope.row.contact}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="奖品类别" width="115" align="center">
-        <template slot-scope="scope">
-          {{scope.row.tel}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="奖品面额" width="220">
-        <template slot-scope="scope">
-          <i class="el-icon-time"></i>
-          <span>{{scope.row.password}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="奖券费用" width="220">
-        <template slot-scope="scope">
-          <i class="el-icon-time"></i>
-          <span>{{scope.row.createdAt}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="是否充值成功" width="220">
-        <template slot-scope="scope">
-          <i class="el-icon-time"></i>
-          <span>{{scope.row.createdAt}}</span>
-        </template>
-      </el-table-column>
-    </el-table>
+  <div class="container">
+     <div class="verify-header">
+      <span><i class="el-icon-arrow-left"></i></span>
+      <span >活动管理</span><span id="manage">|</span><span id="info-text">用户参与详情</span></div>
+      <div class="info-content">
+          <div class="info-header">
+            <div class="fl">
+              <span>已发放奖品合计:</span>
+              <span id="value">288000元</span>
+            </div>
+            <div class="fr">
+              <el-button style='margin-bottom:20px;' type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">导出excel</el-button>
+            </div>
+          </div>
+          <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit highlight-current-row height="450"
+      >
+            <el-table-column align="center" label='Id' width="95">
+              <template slot-scope="scope">
+                {{scope.$index}}
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label='用户手机号' width="95">
+              <template slot-scope="scope">
+                {{scope.row.tel}}
+              </template>
+            </el-table-column>
+            <el-table-column label="中奖时间">
+              <template slot-scope="scope">
+                {{scope.row.name}}
+              </template>
+            </el-table-column>
+            <el-table-column label="是否支付成功" width="110" align="center">
+              <template slot-scope="scope">
+                <el-tag>{{scope.row.contact}}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="奖品类别" width="115" align="center">
+              <template slot-scope="scope">
+                {{scope.row.tel}}
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="奖品面额" width="220">
+              <template slot-scope="scope">
+                <i class="el-icon-time"></i>
+                <span>{{scope.row.password}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="奖券费用" width="220">
+              <template slot-scope="scope">
+                <i class="el-icon-time"></i>
+                <span>{{scope.row.createdAt}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="是否充值成功" width="220">
+              <template slot-scope="scope">
+                <i class="el-icon-time"></i>
+                <span>{{scope.row.createdAt}}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+      </div>
   </div>
 </template>
 
@@ -102,3 +114,19 @@ export default {
   }
 }
 </script>
+<style lang="stylus" scoped>
+// @import "~common/stylus/modal"
+.info-content
+  padding:20px
+  background:#fff
+.info-header
+  height:45px
+  line-height:45px
+#manage
+  margin: 0 5px
+#info-text
+  font-size:13px
+  color:#444
+#value
+  color:#19adf0
+</style>

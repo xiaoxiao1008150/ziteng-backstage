@@ -36,7 +36,7 @@
           align="center" 
           width="130">
           <template slot-scope="scope">
-            <span @click="goToInfo">查看</span>
+            <span @click="goToInfo" class="look">查看</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="270">

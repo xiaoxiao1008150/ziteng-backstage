@@ -1,6 +1,6 @@
 
 获取模板数据列表
-  url：192.168.31.241:8888/marketing/activityClient/getTemplate
+  url：http://192.168.31.241:8888/marketing/activityClient/getTemplate
   返回格式：
   {
     "code": "ok",
@@ -41,6 +41,7 @@
                                       {name:'奖项三',category:'3',price:'20',number:'10',weight:'3',value:'100'}]
     startTime=1518451200000
     expiredTime=1518451200000// 已换
+
   返回格式：
 {
     "code": "ok",

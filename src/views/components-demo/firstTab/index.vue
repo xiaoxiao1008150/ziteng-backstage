@@ -85,7 +85,11 @@
                     <span v-else>{{item.name}}</span>
                   </td>
                   <td class="spc-width-select" >
-                    <el-select  v-show="item.name!=='谢谢参与'" v-model="item['category']"  placeholder="请选择" @change="change">
+                    <el-select
+                      v-show="item.name!=='谢谢参与'" 
+                      v-model="item['category']"  
+                      placeholder="请选择" 
+                      @change="change">
                       <el-option
                         v-for="item1 in tableData.type"
                         :key="item1.value"
@@ -96,7 +100,7 @@
                     </el-select>
                   </td>
                   <td class="spc-width">
-                  <el-select v-show="item.name!=='谢谢参与'" v-model="item['price']" placeholder="请选择" @change="change1">
+                  <el-select :disabled="item['category'] ? false : true" v-show="item.name!=='谢谢参与'" v-model="item['price']" placeholder="请选择" @change="change1">
                     <el-option
                         v-for="item2 in tableData.denomination[currentSelectOption]"
                         :key="item2.value"
@@ -107,16 +111,16 @@
                     </el-select>
                   </td>
                   <td class="spc-width">
-                    <el-input type="price" min="0" class="td-six" placeholder="数量" v-model="item['number']">
+                    <el-input type="number" min="0" class="td-six" placeholder="数量" v-model="item['number']">
                     </el-input>
                   </td>
                   <td class="spc-width">
-                      <el-input  type="price" min="0" v-model="item['weight']" class="td-six" placeholder="概率"></el-input>
+                      <el-input  type="number" min="0" v-model="item['weight']" class="td-six" placeholder="概率"></el-input>
                   </td>
                   <td class="spc-width"><span class="estimate"></span></td>
                 </tr>
                 <tr>
-                  <td></td>
+                  <td v-if="autoDefinie"></td>
                   <td>合计</td>
                   <td></td>
                   <td></td>
@@ -135,6 +139,8 @@
 import Distpicker from 'components/Distpicker/src/Distpicker'
 import { mapGetters,mapMutations} from 'vuex'
 import Tab from 'components/Tab'
+import {  createActivity } from 'api/activity'
+
 
 
 let tableData = {
@@ -268,9 +274,12 @@ export default {
       }
     },
     setTepData (len) {
+      this.tep = []
       for(let i=0;i<len;i++) {
         this.tep[i] = false
       }
+      console.log('!!!!!!!', len)
+      console.log('test', this.tep.length)
     },
     validate (len,item) {
       for(let i=0;i<len;i++){
@@ -299,15 +308,20 @@ export default {
     setlotteryData () {
       //获取最终“奖项设置”的行数
       let item = this.ruleForm.prizeSettings
+      console.log('item', item)
       let len = item.length
-      this.setTepData(len)
-      console.log('length======', this.tep.length)
+      console.log('itemlen', len)
+      // if(this.add) {
+        this.setTepData(len)
+      // }
       this.validate(len, item)
     },
     change (value) {
       this.currentSelectOption = value
-      //在这里处理奖品 种类
-      this.category = value
+      if(value){
+        //在这里处理奖品 种类
+        this.category = value
+      }
     },
     change1 (value) {
       // 这里确定奖品的面额
@@ -351,20 +365,25 @@ export default {
     },
     addLottery () {
       // 先验证第一行数据是否填写完整
+      // this.add = true
       this.setlotteryData()
       let len = this.tep.length
-        if(this.tep[len-1]){
-          // console.log('hade', this.tep[i])
-          let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
-          this.ruleForm.prizeSettings.push(baseData)
-        }else{
-          console.log('未填写', this.tep[len-1])
-          this.setAlert(`请将奖项设置第${len}行填写完整`)
-        }
+      if(this.tep[len-1]){
+        console.log('impo', len)
+        let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
+        this.ruleForm.prizeSettings.push(baseData)
+        console.log('ruke', this.ruleForm.prizeSettings)
+      }else{
+        this.setAlert(`请将奖项设置第${len}行填写完整`)
+      }
     },
     deleteLottery (index){
+      if(index===0) {
+        return
+      }
       this.ruleForm.prizeSettings && this.ruleForm.prizeSettings.splice(index, 1)
       // 删除数据之后重新获取 tep的值
+      // this.add = false
       this.setlotteryData()
     },
     resetForm(formName) {
@@ -384,7 +403,6 @@ export default {
           }
         }
         // 判断日期填写是否正确
-        console.log('thie', this.ruleForm.startTime)
         if(this.ruleForm.startTime > this.ruleForm.expiredTime){
           this.setAlert(`开始时间不能大于结束时间`)
           return
@@ -396,21 +414,22 @@ export default {
       
         // ”奖项设置“ 验证，借助 this.tep的值
         // console.log('ruleForm', this.ruleForm)
-        // this.setlotteryData()
-        // let len = this.tep.length
-        // let changeData = this.ruleForm.prizeSettings
-        // let changeAll = 0
-        // for(let i=0; i<len ;i++){
-        //   if(!this.tep[i]){
-        //     this.setAlert(`奖项设置第${i+1}行未填写完整`)
-        //     return
-        //   }
-        //   changeAll += parseInt(changeData[i].weight)
-        // }
-        // if(changeAll!==100){  
-        //   this.setAlert(`中奖概率之和必须是100`)
-        //   return
-        // }
+        this.setlotteryData()
+        let len = this.tep.length
+        console.log('=====', len)
+        let changeData = this.ruleForm.prizeSettings
+        let changeAll = 0
+        for(let i=0; i<len ;i++){
+          if(!this.tep[i]){
+            this.setAlert(`奖项设置第${i+1}行未填写完整======`)
+            return
+          }
+          changeAll += parseInt(changeData[i].weight)
+        }
+        if(changeAll!==100){  
+          this.setAlert(`中奖概率之和必须是100`)
+          return
+        }
         //验证数据完毕，开始提交数据
         valid = true
         if(valid) {
@@ -432,17 +451,21 @@ export default {
           //处理时间区域数据
           this.ruleForm.startTime = this.ruleForm.startTime.getTime()
           this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
-          setTimeout(() => {
-          // this.showLoading = false
-            loading.close()
-           }, 500);
+          let data = {createInfo:this.ruleForm}
+          createActivity(data).then((res) =>{
+            this.showLoading = false
+          })
+          //数据提交之后 重置表单
+          // 跳转到客户审核页面
+          this.$router.push({ path: `/client-verify/`,})
+          // this.$refs.ruleForm.resetFields();
+          // this.resetForm(formName)
+          console.log('form', this.ruleForm)
+          // setTimeout(() => {
+          // // this.showLoading = false
+          //   loading.close()
+          //  }, 500);
         }
-        //数据提交之后 重置表单
-        // 跳转到客户审核页面
-        this.$router.push({ path: `/client-verify/`,})
-        // this.$refs.ruleForm.resetFields();
-        // this.resetForm(formName)
-        console.log('form', this.ruleForm)
       }
         // });
     // }
@@ -453,22 +476,16 @@ export default {
     if(this.currentItemFromRouter !== 'slyder'){
 
     let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
-    // console.log('初始化之前', this.ruleForm.prizeSettings)
-    // console.log('lotteryBaseLine', lotteryBaseLine)
     this.ruleForm.prizeSettings.push(baseData)
-    // console.log('初始化数据', this.ruleForm.prizeSettings)
       this.autoDefinie = true
     }else{
-
       this.ruleForm.prizeSettings.concat(slyderData)
       for(let i in slyderData){
         this.$set(this.ruleForm.prizeSettings, i , slyderData[i]);
       }
-
-      // console.log('test',this.ruleForm.prizeSettings )
-      // console.log('slyderData',slyderData )
       this.autoDefinie = false
     }
+    this.change('')
   },
   components:{
     // VDistpicker
@@ -483,7 +500,7 @@ export default {
 .slyder-first
   padding:20px 30px
   position:relative
-  height:800px
+  height:100%
 .slyder-first-wrapper
   // position :absolute
   // left:350px
@@ -572,6 +589,8 @@ export default {
   height:300px
   span
     vertical-align:top
+#six-table
+  min-width:610px
 #six-table tr
   height:40px
   line-height:40px

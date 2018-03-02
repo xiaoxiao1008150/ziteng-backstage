@@ -88,7 +88,7 @@
         <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
       </div>
       <div slot="body">
-        <div class="reject">确定通过吗？</div>
+        <div class="confirm">确定通过吗？</div>
         <div>
            <el-button @click="close">取消</el-button>
            <el-button type="primary" @click="activityPass" :loading="loading">确定</el-button>
@@ -101,7 +101,7 @@
         <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
       </div>
       <div slot="body">
-        <div class="reject">确定拒绝吗？</div>
+        <div class="confirm">确定拒绝吗？</div>
         <div>
            <el-button @click="close">取消</el-button>
            <el-button type="primary" @click="activityReject" :loading="loading">确定</el-button>

@@ -1,6 +1,16 @@
 import http from 'utils/axios'
 
-//  测试url x  先保存
+// 创建活动 192.168.31.241:9999/activityClient/createInfo?
+export function createActivity(data) {
+  return http({
+    url: `/activityClient/`,
+    method: 'post',
+    data
+  })
+}
+
+
+//  测试url   先保存
 export function fetchInfoList() {
   return http({
     url: `/user`,

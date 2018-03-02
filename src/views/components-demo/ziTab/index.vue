@@ -61,6 +61,7 @@ export default {
 <style lang="stylus" scoped>
 .zi-content
   background:#fff
+  min-height:610px
 // .zitab
 //   text-align:left
 //   position:relative

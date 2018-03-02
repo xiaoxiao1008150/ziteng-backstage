@@ -5,13 +5,18 @@ import { Message } from 'element-ui'
 
 // create an axios instance
 const service = axios.create({
-  // baseURL: 'http://192.168.31.241:9999/', // api的base_url
-  baseURL: 'http://5a73fdb161c2a40012894a49.mockapi.io', // api的base_url
-  timeout: 5000 // request timeout
-})
+  baseURL: 'http://192.168.31.241:8888', // api的base_url
+  timeout: 5000,// request timeout
+});
+
 
 // request interceptor
 service.interceptors.request.use(config => {
+  console.log('config', config)
+  config.data = JSON.stringify(config.data)
+  config.headers = {
+    'Content-Type':'application/x-www-form-urlencoded'
+  }
   // Do something before request is sent
   // if (store.getters.token) {
   //   config.headers['X-Token'] = getToken() // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
