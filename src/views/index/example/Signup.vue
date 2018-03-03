@@ -6,14 +6,14 @@
   </div>
   <div class="" slot="body">
     <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
-      <el-form-item label="企业名称" prop="name">
-        <el-input v-model="ruleForm.name" placeholder="请输入购买合同中的企业名称" auto-complete="off"></el-input>
+      <el-form-item label="企业名称" prop="contractName">
+        <el-input v-model="ruleForm.contractName" placeholder="请输入购买合同中的企业名称" auto-complete="off"></el-input>
       </el-form-item>
-       <el-form-item label="联系人" prop="contact">
-        <el-input v-model="ruleForm.contact" placeholder="请输入联系人" auto-complete="off"></el-input>
+       <el-form-item label="联系人" prop="contactName">
+        <el-input v-model="ruleForm.contactName" placeholder="请输入联系人" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="手机号码" prop="tel">
-        <el-input v-model="ruleForm.tel" placeholder="请输入手机号码" auto-complete="off"></el-input>
+      <el-form-item label="手机号码" prop="mobileNumber">
+        <el-input v-model="ruleForm.mobileNumber" placeholder="请输入手机号码" auto-complete="off"></el-input>
       </el-form-item>
        <el-form-item label="密码" prop="password">
         <el-input  type="password" v-model="ruleForm.password" placeholder="请输入密码" auto-complete="off"></el-input>
@@ -21,8 +21,8 @@
        <el-form-item label="确认密码" prop="confirmPassword">
         <el-input type="password" v-model="ruleForm.confirmPassword" placeholder="请确认密码" auto-complete="off"></el-input>
       </el-form-item>
-       <el-form-item label="验证码" prop="captcha">
-        <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
+       <el-form-item label="验证码" prop="verifyCode">
+        <el-input class="captcha" v-model="ruleForm.verifyCode" placeholder="请确认验证码"></el-input>
         <captcha @click.native="getCaptcha" :countDown="countDown" @stop="stop"></captcha>
         <!-- <button class="code-btn" @click="getCaptcha">发送验证码</button> -->
       </el-form-item>
@@ -44,6 +44,7 @@
   import Modal from 'components/Modal'
   import  Captcha from 'components/Captcha'
   import { createUser, getCaptcha } from 'api/user'
+  import qs from 'qs'
 
   export default {
     data() {
@@ -70,21 +71,21 @@
         countDown:false,
         captchaValue:null,
         ruleForm: {
-          name: '',
-          contact: '',
-          tel: '',
+          contractName: '',
+          contactName: '',
+          mobileNumber: '',
           password: '',
           confirmPassword: '',
-          captcha: '',
+          verifyCode: '',
         },
         rules: {
-          name: [
+          contractName: [
             { required: true, message: '请输入活动名称', trigger: 'blur' },
           ],
-          contact: [
+          contactName: [
             { required: true, message: '请输入联系人', trigger: 'blur' },
           ],
-          tel: [
+          mobileNumber: [
             { required: true, message: '请输入手机号码', trigger: 'blur' }
             // { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
           ],
@@ -94,7 +95,7 @@
           confirmPassword: [
             { required: true, validator: validatePass2, trigger: 'blur' }
           ],
-          captcha: [
+          verifyCode: [
             { required: true, message: '请输入验证码', trigger: 'blur' },
           ],
         }
@@ -120,16 +121,20 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             // console.log('valid', this.$refs[formName].model)
-            let data = this.$refs[formName].model
-            createUser(data).then((response) => {
-              // console.log('kk', response) response data是post的数据
-              this.$notify({
-                title: '成功',
-                message: '注册成功',
-                type: 'success',
-                duration: 2000
-              })
-              this.close()//这里注意顺序
+            let data = qs.stringify(this.ruleForm)
+            console.log('注册数据', data)
+            createUser(data).then((res) => {
+              console.log('kk', res)
+              let data = res.data
+              if(data.code === 'ok') {
+                this.$notify({
+                  title: '成功',
+                  message: '注册成功',
+                  type: 'success',
+                  duration: 2000
+                })
+                this.close()//这里注意顺序
+              }
             })
           } else {
             console.log('error submit!!');

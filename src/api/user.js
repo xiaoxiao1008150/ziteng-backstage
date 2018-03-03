@@ -5,10 +5,7 @@ import http from 'utils/axios'
 export function fetchUserList() {
   return http({
     url: '/marketing/userClient/getUserByStatus?_status=0',
-    method: 'post',
-    headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    method: 'post'
   })
 }
 // http://192.168.31.241:8888/marketing/userClient/getUserWithStatus
@@ -24,9 +21,8 @@ export function fetchAllUser() {
 //data{startTime=2012-10-22 00:00:00  status=0 expiredTime=2012-10-23 00:00:00  id=}
 export function userEdit(data) {
   return http({
-    url: '/marketing/userClient/editUser',
+    url: `/marketing/userClient/editUser?${data}`,
     method: 'post',
-    data
   })
 }
 
@@ -47,11 +43,11 @@ export function fetchUser(data) {
   })
 }
 
+// 用户注册
 export function createUser(data) {
   return http({
-    url: '/user',
+    url: `/marketing/userClient/createUser?${data}`,
     method: 'post',
-    data
   })
 }
 

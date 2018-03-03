@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+// import qs from "qs"
 // import store from '@/store'
 // import { getToken } from '@/utils/auth'
 
@@ -13,7 +14,9 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(config => {
   console.log('config', config)
-  config.data = JSON.stringify(config.data)
+  // config.data = qs.stringify(config.data)
+  // let data = qs.stringify(this.submitData)
+
   config.headers = {
     'Content-Type':'application/x-www-form-urlencoded'
   }
@@ -34,9 +37,9 @@ service.interceptors.response.use(
   error => {
     console.log('err' + error)// for debug
     Message({
-      message: error.message,
+      message: '请稍后尝试',
       type: 'error',
-      duration: 5 * 1000
+      duration: 2* 1000
     })
     return Promise.reject(error)
   })

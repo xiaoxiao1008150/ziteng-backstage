@@ -42,11 +42,6 @@
           <el-tab-pane label="限制条件" name="second" class="mytag">
               <div class="input-item">
                 <span>手机号地域</span>
-                <!-- <v-distpicker 
-                hide-area id="distpicker"
-                @province="selectProvince"
-                @city="selectCity"
-                ></v-distpicker> -->
                 <distpicker 
                 hide-area id="distpicker"
                 @province="selectProvince"
@@ -140,6 +135,7 @@ import Distpicker from 'components/Distpicker/src/Distpicker'
 import { mapGetters,mapMutations} from 'vuex'
 import Tab from 'components/Tab'
 import {  createActivity } from 'api/activity'
+ import qs from 'qs'
 
 
 
@@ -451,13 +447,24 @@ export default {
           //处理时间区域数据
           this.ruleForm.startTime = this.ruleForm.startTime.getTime()
           this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
-          let data = {createInfo:this.ruleForm}
+          // 将settings, prizeSettings 数组转化为字符串
+          // console.log('setting', JSON.stringify(this.ruleForm.settings))
+          this.ruleForm.settings = JSON.stringify(this.ruleForm.settings)
+          this.ruleForm.prizeSettings = JSON.stringify(this.ruleForm.prizeSettings)
+          let data = qs.stringify(this.ruleForm)
+          console.log('创建活动数据', data)
           createActivity(data).then((res) =>{
-            this.showLoading = false
+            let data = res.data
+            if(data.code==='ok'){
+              console.log('处理成功')
+            }else{
+              alert('请稍后处理')
+            }
+              loading.close()
           })
           //数据提交之后 重置表单
           // 跳转到客户审核页面
-          this.$router.push({ path: `/client-verify/`,})
+          // this.$router.push({ path: `/client-verify/`,})
           // this.$refs.ruleForm.resetFields();
           // this.resetForm(formName)
           console.log('form', this.ruleForm)

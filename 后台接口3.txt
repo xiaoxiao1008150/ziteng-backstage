@@ -28,7 +28,7 @@
 
 //手机号次数未验证********
 创建活动
-  url：192.168.31.241:9999/activityClient/createInfo?
+  url：http://192.168.31.241:8888/marketing/activityClient/createInfo?
   post：参数
     activityName=搞活动 //已换
     templateNo=123456

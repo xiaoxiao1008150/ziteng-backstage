@@ -3,7 +3,7 @@ import http from 'utils/axios'
 // 创建活动 192.168.31.241:9999/activityClient/createInfo?
 export function createActivity(data) {
   return http({
-    url: `/activityClient/`,
+    url: `/marketing/activityClient/createInfo?`,
     method: 'post',
     data
   })

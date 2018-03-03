@@ -8,7 +8,7 @@
       <el-tabs v-model="activeName" @tab-click="tabChange">
         <el-tab-pane label="待审核" name="first">
           <el-table  fit highlight-current-row
-             v-loading.body="listLoading" element-loading-text="拼命加载中"
+             v-loading="listLoading" element-loading-text="拼命加载中"
             :data="userList" style="width: 100%">
               <el-table-column align="center" width="180"
                 v-for="{ prop, label } in colConfigs"
@@ -35,7 +35,10 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="客户列表" name="second">
-          <el-table fit highlight-current-row :data="userListAll" style="width: 100%">
+          <el-table fit highlight-current-row
+          v-loading="listLoading" element-loading-text="拼命加载中"
+          :data="userListAll" 
+          style="width: 100%">
             <el-table-column align="center" width="180"
               v-for="{ prop, label } in colConfigs"
               :key="prop"
@@ -50,6 +53,9 @@
               :filters="filters"
               :filter-method="filterTag"
             >
+              <template slot-scope="scope">
+                {{changeStatus(scope.row.status)}}
+              </template>
             </el-table-column>
             <el-table-column label="操作" align="center" width="90">
               <template slot-scope="scope">
@@ -57,7 +63,7 @@
                   size="mini"
                   type="primary"
                   plain
-                  @click="startEdit(scope.row.id, scope.row.start_time,)"
+                  @click="startEdit(scope.row.id, scope.row.status,scope.row.start_time,)"
                   >编辑</el-button>
               </template>
             </el-table-column>
@@ -106,7 +112,11 @@
               </el-select>
             </el-form-item>
             <el-form-item label="有效期" prop="time">
-              <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm1.time" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date"
+               placeholder="选择日期" 
+               v-model="ruleForm1.time"
+               :picker-options="pickerBeginDateBefore" 
+               style="width: 100%;"></el-date-picker>
             </el-form-item>
             <el-button type="primary"  class="info-btn" :loading="loading" @click="submitEditForm('ruleForm1')">确定</el-button>
           </el-form>
@@ -130,6 +140,7 @@
 <script>
   import Modal from 'components/Modal'
   import { fetchUserList, userEdit, userReject ,fetchAllUser } from 'api/user'
+  import qs from 'qs'
 
   export default {
     data () {
@@ -200,19 +211,36 @@
     },
     methods:{
       fetchUserList () {
-        // this.listLoading = true
+        console.log('action')
+        this.listLoading = true
         fetchUserList().then((res) =>{
-          console.log('user', res)
           this.userList = res.data.list
-          // this.listLoading = false
+          this.listLoading = false
+        }).catch(()=>{
+          this.listLoading = false
         })
       },
       fetchUserList1 () {
+        this.loading = true
         fetchUserList().then((res) =>{
-          this.userList = res.list
+          this.userList = res.data.list
           this.loading = false
           this.tepHelp = true
           this.close()
+        }).catch(()=>{
+          this.loading = false
+        })
+      },
+      fetchAllUser1 () {
+        this.loading = true
+        fetchAllUser().then((res) =>{
+          let result = res.data
+          if(result.code==='ok'){
+            this.userListAll = result.list
+            this.loading = false
+          }
+        }).catch(()=>{
+          this.loading = false
         })
       },
       filterTag(value, row) {
@@ -222,10 +250,28 @@
         // item返回状态 commond，请求相关数据
         console.log('te', item)
       },
+      changeStatus (val) {
+        let result
+        switch(val)
+          {
+          case '1':
+            result = '正常'
+            break;
+          case '2':
+            result = '禁用'
+            break;
+          case '3':
+            result = '未通过'
+            break;
+          default:
+            result = ''
+          }
+          return result
+      },
       tabChange (tab) {
         // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，第一次切换到”客户列表“ 才需要重新拉取
         // 第一次拉取客户列表
-        if(this. tabHelp && tab.active && tab.name === 'second'){
+        if(this.tabHelp && tab.active && tab.name === 'second'){
           // this.fetchAllUser
           this.listLoading = true
           fetchAllUser().then((res) =>{
@@ -258,12 +304,16 @@
         // 处理拒绝逻辑,处理完逻辑设置dialogVisible false
         let data = this.currentId
         userReject(data).then((res) =>{
-          let result = res.data
-          if(res.code === 'ok'){
-            console.log('res', res.data)
+          console.log('拒绝',res)
+          let data = res.data
+          if(data.code === 'ok'){
             this.loading = false
             this.dialogVisible = false
-            alert('拒绝通过数据处理完成')
+            // 重新拉取数据
+            this.fetchUserList1()
+            this.close()
+          }else{
+            alert('请稍后处理')
           }
         })
         // setTimeout(()=>{
@@ -279,11 +329,14 @@
         this.edit = false
         this.dialogVisible = false
       },
-      startEdit (id, time) {
+      startEdit (id, status, time) {
         this.edit = true
         let startTime = new Date(time).getTime()
+        if(!time){
+          startTime = Date.now()
+        }
         this.submitData = {id,  startTime}
-        // console.log('%%%%', this.submitData)
+        console.log('%%%%', status)
       },
       setAlert(text) {
         this.$alert(text,'提示', {
@@ -305,27 +358,35 @@
         let time2= this.ruleForm.endTime.getTime()
         this.$set(this.submitData, 'startTime', time1)
         this.$set(this.submitData, 'expiredTime', time2)
-        console.log('ceshi ', this.submitData)
       },
       submitEditForm(formName) {
         this.$refs[formName].validate(valid => {
           if(valid) {
-            let stauts = this.ruleForm1.status
+            this.loading = true
+            let status = this.ruleForm1.status
             let expiredTime = this.ruleForm1.time.getTime()
             this.$set(this.submitData, 'expiredTime', expiredTime)
             this.$set(this.submitData, 'status', status)
-            console.log('编辑 ', this.submitData)
-            let data = this.submitData
+            // let data = this.submitData
+            console.log('编辑=== ', this.submitData)
+            let data = qs.stringify(this.submitData)
             userEdit(data).then((res) =>{
-              if(res.code === 'ok') {
+              let data = res.data
+              if(data.code === 'ok') {
                 alert('数据处理成功')
                 this.$refs[formName].resetFields();
+                // 重新拉取列表
+                this.fetchAllUser1()
                 this.close()
               }else{
                 alert('请稍后处理')
               }
               this.loading = false
             })
+          }else {
+            console.log('error submit!!')
+            this.loading = false
+            return false
           }
         })
       },
@@ -339,11 +400,16 @@
               // 提交数据 this.submitData
               // 处理数据步骤 1. 提交对单一客户操作的结果 userEdit
               // 2. 重新拉取最新的待审核列表 fetchUserList
-              let data = this.submitData
+              let data = qs.stringify(this.submitData)
+              // let data = this.submitData
+              console.log('待审核通过', data)
               userEdit(data).then((res) =>{
-                if(res.code === 'ok') {
-                  alert('数据处理成功')
+                console.log('测试res', res)
+                let data = res.data
+                if(data.code === 'ok') {
                   this.$refs[formName].resetFields();
+                  // 重新拉取待审核列表 此处不用table 加载图标，
+                  this.fetchUserList1()
                   this.close()
                 }else{
                   alert('请稍后处理')
@@ -357,6 +423,7 @@
             // }, 500)
           } else {
             console.log('error submit!!')
+            this.loading = false
             return false
           }
         })
