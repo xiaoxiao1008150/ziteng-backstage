@@ -1,5 +1,14 @@
 import http from 'utils/axios'
 
+// 获取模板数据
+export function getTemplates() {
+  return http({
+    url: `/marketing/templateClient/getTemplates`,
+    method: 'post',
+  })
+}
+
+
 // 创建活动 192.168.31.241:9999/activityClient/createInfo?
 export function createActivity(data) {
   return http({

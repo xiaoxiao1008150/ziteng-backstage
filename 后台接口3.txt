@@ -1,6 +1,6 @@
 
 获取模板数据列表
-  url：http://192.168.31.241:8888/marketing/activityClient/getTemplate
+  url： http://192.168.31.241:8888/marketing/templateClient/getTemplates
   返回格式：
   {
     "code": "ok",
@@ -56,7 +56,7 @@
     }
 }
 用户注册：短信
-  http://192.168.31.241:9999/sms/verifyCode
+  http://192.168.31.241:8888/marketing/sms/verifyCode
   post: 手机号码  mobileNumber
   返回 {
       “code”:”ok”,
@@ -64,7 +64,7 @@
     }
 
 用户注册：
-  http://192.168.31.241:9999/userClient/createUser
+  http://192.168.31.241:8888/marketing/userClient/createUser
   post: 企业名称  contractName
     联系人 contactName
     手机号码  mobileNumber

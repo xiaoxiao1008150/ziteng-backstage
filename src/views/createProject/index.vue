@@ -32,6 +32,7 @@
              <el-card>
               <div class="reco">
                 <img :src="'/static/create/' + item.type + '.jpg' " class="image">
+                <!-- <img :src="item.img" class="image"> -->
                 <img class="reco-img" src="/static/create/reco.png">
               </div>
               <div>
@@ -61,6 +62,8 @@ let levelData = ['抽奖活动', '签到活动','游戏活动']
 import Dialog from 'components/Dialog'
 import svgIcon from 'components/Icon'
 import { mapGetters,mapMutations } from 'vuex'
+import { getTemplates } from 'api/activity'
+
 
 export default {
   name: 'AppMain',
@@ -69,7 +72,8 @@ export default {
       showLoading:false,
       showModal:false,
       festivalData: festivalData,
-      levelData:levelData
+      levelData:levelData,
+      loadingObj:''
     }
   },
   computed: {
@@ -80,26 +84,68 @@ export default {
     ])
   },
   created () {
+    this.getTemplates()
   },
   methods: {
     ...mapMutations([
-      'setCurrentLottery', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+      'setCurrentLottery',
+      'initLotteryData' // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
     ]),
+//     let lotteryData = [
+//   {num:'01',text:'超级大转盘',type:'slyder'},
+//   {num:'02',text:'抽红包',type:'envelope'},
+//   {num:'03',text:'欢乐拼图',type:'jigsaw'},
+//   {num:'04',text:'开宝箱',type:'box'}
+// ]
+    changeTemplateData (arr) {
+      let result = []
+      arr.forEach((item,index) =>{
+        if(item.template_no === '123456') {
+          result[index] = {num:'01',text:'超级大转盘',type:'slyder',templateNo:item.template_no}
+        }else if(item.template_no === '234567'){
+          result[index] = {num:'02',text:'抽红包',type:'envelope',templateNo:item.template_no}
+        }
+      })
+      return result
+    },
+    getTemplates () {
+      // this.setLoading()
+      // getTemplates().then((res) =>{
+      //   let data = res.data
+      //   console.log('template', res)
+      //   if(data.code === 'ok') {
+      //     let result = this.changeTemplateData(data.list)
+      //     // this.lotteryData = result
+          // this.initLotteryData(result) 
+      //     this.loading.close()
+      //     console.log('test==', result)
+      //   }
+      // })
+    },
     openModel(item) {
       this.showModal = true
       this.setCurrentLottery(item)
     },
-    openFullScreen() {
-      // this.showLoading = true
-      const loading = this.$loading({
+    setLoading () {
+      this.loading = this.$loading({
         lock: true,
         text: '加载中',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       });
+    },
+    openFullScreen() {
+      // this.showLoading = true
+      this.setLoading()
+      // const loading = this.$loading({
+      //   lock: true,
+      //   text: '加载中',
+      //   spinner: 'el-icon-loading',
+      //   background: 'rgba(0, 0, 0, 0.7)'
+      // });
       setTimeout(() => {
         // this.showLoading = false
-        loading.close()
+        this.loading.close()
       }, 500);
     }
   },

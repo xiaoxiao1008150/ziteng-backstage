@@ -47,19 +47,7 @@ export const constantRouterMap = [
        { path: 'info/:id', component: _import('management/Info'), name: 'management', meta: { title: '用户参与详情' }},
     ]
   },
-  {
-    path: '/center',
-    component: Layout,
-    redirect: '/center/index',
-    // redirect: 'noredirect',
-    meta: {
-      title: '个人中心',
-      icon: 'user'
-    },
-    children:[
-       { path: 'index', component: _import('center/index'),meta: { title: '个人中心' }}
-    ]
-  },
+  
   {
     path: '/client-verify',
     component: Layout,
@@ -98,6 +86,19 @@ export const constantRouterMap = [
             roles: ['admin']
           }
       }
+    ]
+  },
+  {
+    path: '/center',
+    component: Layout,
+    redirect: '/center/index',
+    // redirect: 'noredirect',
+    meta: {
+      title: '个人中心',
+      icon: 'user'
+    },
+    children:[
+       { path: 'index', component: _import('center/index'),meta: { title: '个人中心' }}
     ]
   }
 ]

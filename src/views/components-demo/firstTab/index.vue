@@ -188,11 +188,12 @@ export default {
         },
       ruleForm: {
           activityName: '',
+          templateNo:'',
           startTime: '',
           expiredTime: '',
           activityRule:'',
           settings:[
-            {key:'areaCode', value:'0411,022'},
+            {key:'areaCode', value:''},
             {key:'takeNum', value:'1'},
             {key:'verifyCodeType', value:'IMAGE'},
           ],
@@ -274,8 +275,6 @@ export default {
       for(let i=0;i<len;i++) {
         this.tep[i] = false
       }
-      console.log('!!!!!!!', len)
-      console.log('test', this.tep.length)
     },
     validate (len,item) {
       for(let i=0;i<len;i++){
@@ -345,7 +344,10 @@ export default {
           result = '手机号次数'
           break;
         case 'activityRule':
-          result = '活动规则未填写'
+          result = '活动规则'
+          break;
+        case 'templateNo':
+          result = '模板编号'
           break;
         default:
           result = '暂无'
@@ -388,6 +390,11 @@ export default {
     },
     submitForm(formName) {
         let valid = false
+        console.log('===…… ', this.ruleForm)
+
+        this.ruleForm.templateNo = this.currentLotteryItem.templateNo
+        console.log('===', this.currentLotteryItem)
+        console.log('===………………………… ', this.ruleForm)
         // this.$refs[formName].validate((valid) => {
         let data = this.ruleForm
         //除”奖项设置“之外区域的验证
@@ -407,7 +414,6 @@ export default {
           this.setAlert('手机号区域未填写')
           return
         }
-      
         // ”奖项设置“ 验证，借助 this.tep的值
         // console.log('ruleForm', this.ruleForm)
         this.setlotteryData()
@@ -429,55 +435,64 @@ export default {
         //验证数据完毕，开始提交数据
         valid = true
         if(valid) {
-            const loading = this.$loading({
+            let loading = this.$loading({
               lock: true,
               text: '正在提交...',
               spinner: 'el-icon-loading',
               background: 'rgba(0, 0, 0, 0.7)'
-          });
+            });
             //处理城市选择区域数据
-          if(this.select.province .code && this.select.city){
-             this.resultSelect = this.select.province.code + ',' + this.select.city.code
-          }
-          if(this.select.province .code && !this.select.city){
-            let cityString = this.cityArr.join(',')
-            this.resultSelect = this.select.province.code + ',' + cityString
-          }
-          this.ruleForm.settings[0].value = this.resultSelect
-          //处理时间区域数据
-          this.ruleForm.startTime = this.ruleForm.startTime.getTime()
-          this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
-          // 将settings, prizeSettings 数组转化为字符串
-          // console.log('setting', JSON.stringify(this.ruleForm.settings))
-          this.ruleForm.settings = JSON.stringify(this.ruleForm.settings)
-          this.ruleForm.prizeSettings = JSON.stringify(this.ruleForm.prizeSettings)
-          let data = qs.stringify(this.ruleForm)
-          console.log('创建活动数据', data)
-          createActivity(data).then((res) =>{
-            let data = res.data
-            if(data.code==='ok'){
-              console.log('处理成功')
-            }else{
-              alert('请稍后处理')
+            if(this.select.province .code && this.select.city){
+               this.resultSelect = this.select.province.code + ',' + this.select.city.code
             }
+            if(this.select.province .code && !this.select.city){
+              let cityString = this.cityArr.join(',')
+              this.resultSelect = this.select.province.code + ',' + cityString
+            }
+            this.ruleForm.settings[0].value = this.resultSelect
+            //处理时间区域数据
+            this.ruleForm.startTime = this.ruleForm.startTime.getTime()
+            this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
+
+            // 将settings, prizeSettings 数组转化为字符串
+            this.ruleForm.settings = JSON.stringify(this.ruleForm.settings)
+            this.ruleForm.prizeSettings = JSON.stringify(this.ruleForm.prizeSettings)
+            // 处理模板标号 templateNo
+            let initdata = this.ruleForm
+            let data = qs.stringify(initdata)
+            console.log('创建活动数据form', this.ruleForm)
+            console.log('创建活动数据', data)
+            
+            // createActivity(data).then((res) =>{
+            //   let data = res.data
+            //   if(data.code==='ok'){
+            //     console.log('处理成功')
+            //     console.log('form', this.ruleForm)
+            //     this.$router.push({ path: `/management/`,})
+            //     this.resetForm(formName)
+            //   }else{
+            //     alert('请稍后处理')
+            //   }
+            //     loading.close()
+            // })
+            //数据提交之后 重置表单
+            // 跳转到客户审核页面
+            // this.$refs.ruleForm.resetFields();
+            // this.resetForm(formName)
+            var that = this
+            setTimeout(() => {
+              console.log('important', this.ruleForm)
+              that.resetForm(formName)
+
+            // this.showLoading = false
               loading.close()
-          })
-          //数据提交之后 重置表单
-          // 跳转到客户审核页面
-          // this.$router.push({ path: `/client-verify/`,})
-          // this.$refs.ruleForm.resetFields();
-          // this.resetForm(formName)
-          console.log('form', this.ruleForm)
-          // setTimeout(() => {
-          // // this.showLoading = false
-          //   loading.close()
-          //  }, 500);
+             }, 3000);
         }
       }
         // });
     // }
   },
-  created () {
+  activated () {
     let type = this.$route.meta.type
     this.currentItemFromRouter = type
     if(this.currentItemFromRouter !== 'slyder'){
@@ -493,6 +508,7 @@ export default {
       this.autoDefinie = false
     }
     this.change('')
+    console.log('kkkkkk', this.currentLotteryItem.templateNo)
   },
   components:{
     // VDistpicker
