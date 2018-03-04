@@ -303,9 +303,7 @@ export default {
     setlotteryData () {
       //获取最终“奖项设置”的行数
       let item = this.ruleForm.prizeSettings
-      console.log('item', item)
       let len = item.length
-      console.log('itemlen', len)
       // if(this.add) {
         this.setTepData(len)
       // }
@@ -367,10 +365,8 @@ export default {
       this.setlotteryData()
       let len = this.tep.length
       if(this.tep[len-1]){
-        console.log('impo', len)
         let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
         this.ruleForm.prizeSettings.push(baseData)
-        console.log('ruke', this.ruleForm.prizeSettings)
       }else{
         this.setAlert(`请将奖项设置第${len}行填写完整`)
       }
@@ -390,11 +386,8 @@ export default {
     },
     submitForm(formName) {
         let valid = false
-        console.log('===…… ', this.ruleForm)
 
         this.ruleForm.templateNo = this.currentLotteryItem.templateNo
-        console.log('===', this.currentLotteryItem)
-        console.log('===………………………… ', this.ruleForm)
         // this.$refs[formName].validate((valid) => {
         let data = this.ruleForm
         //除”奖项设置“之外区域的验证
@@ -418,7 +411,6 @@ export default {
         // console.log('ruleForm', this.ruleForm)
         this.setlotteryData()
         let len = this.tep.length
-        console.log('=====', len)
         let changeData = this.ruleForm.prizeSettings
         let changeAll = 0
         for(let i=0; i<len ;i++){
@@ -435,7 +427,7 @@ export default {
         //验证数据完毕，开始提交数据
         valid = true
         if(valid) {
-            let loading = this.$loading({
+            var loading = this.$loading({
               lock: true,
               text: '正在提交...',
               spinner: 'el-icon-loading',
@@ -455,13 +447,18 @@ export default {
             this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
 
             // 将settings, prizeSettings 数组转化为字符串
-            this.ruleForm.settings = JSON.stringify(this.ruleForm.settings)
-            this.ruleForm.prizeSettings = JSON.stringify(this.ruleForm.prizeSettings)
+            // this.ruleForm.settings = JSON.stringify(this.ruleForm.settings)
+            // this.ruleForm.prizeSettings = JSON.stringify(this.ruleForm.prizeSettings)
+            // let arr = this.ruleForm
+            const object = Object.assign({}, this.ruleForm);
+            object.settings = JSON.stringify(object.settings)
+            object.prizeSettings = JSON.stringify(object.prizeSettings)
             // 处理模板标号 templateNo
-            let initdata = this.ruleForm
-            let data = qs.stringify(initdata)
+            // let initdata = this.ruleForm
+            let data = qs.stringify(object)
+            // let data = qs.stringify(arr)
             console.log('创建活动数据form', this.ruleForm)
-            console.log('创建活动数据', data)
+            console.log('创建活动数据', object)
             
             // createActivity(data).then((res) =>{
             //   let data = res.data
@@ -482,8 +479,8 @@ export default {
             var that = this
             setTimeout(() => {
               console.log('important', this.ruleForm)
+              this.$router.push({ path: `/management/`,})
               that.resetForm(formName)
-
             // this.showLoading = false
               loading.close()
              }, 3000);
@@ -520,6 +517,7 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+
 .slyder-first
   padding:20px 30px
   position:relative

@@ -109,18 +109,20 @@ export default {
       return result
     },
     getTemplates () {
-      // this.setLoading()
-      // getTemplates().then((res) =>{
-      //   let data = res.data
-      //   console.log('template', res)
-      //   if(data.code === 'ok') {
-      //     let result = this.changeTemplateData(data.list)
-      //     // this.lotteryData = result
-          // this.initLotteryData(result) 
-      //     this.loading.close()
-      //     console.log('test==', result)
-      //   }
-      // })
+      this.setLoading()
+      getTemplates().then((res) =>{
+        let data = res.data
+        console.log('template', res)
+        if(data.code === 'ok') {
+          let result = this.changeTemplateData(data.list)
+          // this.lotteryData = result
+          // 将异步获取的数据 放到vuex全局
+          this.initLotteryData(result)
+          this.loading.close()
+        }
+      }).catch((res) =>{
+        this.loading.close()
+      })
     },
     openModel(item) {
       this.showModal = true
@@ -137,12 +139,6 @@ export default {
     openFullScreen() {
       // this.showLoading = true
       this.setLoading()
-      // const loading = this.$loading({
-      //   lock: true,
-      //   text: '加载中',
-      //   spinner: 'el-icon-loading',
-      //   background: 'rgba(0, 0, 0, 0.7)'
-      // });
       setTimeout(() => {
         // this.showLoading = false
         this.loading.close()

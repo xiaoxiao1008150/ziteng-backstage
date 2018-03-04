@@ -14,7 +14,7 @@
               <el-button style='margin-bottom:20px;' type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">导出excel</el-button>
             </div>
           </div>
-          <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit highlight-current-row height="450"
+          <el-table :data="list" v-loading="listLoading" element-loading-text="拼命加载中" border fit highlight-current-row height="450"
       >
             <el-table-column align="center" label='Id' width="95">
               <template slot-scope="scope">
@@ -89,6 +89,8 @@ export default {
         console.log('impi', response)
         this.list = response.data
         this.listLoading = false
+      }).catch(()=>{
+          this.listLoading = false
       })
     },
     handleDownload() {

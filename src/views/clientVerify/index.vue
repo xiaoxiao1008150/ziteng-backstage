@@ -169,7 +169,7 @@
           { prop: 'id', label: '账号有效期' },
         ],
         loading:false,
-        userList:[],
+        userList: [],
         userListAll: [],
         ruleForm: {
           startTime: '',
@@ -211,7 +211,6 @@
     },
     methods:{
       fetchUserList () {
-        console.log('action')
         this.listLoading = true
         fetchUserList().then((res) =>{
           this.userList = res.data.list
@@ -221,26 +220,26 @@
         })
       },
       fetchUserList1 () {
-        this.loading = true
+        // this.loading = true
         fetchUserList().then((res) =>{
           this.userList = res.data.list
-          this.loading = false
+          // this.loading = false
           this.tepHelp = true
           this.close()
         }).catch(()=>{
-          this.loading = false
+          // this.loading = false
         })
       },
       fetchAllUser1 () {
-        this.loading = true
+        // this.loading = true
         fetchAllUser().then((res) =>{
           let result = res.data
           if(result.code==='ok'){
             this.userListAll = result.list
-            this.loading = false
+            // this.loading = false
           }
         }).catch(()=>{
-          this.loading = false
+          // this.loading = false
         })
       },
       filterTag(value, row) {
@@ -280,7 +279,8 @@
               this.userListAll = result.list
               this.listLoading = false
             }
-              console.log('res', res)
+          }).catch(()=>{
+            this.listLoading = false
           })
           this.tabHelp = false
         }
@@ -288,7 +288,6 @@
       passVerify (id, status) {
         this.pass = true
         // 客户通过，待审核通过操作
-        console.log('id', id)
         this.submitData  = {id, status}
       },
       reject (id) {
@@ -296,7 +295,6 @@
         this.currentId = id
       },
       calcelConfirm () {
-        console.log('cancle')
         this.dialogVisible = false
       },
       rejectConfirm () {
@@ -304,17 +302,21 @@
         // 处理拒绝逻辑,处理完逻辑设置dialogVisible false
         let data = this.currentId
         userReject(data).then((res) =>{
-          console.log('拒绝',res)
           let data = res.data
           if(data.code === 'ok'){
             this.loading = false
-            this.dialogVisible = false
+            // this.dialogVisible = false
             // 重新拉取数据
             this.fetchUserList1()
             this.close()
           }else{
-            alert('请稍后处理')
+            alert('请稍后再尝试')
           }
+        }).catch(()=>{
+          console.log('kkk')
+          this.loading = false
+          // this.dialogVisible = false
+          this.close()
         })
         // setTimeout(()=>{
         //   this.loading = false
@@ -328,15 +330,21 @@
         this.pass = false
         this.edit = false
         this.dialogVisible = false
+        if(this.ruleForm.startTime && this.ruleForm.endTime) {
+          this.$refs.ruleForm.resetFields();
+        }
+        if(this.ruleForm1.status && this.ruleForm1.time){
+          this.$refs.ruleForm1.resetFields();
+        }
       },
       startEdit (id, status, time) {
         this.edit = true
         let startTime = new Date(time).getTime()
+        // 默认的startTime是现在
         if(!time){
           startTime = Date.now()
         }
         this.submitData = {id,  startTime}
-        console.log('%%%%', status)
       },
       setAlert(text) {
         this.$alert(text,'提示', {
@@ -382,7 +390,9 @@
                 alert('请稍后处理')
               }
               this.loading = false
-            })
+            }).catch((res) =>{
+                this.loading = false
+              })
           }else {
             console.log('error submit!!')
             this.loading = false
@@ -402,6 +412,7 @@
               // 2. 重新拉取最新的待审核列表 fetchUserList
               let data = qs.stringify(this.submitData)
               // let data = this.submitData
+              console.log('待审核通过form', this.submitData)
               console.log('待审核通过', data)
               userEdit(data).then((res) =>{
                 console.log('测试res', res)
@@ -414,6 +425,8 @@
                 }else{
                   alert('请稍后处理')
                 }
+                this.loading = false
+              }).catch((res) =>{
                 this.loading = false
               })
             //   setTimeout(()=> {

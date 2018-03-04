@@ -13,7 +13,7 @@
       <el-button type="primary" class="example-btn" @click="openModel">创建活动</el-button>
     </el-col>
   </el-row>
-  <!-- <modal v-if="showModal">
+<!--   <modal v-if="showModal">
     <div slot="body">
       <div class="close-tep"><span>请您先登录</span><span class="fr" @click="close">X</span></div>
     </div>
