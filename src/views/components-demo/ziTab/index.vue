@@ -1,16 +1,8 @@
 <template>
   <div class="zi-content">
-    <!-- <div class="zitab">
-      <div class="zitab-bar" :style="{ transform:transNum}"></div>
-      <div  class="zitab-item"
-      v-for="(item,index) in tabData" :key="index" 
-      :class="{ active: index===jsIndex}"
-      @click="tabChange(index)"
-      >{{item.label}}</div>
-    </div> -->
     <tab :tabData="tabData" @tabChange="setActiveName">
     </tab>
-    <slot><first-tab :activeName="activeName" :hasClickSave="hasClickSave"></first-tab></slot>
+    <first-tab :giveUpVisible="dialogVisible" :activeName="activeName" :hasClickSave="hasClickSave" @close="close"></first-tab>
   </div>
 </template>
 <script>
@@ -29,27 +21,25 @@ export default {
     hasClickSave: {
       type: Boolean,
       defautl: false
+    },
+    dialogVisible: {
+      type: Boolean,
+      defautl: false
     }
   },
   data() {
     return {
       activeName: 'first',
       tabData:tabData
-      // jsIndex:0,
-      // styleObject: {
-      //   transform: `translateX(85*${this.jsIndex}px)`
-      // }
     };
   },
-  // computed:{
-  //   transNum () {
-  //     return 'translateX(' + this.jsIndex * 85 + 'px)'
-  //   }
-  // },
   methods:{
     setActiveName (index) {
       // this.jsIndex= index
       this.activeName = this.tabData[index].name
+    },
+    close(){
+      this.$emit('close')
     }
   },
   components:{

@@ -7,10 +7,9 @@
         v-if="item.children && item.children.length>=1" >
         <router-link
         class="side-link"
-        @click.native="setIndex(index)"
+        @click="setIndex(index,item)"
         :class="{ active: index===jsIndex}"
-        router-link-active
-        :to="item.path+'/'+item.children[0].path" 
+        :to="item.path+'/'+item.children[0].path"
        >
           <svg-icon v-if="item.meta&&item.meta.icon" :icon-class="item.meta.icon"></svg-icon>
           <span v-if="item.meta && item.meta.title">{{item.meta.title}}</span>
@@ -20,7 +19,7 @@
   </div>
 </template>
 <script>
-
+import { mapGetters, mapMutations} from 'vuex'
 import svgIcon from 'components/Icon'
 export default {
   name: 'SidebarItem',
@@ -35,11 +34,35 @@ export default {
       type: Array
     }
   },
+  computed: {
+  // 使用对象展开运算符将 getter 混入 computed 对象中
+    ...mapGetters([
+      'isCreate',
+      'statusResult'
+    ])
+  },
   created () {
   },
   methods:{
-    setIndex(index){
+    ...mapMutations([
+      'getLotteryResult'
+    ]),
+
+    setIndex(index, item){
       this.jsIndex = index
+      // this.$router.push({path: item.path+'/'+item.children[0].path})
+
+      // setTimeout(() =>{
+      //   // 如果是正在创建活动，那么点击侧边栏的时候，应该先判断是否放弃正在的创建活动
+      //   if(this.statusResult) { // 已经放弃创建活动
+      //     console.log('路由执行')
+      //     // return
+      //   }else {
+      //     this.jsIndex = index
+      //     // :to="item.path+'/'+item.children[0].path" 
+      //     this.$router.push({path: item.path+'/'+item.children[0].path})
+      //   }
+      // },100)
     }
   },
   components:{

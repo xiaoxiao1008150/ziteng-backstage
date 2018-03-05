@@ -1,9 +1,10 @@
 <template>
   <section class="app-main">
     <transition name="fade" mode="out-in">
-      <keep-alive>
+      <keep-alive exclude="slyderAPP,envelope">
         <router-view></router-view>
       </keep-alive>
+      <!-- <router-view v-if="!$route.meta.keepAlive"></router-view> -->
     </transition>
   </section>
 </template>

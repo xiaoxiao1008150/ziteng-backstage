@@ -7,8 +7,10 @@
 <script>
 import ziHeader from '../ziHeader'
 import ziTab from '../ziTab'
+import { mapGetters,mapMutations} from 'vuex'
+
 export default {
-  name: 'slyder',
+  name: 'envelope',
   components:{
     ziHeader,
     ziTab

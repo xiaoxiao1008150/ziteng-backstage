@@ -308,6 +308,7 @@
             // this.dialogVisible = false
             // 重新拉取数据
             this.fetchUserList1()
+            this.tabHelp = true
             this.close()
           }else{
             alert('请稍后再尝试')
@@ -381,7 +382,7 @@
             userEdit(data).then((res) =>{
               let data = res.data
               if(data.code === 'ok') {
-                alert('数据处理成功')
+                // alert('数据处理成功')
                 this.$refs[formName].resetFields();
                 // 重新拉取列表
                 this.fetchAllUser1()

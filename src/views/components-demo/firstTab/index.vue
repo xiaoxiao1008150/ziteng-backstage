@@ -1,7 +1,5 @@
 <template>
   <div class="slyder-first">
-  <!-- <pre><code>{{select}}</code></pre> -->
-    <!-- <tab-img :data="textarea" :activeName="activeName"></tab-img> -->
     <div class="tab-img">
       <!-- <img :src=" '/static/images/slyder-' + activeName + '.jpg' "> -->
       <img :src=" '/static/images/' + currentItemFromRouter + '-' + activeName + '.png' ">
@@ -128,15 +126,28 @@
         </el-tabs>
       </el-form>
     </div>
+    <modal v-if="giveUpVisible">
+       <div slot="header">
+        <span class="fl">提示</span>
+        <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
+      </div>
+      <div slot="body">
+        <div class="confirm">确定放弃创建表格吗？</div>
+        <div>
+           <el-button @click="calcelConfirm">取消</el-button>
+           <el-button type="primary" @click="confirmGiveUp">确定</el-button>
+        </div>
+      </div>
+    </modal>
   </div>
 </template>
 <script>
 import Distpicker from 'components/Distpicker/src/Distpicker'
 import { mapGetters,mapMutations} from 'vuex'
 import Tab from 'components/Tab'
+import Modal from 'components/Modal'
 import {  createActivity } from 'api/activity'
- import qs from 'qs'
-
+import qs from 'qs'
 
 
 let tableData = {
@@ -148,8 +159,6 @@ let tableData = {
   }
 }
 let slyderData = [
-            // {name:'奖项一',category:'',price:'',price:'',weight:'',value:''},新
-            // {name:'奖项一',category:'',price:'',number:'',change:'',value:''},旧
             {name:'奖项一',category:'',price:'',number:'',weight:'',value:''},
             {name:'奖项二',category:'',price:'',number:'',weight:'',value:''},
             {name:'奖项三',category:'',price:'',number:'',weight:'',value:''},
@@ -158,14 +167,17 @@ let slyderData = [
             {name:'谢谢参与',category:'',price:'',number:'',weight:'',value:''}
           ]
 let lotteryBaseLine =  {name:'',category:'',price:'',number:'',weight:'',value:''}
-            // {name:'奖项一',category:'',price:'',price:'',weight:'',value:''},
 
 export default {
-  name: '',
+  // name: 'slyderAPP',
   props:{
     activeName:{
       type:String,
       default:'first'
+    },
+    giveUpVisible:{
+      type:Boolean,
+      default:false
     }
   },
   data() {
@@ -212,7 +224,8 @@ export default {
       cityArr:[],
       resultSelect:'',
       autoDefinie: false,
-      currentItemFromRouter:''
+      currentItemFromRouter:'',
+      dialogVisible: false,
     }
   },
   watch: {
@@ -228,13 +241,37 @@ export default {
   // 使用对象展开运算符将 getter 混入 computed 对象中
     ...mapGetters([
       'currentLotteryItem',
-      'hasClickSave'
+      'hasClickSave',
+      'isCreate',
+      'preparePath'
     ])
   },
+
   methods:{
     ...mapMutations([
       'setClickSave', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+      'setLotteryStatus'
     ]),
+    close () {
+      // this.dialogVisible = false
+      this.$emit('close')
+    },
+    calcelConfirm () {
+      this.close()
+    },
+    confirmGiveUp () {
+      let url = this.preparePath
+      if(url) {
+        this.setLotteryStatus(true)
+        setTimeout(()=>{
+          this.close()
+          // 在这里重置表单
+          // this.resetForm('ruleForm')
+          this.$router.push({path:url})
+        },1000)
+      }
+      this.close()
+    },
     selectProvince(value) {
       this.select.province = value
     },
@@ -377,14 +414,14 @@ export default {
       }
       this.ruleForm.prizeSettings && this.ruleForm.prizeSettings.splice(index, 1)
       // 删除数据之后重新获取 tep的值
-      // this.add = false
       this.setlotteryData()
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
-      Object.assign(this[formName], this.$options.data()[formName])
+      // Object.assign(this[formName], this.$options.data()[formName])
     },
     submitForm(formName) {
+        console.log('^^^^^^', this.ruleForm)
         let valid = false
 
         this.ruleForm.templateNo = this.currentLotteryItem.templateNo
@@ -420,14 +457,14 @@ export default {
           }
           changeAll += parseInt(changeData[i].weight)
         }
-        if(changeAll!==100){  
+        if(changeAll!==100){
           this.setAlert(`中奖概率之和必须是100`)
           return
         }
         //验证数据完毕，开始提交数据
         valid = true
         if(valid) {
-            var loading = this.$loading({
+            this.loading = this.$loading({
               lock: true,
               text: '正在提交...',
               spinner: 'el-icon-loading',
@@ -447,9 +484,6 @@ export default {
             this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
 
             // 将settings, prizeSettings 数组转化为字符串
-            // this.ruleForm.settings = JSON.stringify(this.ruleForm.settings)
-            // this.ruleForm.prizeSettings = JSON.stringify(this.ruleForm.prizeSettings)
-            // let arr = this.ruleForm
             const object = Object.assign({}, this.ruleForm);
             object.settings = JSON.stringify(object.settings)
             object.prizeSettings = JSON.stringify(object.prizeSettings)
@@ -457,16 +491,15 @@ export default {
             // let initdata = this.ruleForm
             let data = qs.stringify(object)
             // let data = qs.stringify(arr)
-            console.log('创建活动数据form', this.ruleForm)
+            // console.log('创建活动数据form', this.ruleForm)
             console.log('创建活动数据', object)
-            
             // createActivity(data).then((res) =>{
             //   let data = res.data
+            //   console.log('处理结果',res)
             //   if(data.code==='ok'){
-            //     console.log('处理成功')
             //     console.log('form', this.ruleForm)
-            //     this.$router.push({ path: `/management/`,})
             //     this.resetForm(formName)
+            //     this.$router.push({ path: `/management/`,})
             //   }else{
             //     alert('请稍后处理')
             //   }
@@ -479,21 +512,21 @@ export default {
             var that = this
             setTimeout(() => {
               console.log('important', this.ruleForm)
-              this.$router.push({ path: `/management/`,})
-              that.resetForm(formName)
+              // this.$router.push({ path: `/management/`,})
+              // that.resetForm(formName)
             // this.showLoading = false
-              loading.close()
+              that.loading.close()
              }, 3000);
         }
       }
         // });
     // }
   },
-  activated () {
+  created () {
+    console.log('hh',this.ruleForm)
     let type = this.$route.meta.type
     this.currentItemFromRouter = type
     if(this.currentItemFromRouter !== 'slyder'){
-
     let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
     this.ruleForm.prizeSettings.push(baseData)
       this.autoDefinie = true
@@ -505,14 +538,13 @@ export default {
       this.autoDefinie = false
     }
     this.change('')
+    // this.setLotteryStatus(true)
     console.log('kkkkkk', this.currentLotteryItem.templateNo)
   },
   components:{
-    // VDistpicker
     Distpicker,
-    Tab
-    // Date,
-    // markdownEditor
+    Tab,
+    Modal
   }
 }
 </script>
@@ -666,18 +698,9 @@ export default {
     top:163px
     height:144px
     width:144px
-    // background:rgba(0,0,0,0.5)
     z-index:1000
     ul > li > span
       font-size:16px
-    // ul
-    //   position: absolute;
-    //   left: 0px;
-    //   top: 0px;
-    //   right: 0px;
-    //   bottom: 0px;
-    //   list-style: none;
-    //   text-align: center;
     ul > li
       position: absolute;
       top: 0px;
