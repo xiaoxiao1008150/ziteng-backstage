@@ -50,19 +50,6 @@ export default {
 
     setIndex(index, item){
       this.jsIndex = index
-      // this.$router.push({path: item.path+'/'+item.children[0].path})
-
-      // setTimeout(() =>{
-      //   // 如果是正在创建活动，那么点击侧边栏的时候，应该先判断是否放弃正在的创建活动
-      //   if(this.statusResult) { // 已经放弃创建活动
-      //     console.log('路由执行')
-      //     // return
-      //   }else {
-      //     this.jsIndex = index
-      //     // :to="item.path+'/'+item.children[0].path" 
-      //     this.$router.push({path: item.path+'/'+item.children[0].path})
-      //   }
-      // },100)
     }
   },
   components:{
