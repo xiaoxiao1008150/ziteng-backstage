@@ -8,6 +8,7 @@
     <div class="verify-content" style="padding:30px 5%">
       <el-table
         fit highlight-current-row
+        v-loading="listLoading" element-loading-text="拼命加载中"
         :data="tableData"
         style="width: 100%">
         <el-table-column
@@ -45,6 +46,7 @@
               size="mini"
               type="success"
               plain
+              @click="publishTtn"
               >发布</el-button>
             <el-button
               size="mini"
@@ -57,47 +59,20 @@
           </template>
         </el-table-column>
       </el-table>
-          <!-- <table class="verify-table" style="margin:0">
-               <tr>
-                 <th>活动名称</th>
-                 <th>活动时间</th>
-                 <th>
-                    <el-dropdown @command="handleCommand">
-                    <span class="el-dropdown-link">
-                      全部状态<i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item
-                        v-for="(item,index) in options"
-                        :key="index"
-                        :command="item.value">{{item.value}}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                    <el-select id="verity-select" v-model="value" placeholder="请选择">
-                      <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                  </th>
-                 <th>用户参与详情</th>
-                 <th>操作</th>
-               </tr>
-              <tr>
-                <td>大转盘抽奖</td>
-                <td><div class="time">2018-01-10 09：00：00</div><div class="time">2018-01-10 09：00：00</div></td>
-                <td>进行中</td>
-                <td @click="goToInfo" class="verify-aciton">查看</td>
-                <td>
-                  <span class="verify-aciton verify-aciton-publish">发布</span>
-                  <span class="verify-aciton verify-aciton-eidt">编辑</span>
-                  <span class="verify-aciton verify-aciton-preview" @click="openDialog">预览</span>
-                  </td>
-              </tr>
-          </table> -->
     </div>
+    <modal v-if="isPublish">
+       <div slot="header">
+        <span class="fl">提示</span>
+        <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
+      </div>
+      <div slot="body">
+        <div class="confirm">确定发布吗？</div>
+        <div>
+           <el-button @click="close">取消</el-button>
+           <el-button type="primary" @click="publish" :loading="loading">确定</el-button>
+        </div>
+      </div>
+    </modal>
     <zi-dialog
       :imgUrl=num
       :title=title
@@ -111,6 +86,7 @@
 <script>
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
+  import { activityManageList,activityPublish } from 'api/manage_activity'
 
   export default {
     data () {
@@ -129,11 +105,34 @@
         title:'超级大转盘',
         num:'01',
         hasCreated:true,
-        filters: [{text: '未发布',value: '未发布'}, {text: '审核中',value: '审核中'}, {text: '未开始',value: '未开始'},{text: '已激活',value: '已激活'},{text: '禁用',value: '禁用'},{text: '未通过',value: '未通过'},{text: '已结束',value: '已结束'},{text: '已关闭',value: '已关闭'}],
+        filters: [{text: '未发布',value: '未发布'}, {text: '审核中',value: '审核中'}, {text: '未开始',value: '未开始'},{text: '未通过',value: '未通过'}],
         value: '',
+        listLoading:false,
+        loading:false,
+        isPublish:false
       }
     },
     methods:{
+      activityManageList () {
+        this.listLoading = true
+        activityManageList().then((res) =>{
+          this.userList = res.data.list
+          this.listLoading = false
+        }).catch(()=>{
+          this.listLoading = false
+        })
+      },
+      //按钮加载的时候
+      activityManageList1 () {
+        fetchUserList().then((res) =>{
+          this.userList = res.data.list
+          this.tepHelp = true
+          this.close()
+        })
+      },
+      close(){
+        this.isPublish = false
+      },
       openDialog () {
         this.showModal = true
       },
@@ -145,7 +144,30 @@
       },
       filterTag(value, row) {
         return row.status === value;
-      }
+      },
+      publishTtn () {
+        this.isPublish = true
+      },
+      publish () {
+        this.loading = true
+        activityPublish().then((res) =>{
+          let data = res.data
+          if(data.code === 'ok') {
+            // 重新拉取待审核列表 此处不用table 加载图标，
+            this.activityManageList1()
+            this.close()
+          }else{
+            this.$message({
+              message: '请稍后尝试',
+              type: 'error',
+              duration: 2* 1000
+            });
+          }
+          this.loading = false
+        }).catch(()=>{
+          this.loading = false
+        })
+      },
       // passVerify () {
       //   console.log('passVerify')
       //   this.pass = true
@@ -158,6 +180,11 @@
       //   this.edit = true
       // }
     },
+    created () {
+      console.log('是否执行')
+      // 获取活动审核 待审核列表
+      // this.activityManageList()
+    },
     components:{
       // Date,
       Modal,
@@ -167,37 +194,4 @@
 </script>
 <style lang="stylus" scoped>
 @import "~common/stylus/modal"
-// @import "~common/stylus/table"
-
-// .verify-header
-//   text-align:left
-//   height:60px
-//   line-height:60px
-// .verify-content
-//   background:#fff
-//   padding:30px 5%;
-// .verify-table
-//   font-size:13px
-//   // margin:30px 5%;
-//   width:90%
-//   tr:first-child
-//     border-bottom:1px solid #ccc
-//   tr
-//     height:40px
-//   td
-//     padding:8px 10px
-//     vertical-align :middle
-//   .verify-aciton
-//     display:inline-block
-//     width:40px
-//     cursor :pointer
-//   .verify-aciton-pass
-//     color:#24b9f3
-//   .verify-aciton-reject
-//     color:red
-//   .time
-//     height:20px
-// #edit-select
-//   width:250px
-//   vertical-align :middle
 </style>

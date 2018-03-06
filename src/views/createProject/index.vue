@@ -28,7 +28,7 @@
       <span>活动推荐</span></div>
       <div class="re-classify">
         <el-row :gutter="20">
-          <el-col class="test" :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}" v-for="(item, index) in lotteryData" :key="index">
+          <el-col class="margin-col" :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}" v-for="(item, index) in lotteryData" :key="index">
              <el-card>
               <div class="reco">
                 <img :src="'/static/create/' + item.type + '.jpg' " class="image">
@@ -63,6 +63,7 @@ import Dialog from 'components/Dialog'
 import svgIcon from 'components/Icon'
 import { mapGetters,mapMutations } from 'vuex'
 import { getTemplates } from 'api/activity'
+
 
 
 export default {
@@ -231,7 +232,8 @@ export default {
     width:40px
     top:-10px
     right:-10px
-.test
+.margin-col
   max-width:280px
+  margin-bottom:20px
 </style>
 

@@ -275,11 +275,20 @@
           this.listLoading = true
           fetchAllUser().then((res) =>{
             let result = res.data
+            console.log('res', res)
             if(result.code==='ok'){
               this.userListAll = result.list
               this.listLoading = false
+            }else{
+              this.$message({
+                message: '请稍后尝试',
+                type: 'error',
+                duration: 2* 1000
+              });
+              this.listLoading = false
             }
           }).catch(()=>{
+            console.log('shibai')
             this.listLoading = false
           })
           this.tabHelp = false
@@ -311,7 +320,11 @@
             this.tabHelp = true
             this.close()
           }else{
-            alert('请稍后再尝试')
+            this.$message({
+              message: '请稍后尝试',
+              type: 'error',
+              duration: 2* 1000
+            });
           }
         }).catch(()=>{
           console.log('kkk')
@@ -388,7 +401,11 @@
                 this.fetchAllUser1()
                 this.close()
               }else{
-                alert('请稍后处理')
+                this.$message({
+                  error: '请稍后尝试',
+                  type: 'error',
+                  duration: 2* 1000
+                });
               }
               this.loading = false
             }).catch((res) =>{
@@ -422,6 +439,8 @@
                   this.$refs[formName].resetFields();
                   // 重新拉取待审核列表 此处不用table 加载图标，
                   this.fetchUserList1()
+                  // 开启 客户列表拉取数据 开关
+                  this.tabHelp = true
                   this.close()
                 }else{
                   alert('请稍后处理')
@@ -443,7 +462,7 @@
         })
       }
     },
-    created () {
+    activated () {
       this.fetchUserList()
     },
     components:{
@@ -453,35 +472,4 @@
 </script>
 <style lang="stylus" scoped>
 @import "~common/stylus/modal"
-// @import "~common/stylus/table"
-// .verify-header
-//   text-align:left
-//   height:60px
-//   line-height:60px
-// .verify-content
-//   background:#fff
-// .verify-table
-//   font-size:13px
-//   margin:30px 5%;
-//   width:90%
-//   tr:first-child
-//     border-bottom:1px solid #ccc
-//   tr
-//     height:40px
-//   td
-//     padding:8px 10px
-//     vertical-align :middle
-//   .verify-aciton
-//     display:inline-block
-//     width:40px
-//     cursor :pointer
-//   .verify-aciton-pass
-//     color:#24b9f3
-//   .verify-aciton-reject
-//     color:red
-//   .time
-//     height:20px
-// #edit-select
-//   width:250px
-//   vertical-align :middle
 </style>

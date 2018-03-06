@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { fetchInfoList } from 'api/activity'
+import { fetchInfoList } from 'api/manage_activity'
 // import { parseTime } from '@/utils'
 
 export default {

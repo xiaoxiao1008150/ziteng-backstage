@@ -423,8 +423,12 @@ export default {
     submitForm(formName) {
         console.log('^^^^^^', this.ruleForm)
         let valid = false
-
-        this.ruleForm.templateNo = this.currentLotteryItem.templateNo
+        // 用路由获取templateNo  vuex获取会随着页面刷新而变化
+        let templateNo = this.$route.params.no
+        if(templateNo) {
+           this.ruleForm.templateNo = templateNo
+        }
+        // this.ruleForm.templateNo = this.currentLotteryItem.templateNo
         // this.$refs[formName].validate((valid) => {
         let data = this.ruleForm
         //除”奖项设置“之外区域的验证
@@ -523,7 +527,6 @@ export default {
     // }
   },
   created () {
-    console.log('hh',this.ruleForm)
     let type = this.$route.meta.type
     this.currentItemFromRouter = type
     if(this.currentItemFromRouter !== 'slyder'){
@@ -538,8 +541,6 @@ export default {
       this.autoDefinie = false
     }
     this.change('')
-    // this.setLotteryStatus(true)
-    console.log('kkkkkk', this.currentLotteryItem.templateNo)
   },
   components:{
     Distpicker,
@@ -549,16 +550,13 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-
+.confirm
+  padding:5px 0 25px
 .slyder-first
   padding:20px 30px
   position:relative
   height:100%
 .slyder-first-wrapper
-  // position :absolute
-  // left:350px
-  // top:30px
-  // bottom:0
   margin: 30px 0 0 350px;
 .slyder-form
   text-align :center

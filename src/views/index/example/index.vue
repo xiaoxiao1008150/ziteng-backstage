@@ -10,7 +10,7 @@
           <span class="dot">.</span>
         </div>
       </el-card>
-      <el-button type="primary" class="example-btn" @click="openModel">创建活动</el-button>
+      <el-button type="primary" class="example-btn" @click="openModel(item)">创建活动</el-button>
     </el-col>
   </el-row>
 <!--   <modal v-if="showModal">
@@ -31,7 +31,7 @@
 <script>
 import Dialog from 'components/Dialog'
 import Modal from 'components/Modal'
-import { mapGetters} from 'vuex'
+import { mapGetters, mapMutations} from 'vuex'
 
 export default {
   name: 'example',
@@ -41,8 +41,12 @@ export default {
     }
   },
    methods: {
-    openModel () {
+    ...mapMutations([
+      'setCurrentLottery'
+    ]),
+    openModel (item) {
       this.showModal = true
+      this.setCurrentLottery(item)
     },
     close () {
       this.showModal = false

@@ -13,8 +13,12 @@
         <div class="qrcode-wrapper">
           <div class="index-title">活动名称：{{currentLotteryItem.text}}</div>
           <div class="qrcode">
-            <div id="qrcode" ref="qrcode"></div>
-            <img class="qrcode-img" src="/static/images/qrcode.jpg">
+            <!-- <div id="qrcode" ref="qrcode"></div> -->
+            <qrcode 
+                  value="http://www.baidu.com" 
+                  :options="{ size: 130 }">
+            </qrcode>
+            <!-- <img class="qrcode-img" src="/static/images/qrcode.jpg"> -->
             <div class="qrcode-text">微信扫一扫体验活动</div>
           </div>
           <div v-if="!hasCreated">
@@ -41,6 +45,8 @@
 <script>
   import Modal from '../Modal'
   import { mapGetters} from 'vuex'
+  import Qrcode from '@xkeshi/vue-qrcode';
+
   // import { mapGetters,mapMutations} from 'vuex'
   // import VueClipboard from 'vue-clipboard2'
 
@@ -53,6 +59,8 @@
     },
     data () {
       return {
+        //通过设置不同的数据，返回不同的二维码,最好是通过 lottery 的当前模板对象获取网址
+        qrcode:{val: "https://github.com",size: 130}, 
         disabled:true,
         url:'http://www.ziteng.com',
         styleObject:{
@@ -112,8 +120,9 @@
           this.$emit('close')
           // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
           let name = this.currentLotteryItem.type
+          let templateNo = this.currentLotteryItem.templateNo
           if(name){
-            this.$router.push({ path: `/create-project/${name}`,})
+            this.$router.push({ path: `/create-project/${name}/${templateNo}`,})
           }
         // }
       }
@@ -131,7 +140,8 @@
       // new QRCode(el, 'your content');
     },
     components:{
-      Modal
+      Modal,
+      qrcode: Qrcode
     }
   }
 </script>

@@ -8,7 +8,7 @@
       <el-tabs v-model="activeName" @tab-click="tabChange">
         <el-tab-pane label="待审核" name="first">
           <el-table fit highlight-current-row 
-          v-loading.body="listLoading" element-loading-text="拼命加载中"
+          v-loading="listLoading" element-loading-text="拼命加载中"
           :data="vertifyData" style="width: 100%">
               <el-table-column align="center"
                 v-for="{ prop, label, width } in colConfigs"
@@ -41,7 +41,9 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="客户列表" name="second">
-          <el-table fit highlight-current-row :data="vertifyData" style="width: 100%">
+          <el-table fit highlight-current-row
+          v-loading="listLoading" element-loading-text="拼命加载中" 
+          :data="vertifyData" style="width: 100%">
             <el-table-column align="center"
                 v-for="{ prop, label, width } in colConfigs"
                 :key="prop"
@@ -108,15 +110,6 @@
         </div>
       </div>
     </modal>
-
-    <!-- <zi-dialog
-      :imgUrl=num
-      :title=title
-      :hasCreated=hasCreated
-      v-if="showModal"
-      @close="showModal = false" 
-      >
-      </zi-dialog> -->
   </div>
 </template>
 <script>
@@ -124,7 +117,7 @@
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
   import { mapGetters,mapMutations } from 'vuex'
-  import { fetchActivityList,fetchActivityByStatus } from 'api/activity'
+  import { fetchVerfityList,fetchActivityListAll, activityPassVerfity,activityReject} from 'api/activity'
 
 
   export default {
@@ -190,28 +183,23 @@
       ...mapMutations([
         'setCurrentLottery', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
       ]),
-      //  fetchActivityList () {
-      //   this.listLoading = true
-      //   fetchActivityList().then((res) =>{
-      //     let this.userList = res.list
-      //       this.listLoading = false
-      //   })
-      // },
-      //  fetchActivityByStatus () {
-      //   this.listLoading = true
-      //   fetchActivityByStatus().then((res) =>{
-      //     let this.userList = res.list
-      //       this.listLoading = false
-      //   })
-      // },
-      //  fetchActivityByStatus1 () {
-      //   fetchActivityByStatus().then((res) =>{
-      //     let this.userList = res.list
-              // this.loading = false
-              // this.close()
-              // this.tepHelp = true 启动请求客户列表时候重新拉取数据的key
-      //   })
-      // },
+      fetchVerfityList () {
+        this.listLoading = true
+        fetchVerfityList().then((res) =>{
+          this.userList = res.data.list
+          this.listLoading = false
+        }).catch(()=>{
+          this.listLoading = false
+        })
+      },
+      //按钮加载的时候
+      fetchVerfityList1 () {
+        fetchUserList().then((res) =>{
+          this.userList = res.data.list
+          this.tepHelp = true
+          this.close()
+        })
+      },
       handleCommand(command) {
         this.$message('click on item ' + command);
       },
@@ -236,31 +224,90 @@
         return row.status === value;
       },
       tabChange (tab) {
-        // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，/ 第一次切换到”客户列表“ 才需要重新拉取
+        // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，第一次切换到”客户列表“ 才需要重新拉取
         // 第一次拉取客户列表
         if(this.tabHelp && tab.active && tab.name === 'second'){
-          // 获取所有客户的活动列表 this.fetchActivityList()
+          // this.fetchAllUser
+          this.listLoading = true
+          fetchActivityListAll().then((res) =>{
+            let result = res.data
+            if(result.code==='ok'){
+              this.userListAll = result.list
+              this.listLoading = false
+            }
+          }).catch(()=>{
+            this.listLoading = false
+          })
           this.tabHelp = false
         }
+        // // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，/ 第一次切换到”客户列表“ 才需要重新拉取
+        // // 第一次拉取客户列表
+        // if(this.tabHelp && tab.active && tab.name === 'second'){
+        //   // 获取所有客户的活动列表 this.fetchActivityList()
+        //   this.tabHelp = false
+        // }
       },
       activityPass () {
         // 数据处理 1. 提交处理的待审核客户操作结果:取消不处理， 确定改变状态
-        //  跳转到活动列表(保留可以不跳转)
         this.loading = true
-        setTimeout(()=>{
-          // 重新拉取活动审核 待审核列表数据 this.fetchActivityByStatus1
-          // this.fetchActivityByStatus1()
-          // this.loading = false
-          // this.close()
-          // this.activeName = 'second'
-        },1000)
+        //传递相关数据 根据 接口
+        let data = qs.stringify()
+        activityPassVerfity(data).then((res) =>{
+          let data = res.data
+          if(data.code === 'ok') {
+            // 重新拉取待审核列表 此处不用table 加载图标，
+            this.fetchVerfityList1()
+            this.tabHelp = true
+            this.close()
+          }else{
+            this.$message({
+              message: '请稍后尝试',
+              type: 'error',
+              duration: 2* 1000
+            });
+          }
+          this.loading = false
+        }).catch((res) =>{
+          this.loading = false
+        })
+        // setTimeout(()=>{
+        //   // 重新拉取活动审核 待审核列表数据 this.fetchActivityByStatus1
+        //   // this.fetchActivityByStatus1()
+        //   // this.loading = false
+        //   // this.close()
+        //   // this.activeName = 'second'
+        // },1000)
       },
       activityReject () {
         this.loading = true
-        setTimeout(()=>{
-          this.close()
+        // 处理拒绝逻辑 data 根据接口传数据
+        let data = this.currentId
+        activityReject(data).then((res) =>{
+          let data = res.data
+          if(data.code === 'ok'){
+            this.loading = false
+            // this.dialogVisible = false
+            // 重新拉取数据
+            this.fetchVerfityList1()
+            this.tabHelp = true
+            this.close()
+          }else{
+            this.$message({
+              message: '请稍后尝试',
+              type: 'error',
+              duration: 2* 1000
+            });
+          }
+        }).catch(()=>{
+          console.log('kkk')
           this.loading = false
-        },1000)
+          // this.dialogVisible = false
+          this.close()
+        })
+        // setTimeout(()=>{
+        //   this.close()
+        //   this.loading = false
+        // },1000)
       },
       close () {
         this.pass = false
@@ -273,9 +320,9 @@
         this.reject = true
       },
     },
-    created () {
+    activated () {
       // 获取活动审核 待审核列表
-      // this.fetchActivityByStatus()
+      // this.fetchVerfityList()
     },
     components:{
       Modal,
