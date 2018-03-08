@@ -221,6 +221,7 @@ export default {
       tep :[],//因为“奖项设置行数是不固定的，所以tep的长度不要固定住”
       aid :[true,true,true,true,true],
       select: { province: '', city: '', area: '' },
+      // select: { province: 440000, city: '广州市', area: '海珠区' },
       cityArr:[],
       resultSelect:'',
       autoDefinie: false,
@@ -273,7 +274,10 @@ export default {
       this.close()
     },
     selectProvince(value) {
+
       this.select.province = value
+      console.log('province', this.select.province)
+      console.log('province', value)
     },
     selectCity(value) {
       this.select.city = value
@@ -347,6 +351,11 @@ export default {
       this.validate(len, item)
     },
     change (value) {
+      console.log('种类',value)
+      // 根据种类 设置奖品面额 的type
+      // 每次点击种类，清空 面额数据 重新选择面额
+      // this.position 索引
+      this.ruleForm.prizeSettings[this.position].price = ''
       this.currentSelectOption = value
       if(value){
         //在这里处理奖品 种类
@@ -459,8 +468,17 @@ export default {
             this.setAlert(`奖项设置第${i+1}行未填写完整======`)
             return
           }
+          // changeAll += parseInt(changeData[i].weight)
+        }
+        // 填写完整了，验证数量是否输入负数，数量最小值为1
+        for(let i=0; i<len ;i++){
+          if(this.tep[i] && changeData[i].number<1){
+            this.setAlert(`奖项设置第${i+1}行数量必须大于0`)
+            return
+          }
           changeAll += parseInt(changeData[i].weight)
         }
+        //验证概率之和
         if(changeAll!==100){
           this.setAlert(`中奖概率之和必须是100`)
           return
@@ -475,13 +493,14 @@ export default {
               background: 'rgba(0, 0, 0, 0.7)'
             });
             //处理城市选择区域数据
-            if(this.select.province .code && this.select.city){
+            if(this.select.province.code && this.select.city){
                this.resultSelect = this.select.province.code + ',' + this.select.city.code
             }
-            if(this.select.province .code && !this.select.city){
+            if(this.select.province.code && !this.select.city){
               let cityString = this.cityArr.join(',')
               this.resultSelect = this.select.province.code + ',' + cityString
             }
+            console.log('resultSelect',this.resultSelect    )
             this.ruleForm.settings[0].value = this.resultSelect
             //处理时间区域数据
             this.ruleForm.startTime = this.ruleForm.startTime.getTime()
@@ -523,24 +542,76 @@ export default {
              }, 3000);
         }
       }
-        // });
-    // }
   },
   created () {
-    let type = this.$route.meta.type
-    this.currentItemFromRouter = type
-    if(this.currentItemFromRouter !== 'slyder'){
-    let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
-    this.ruleForm.prizeSettings.push(baseData)
-      this.autoDefinie = true
-    }else{
-      this.ruleForm.prizeSettings.concat(slyderData)
-      for(let i in slyderData){
-        this.$set(this.ruleForm.prizeSettings, i , slyderData[i]);
+    // 如果路由有query参数 那么是编辑活动
+    let queryId = this.$route.query.id
+    if(queryId){
+      let type = this.$route.meta.type
+      this.currentItemFromRouter = type
+      if(this.currentItemFromRouter !== 'slyder'){
+          this.autoDefinie = true
+      }else{
+          this.autoDefinie = false
       }
-      this.autoDefinie = false
+      let initData = {
+        activityName:"测试",
+        activityRule:"哈",
+        expiredTime:'2015-10-20',
+        prizeSettings:[
+          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''},
+          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''},
+          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''},
+          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''},
+          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''}
+        ],
+        settings:[
+                    {key:'areaCode', value:"130000,130100"},
+                    {key:'takeNum', value:'7'},
+                    {key:'verifyCodeType', value:'IMAGE'},
+                  ],
+        startTime:'2015-10-01',
+        templateNo:"234567"
+      }
+      // 更改时间格式
+      initData.startTime = new Date(initData.startTime)
+      initData.expiredTime = new Date(initData.expiredTime)
+      // 处理省市数据
+      // var select = initData.settings[0].value
+      // var selectArr = select.split(',')
+      // console.log('sele', selectArr)
+      //   console.log('im', selectArr[0])
+      //   console.log('imfsfds', selectArr.slice(1))
+
+      // //  表示"市"是全选的
+      // if(selectArr && selectArr.length > 2){
+      //   this.select.province = selectArr[0]
+      //   // 但是页面显示是空的 因此 不能设置this.select.city 缓存到this对象
+      //   // this.select.city = selectArr.slice(1)
+      //   //"市" 只有一个
+      // }else if(selectArr && selectArr.length === 2){
+      //   this.select.province = selectArr[0]
+      //   console.log('prfd', this.select.province)
+      //   this.select.city = selectArr[1]
+      // }
+      this.ruleForm = initData
+
+    }else{
+        let type = this.$route.meta.type
+        this.currentItemFromRouter = type
+        if(this.currentItemFromRouter !== 'slyder'){
+        let baseData = JSON.parse( JSON.stringify(lotteryBaseLine))
+        this.ruleForm.prizeSettings.push(baseData)
+          this.autoDefinie = true
+        }else{
+          this.ruleForm.prizeSettings.concat(slyderData)
+          for(let i in slyderData){
+            this.$set(this.ruleForm.prizeSettings, i , slyderData[i]);
+          }
+          this.autoDefinie = false
+        }
+        this.change('')
     }
-    this.change('')
   },
   components:{
     Distpicker,

@@ -7,19 +7,19 @@
   <div class="" slot="body">
     <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
       </el-form-item>
-      <el-form-item label="手机号码" prop="tel">
-        <el-input v-model="ruleForm.tel" placeholder="请输入手机号码" auto-complete="off"></el-input>
+      <el-form-item label="手机号码" prop="_loginName">
+        <el-input v-model="ruleForm._loginName" placeholder="请输入手机号码" auto-complete="off"></el-input>
       </el-form-item>
-       <el-form-item label="密码" prop="password">
-        <el-input   type="password" v-model="ruleForm.password" placeholder="请输入密码" auto-complete="off"></el-input>
+       <el-form-item label="密码" prop="_password">
+        <el-input   type="password" v-model="ruleForm._password" placeholder="请输入密码" auto-complete="off"></el-input>
       </el-form-item>
       <div id="f-password"><span @click="$emit('close','password')">忘记密码</span></div>
-      <el-form-item label="验证码" prop="captcha">
-        <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
+      <el-form-item label="验证码" prop="_verCode">
+        <el-input class="captcha" v-model="ruleForm._verCode" placeholder="请确认验证码"></el-input>
         <!-- <button class="code-btn">发送验证码</button> -->
         <captcha @click.native="getCaptcha" :countDown="countDown" @stop="stop"></captcha>
       </el-form-item>
-        <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">登录</el-button>
+        <el-button type="primary" class="info-btn" :loading="loading" @click="submitForm('ruleForm')">登录</el-button>
     </el-form>
     <div class="skip">没有账号,<span href="" @click="$emit('close','signup')">点击注册</span></div>
   </div>
@@ -35,25 +35,28 @@
   // import formBase from './formBase'
   import Modal from 'components/Modal'
   import  Captcha from 'components/Captcha'
-  import { Login,getCaptcha } from 'api/user'
+  import { login } from 'api/login'
+  import qs from 'qs'
+
   export default {
     data () {
       return {
           countDown:false,
+          loading:false,
           ruleForm: {
-            tel: '',
-            password: '',
-            captcha: '',
+            _loginName: '',
+            _password: '',
+            _verCode: '',
           },
           rules: {
-            tel: [
+            _loginName: [
               { required: true, message: '请输入手机号码', trigger: 'blur' },
               // { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
             ],
-            password: [
+            _password: [
               { required: true,message: '请输入密码', trigger: 'blur' }
             ],
-            captcha: [
+            _verCode: [
               { required: true,message: '请输入验证码', trigger: 'blur' }
             ],
           }
@@ -80,14 +83,17 @@
         this.$refs.ruleForm.validate(valid => {
           // console.log('rule', this.ruleForm)
           if (valid) {
-            // this.loading = true
-            this.$store.dispatch('LoginByUsername', this.ruleForm).then(() => {
+            this.loading = true
+            let init = this.ruleForm
+            // let data = qs.stringify(init) //测试不用
+            
+          this.$store.dispatch('LoginByUsername', init).then(() => {
               this.$router.push({ path: '/create-project' });
-              // this.loading = false
+              this.loading = false
               // this.$router.push({ path: '/' })
               // this.$router.push({ path: '/create-project/index' })
             }).catch(() => {
-              // this.loading = false
+              this.loading = false
             })
           } else {
             console.log('error submit!!')

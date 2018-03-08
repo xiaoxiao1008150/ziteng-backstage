@@ -1,14 +1,10 @@
 import request from 'utils/axios'
 
-export function loginByUsername(tel, password,captcha) {
-  const data = {
-    tel,
-    password,
-    captcha
-  }
+// http://192.168.31.241:8888/marketing/api/login?_loginName=13029499224&_password=123456&_verCode=888999
+export function login(data) {
   return request({
-    url: '/user/1',
-    method: 'get'
+    url: `/marketing/api/login?${data}`,
+    method: 'post'
     // data
   })
 }

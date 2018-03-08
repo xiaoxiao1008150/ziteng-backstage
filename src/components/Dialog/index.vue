@@ -13,9 +13,8 @@
         <div class="qrcode-wrapper">
           <div class="index-title">活动名称：{{currentLotteryItem.text}}</div>
           <div class="qrcode">
-            <!-- <div id="qrcode" ref="qrcode"></div> -->
             <qrcode 
-                  value="http://www.baidu.com" 
+                  value="http://192.168.31.241:8888/activities/template/0e24b56d-efc7-435d-bc22-9778cd15f5a2/INDEX" 
                   :options="{ size: 130 }">
             </qrcode>
             <!-- <img class="qrcode-img" src="/static/images/qrcode.jpg"> -->
@@ -38,7 +37,7 @@
       </div>
     </div>
     <div slot="body" v-if="showLoginPop">
-    <div class="close-tep"><span>请您先登录</span><span class="fr" @click="close">X</span></div>
+      <div class="close-tep"><span>请您先登录</span><span class="fr" @click="close">X</span></div>
     </div>
   </modal>
 </template>
@@ -119,6 +118,7 @@
           // let name = this.setRouterName()
           this.$emit('close')
           // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
+          // 获取模板预览地址 赋值到二维码的value 动态的
           let name = this.currentLotteryItem.type
           let templateNo = this.currentLotteryItem.templateNo
           if(name){
@@ -130,8 +130,8 @@
     created () {
     },
     mounted () {
-      console.log('res',this.$refs.qrcode)
-      let el = this.$refs.qrcode
+      // console.log('res',this.$refs.qrcode)
+      // let el = this.$refs.qrcode
       // var qrcode = new QRCode(el, {
       //   text: 'http://192.168.31.241:8888/activities/template/0e24b56d-efc7-435d-bc22-9778cd15f5a2/INDEX',
       //   width: 130,

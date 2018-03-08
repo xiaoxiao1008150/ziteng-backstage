@@ -3,12 +3,12 @@
     <ul class="side-ui">
       <li 
         v-for="(item,index) in routes" 
-        :key="index" 
+        :key="index"
         v-if="item.children && item.children.length>=1" >
         <router-link
         class="side-link"
-        @click="setIndex(index,item)"
-        :class="{ active: index===jsIndex}"
+        @click.native="setIndex(index,item)"
+        :class="{acitve: index===jsIndex}"
         :to="item.path+'/'+item.children[0].path"
        >
           <svg-icon v-if="item.meta&&item.meta.icon" :icon-class="item.meta.icon"></svg-icon>
@@ -25,7 +25,7 @@ export default {
   name: 'SidebarItem',
   data () {
     return {
-      index:0,
+      // index:0,
       jsIndex:0
     }
   },
@@ -41,17 +41,23 @@ export default {
       'statusResult'
     ])
   },
-  created () {
+  activated () {
+    console.log(this.jsIndex)
   },
   methods:{
-    ...mapMutations([
-      'getLotteryResult'
-    ]),
+    // ...mapMutations([
+    //   'barActive',
+    // ]),
 
     setIndex(index, item){
       this.jsIndex = index
     }
   },
+  // watch :{
+  //   barActive (val) {
+  //     console.log('watch', val)
+  //   }
+  // },
   components:{
     svgIcon
   }
@@ -79,7 +85,7 @@ export default {
   .side-link svg
       position:relative
       top:2px
-  .side-link.active:after
+  .side-link.router-link-active:after
     content:''
     position:absolute
     top:15px

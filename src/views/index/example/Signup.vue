@@ -120,22 +120,36 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+             let loading = this.$loading({
+              lock: true,
+              text: '注册成功,跳转到登录页面',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            });
+            setTimeout(()=> {
+              loading.close()
+              this.$emit('signUpSuccess')
+            },1000)
+
             // console.log('valid', this.$refs[formName].model)
-            let data = qs.stringify(this.ruleForm)
-            console.log('注册数据', data)
-            createUser(data).then((res) => {
-              console.log('kk', res)
-              let data = res.data
-              if(data.code === 'ok') {
-                this.$notify({
-                  title: '成功',
-                  message: '注册成功',
-                  type: 'success',
-                  duration: 2000
-                })
-                this.close()//这里注意顺序
-              }
-            })
+            // let data = qs.stringify(this.ruleForm)
+            // console.log('注册数据', data)
+            // createUser(data).then((res) => {
+            //   console.log('kk', res)
+            //   let data = res.data
+            //   if(data.code === 'ok') {
+            //     this.$notify({
+            //       title: '成功',
+            //       message: '注册成功',
+            //       type: 'success',
+            //       duration: 2000
+            //     })
+            //     this.close()//这里注意顺序
+            //     // 跳转到创建活动页面
+            //     // 发出事件， 注册成功
+            //     this.$emit('signUpSuccess')
+            //   }
+            // })
           } else {
             console.log('error submit!!');
             return false;
@@ -153,41 +167,4 @@
 @import "~common/stylus/modal"
 .captcha input
   width:100px
-// .form
-//   .input-item
-//     height:30px
-//     line-height:30px
-//     font-size :0
-//     margin-bottom:20px
-//   span
-//     display:inline-block
-//     width:60px
-//     vertical-align :middle
-//     text-align:justify
-//     font-size :12px
-//   .input-self
-//     width:280px
-//     height:30px !important
-//     vertical-align :middle
-//   .input-self.code
-//     width:150px
-//     margin-right:20px
-//   .code-btn
-//     width:110px
-//     height:30px
-//     background:#adadad
-//     border:none
-//     outline:none
-//     color:#fff
-//     border-radius:4px
-//     vertical-align :middle
-// .sign-btn
-//   width:260px
-// .skip
-//   padding-bottom:20px
-//   line-height:40px
-//   font-size:12px
-// .skip span
-//   color:blue
-//   cursor:pointer
 </style>

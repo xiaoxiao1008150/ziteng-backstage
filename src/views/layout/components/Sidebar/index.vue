@@ -12,8 +12,12 @@ export default {
   components: { SidebarItem },
   computed: {
     ...mapGetters([
-      'permission_routers'
+      'permission_routers',
+      'barActive'
     ])
+  },
+  watch :{
+ 
   },
   created () {
   }

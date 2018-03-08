@@ -43,6 +43,7 @@ const permission = {
       state.addRouters = routers
       // state.routers = constantRouterMap.concat(routers)//
       //在这步将个人中心模块调到routers数组的最后面
+      // let flag = true
       let center = constantRouterMap.pop()
       state.routers = constantRouterMap.concat(routers).concat(center)
       console.log('router', state.routers)

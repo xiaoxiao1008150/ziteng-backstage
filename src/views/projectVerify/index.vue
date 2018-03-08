@@ -118,6 +118,7 @@
   import Dialog from 'components/Dialog'
   import { mapGetters,mapMutations } from 'vuex'
   import { fetchVerfityList,fetchActivityListAll, activityPassVerfity,activityReject} from 'api/activity'
+  import qs from 'qs'
 
 
   export default {

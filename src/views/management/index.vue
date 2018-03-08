@@ -31,6 +31,9 @@
           :filters="filters"
           :filter-method="filterTag"
         >
+          <template slot-scope="scope">
+            {{changeStatus(scope.row.status)}}
+          </template>
         </el-table-column>
         <el-table-column
           label="用户参与详情"
@@ -47,9 +50,12 @@
               type="success"
               plain
               @click="publishTtn"
+              :disabled="scope.row.status==='1'"
               >发布</el-button>
             <el-button
               size="mini"
+              :disabled="scope.row.status==='1'"
+              @click="editLottery(scope.row)"
               >编辑</el-button>
             <el-button
               size="mini"
@@ -94,18 +100,18 @@
         tableData: [{
           name: '大转盘抽奖',
           time: '2018-01-10 09：00：00',
-          status: '未发布'
+          status: '0'
         },{
           name: '大转盘抽奖2',
           time: '2018-01-10 09：00：00',
-          status: '审核中'
+          status: '1'
         }],
         activeName:'first',
         showModal:false,
         title:'超级大转盘',
         num:'01',
         hasCreated:true,
-        filters: [{text: '未发布',value: '未发布'}, {text: '审核中',value: '审核中'}, {text: '未开始',value: '未开始'},{text: '未通过',value: '未通过'}],
+        filters: [{text: '未发布',value: '0'}, {text: '审核中',value: '1'}, {text: '未开始',value: '2'},{text: '未通过',value: '5'}],
         value: '',
         listLoading:false,
         loading:false,
@@ -113,6 +119,33 @@
       }
     },
     methods:{
+      editLottery (item) {
+        //item携带了项目的所有信息 获取id -》获取全部信息到 创建活动页面 展示该项目的全部数据
+        //（根据后台接口）
+        //根据携带的 templateNo获得需要跳转的路由，根据路由的query  created 函数获取数据
+        this.$router.push({ path: `/create-project/slyder/123456?id=222`,})
+      },
+      changeStatus (val) {
+        let result
+        switch(val)
+          {
+          case '0':
+            result = '未发布'
+            break;
+          case '1':
+            result = '审核中'
+            break;
+          case '2':
+            result = '未开始'
+            break;
+          case '5':
+            result = '未通过'
+            break;
+          default:
+            result = ''
+          }
+          return result
+      },
       activityManageList () {
         this.listLoading = true
         activityManageList().then((res) =>{
@@ -143,6 +176,8 @@
         this.$router.push({ path: `/management/info/1` })
       },
       filterTag(value, row) {
+        console.log('value', value)
+        console.log('row', row)
         return row.status === value;
       },
       publishTtn () {

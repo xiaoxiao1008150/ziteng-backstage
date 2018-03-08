@@ -3,20 +3,22 @@ import { Message } from 'element-ui'
 // import qs from "qs"
 // import store from '@/store'
 // import { getToken } from '@/utils/auth'
-
+import Vue from 'vue'
 // create an axios instance
 const service = axios.create({
+  // baseURL: 'http://192.168.31.241:8888', // api的base_url
   baseURL: 'http://192.168.31.241:8888', // api的base_url
   timeout: 5000,// request timeout
 });
 
+var promiseArr = {}  // 用于记录每个请求的取消方法
+
 
 // request interceptor
 service.interceptors.request.use(config => {
+  // cancel()
   console.log('config', config)
-  // config.data = qs.stringify(config.data)
-  // let data = qs.stringify(this.submitData)
-
+    
   config.headers = {
     'Content-Type':'application/x-www-form-urlencoded'
   }
@@ -27,7 +29,8 @@ service.interceptors.request.use(config => {
   return config
 }, error => {
   // Do something with request error
-  console.log(error) // for debug
+  console.log('request_error', error) // for debug
+
   Promise.reject(error)
 })
 

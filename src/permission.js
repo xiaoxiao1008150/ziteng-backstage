@@ -4,6 +4,8 @@ import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'// progress bar style
 import { getToken } from 'utils/auth' // getToken from cookie
+import axios from 'axios'
+
 
 NProgress.configure({ showSpinner: false })// NProgress Configuration
 
@@ -17,33 +19,39 @@ function hasPermission(roles, permissionRoles) {
 const whiteList = ['/login', '/authredirect']// no redirect whitelist
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
+  next()
+  NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
+  console.log('get',getToken() )
+  //
   if (getToken()) { // determine if there has token
-    /* has token*/
+    // has token 如果已经登录,去login页面，即是本项目的首页，导向创建活动页面
     if (to.path === '/login') {
-        next()
-      NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
+        next({ path: '/create-project' });
     } else {
-      if (store.getters.roles.length === 1) { // 判断当前用户是否已拉取完user_info信息
-         // console.log('mytesr', store.getters.addRouters)
-          // console.log('mytesr', store.getters.permission_routers)
-        store.dispatch('GetUserInfo').then(res => { // 拉取user_info
-          // const roles = res.data.roles // note: roles must be a array! such as: ['editor','develop']
-          const roles = ['admin']
-          // console.log(1)
+      if (store.getters.flag) { // 判断当前用户是否已拉取完user_info信息
+          store.dispatch('setFlag', false)
+          let roles = ['admin']
           store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
-            // console.log('mytesr', store.getters.addRouters)
-            // console.log('mytesr', store.getters.permission_routers)
 
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
             // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
             next()
           })
-        }).catch(() => {
-          store.dispatch('FedLogOut').then(() => {
-            Message.error('Verification failed, please login again')
-            next({ path: '/login' })
-          })
-        })
+        // store.dispatch('GetUserInfo').then(res => { // 拉取user_info
+        //   // const roles = res.data.roles // note: roles must be a array! such as: ['editor','develop']
+        //   // const roles = ['admin']
+        //   store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
+
+        //     router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+        //     // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+        //     next()
+        //   })
+        // }).catch(() => {
+        //   store.dispatch('FedLogOut').then(() => {
+        //     Message.error('Verification failed, please login again')
+        //     next({ path: '/login' })
+        //   })
+        // })
       } else {
         // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
         // if (hasPermission(store.getters.roles, to.meta.roles)) {

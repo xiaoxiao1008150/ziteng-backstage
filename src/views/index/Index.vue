@@ -23,7 +23,7 @@
       </div>
     </div>
     <example-footer></example-footer>
-    <sign-up @close="close" v-if="showSignUp"></sign-up>
+    <sign-up @signUpSuccess="signUpSuccess" @close="close" v-if="showSignUp"></sign-up>
     <login @close="close" v-if="showLogin"></login>
     <password @close="close" v-if="showPassword"></password>
   </div>
@@ -48,6 +48,10 @@ export default {
   created() {
   },
   methods:{
+    signUpSuccess() {
+      this.showSignUp = false
+      this.showLogin = true
+    },
     close (item) {
       if(item==='login'){
         this.showSignUp = false

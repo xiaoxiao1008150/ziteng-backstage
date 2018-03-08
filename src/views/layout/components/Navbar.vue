@@ -4,13 +4,14 @@
         <a href="/login"><img id="background" src="../../../common/images/logo.png"></a>
     </div>
     <div class="fr client-management">
-      <span class="client-name"><svg-icon style="color:#1aadf0" :icon-class="iconName.user"></svg-icon><i>用户名</i></span>
-      <span class="client-out"><svg-icon style="color:#ccc" :icon-class="iconName.tuichu"></svg-icon><i>退出</i></span>
+      <span class="client-name"><svg-icon style="color:#1aadf0" :icon-class="iconName.user"></svg-icon><i>{{name}}</i></span>
+      <span @click="logOut" class="client-out"><svg-icon style="color:#ccc" :icon-class="iconName.tuichu"></svg-icon><i>退出</i></span>
     </div>
   </header>
 </template>
 <script>
 import svgIcon from 'components/Icon'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Navbar',
@@ -19,7 +20,30 @@ export default {
       iconName:{
         user: 'user',
         tuichu: 'tuichu'
-      }
+      },
+      name:''
+    }
+  },
+  computed: {
+    // 使用对象展开运算符将 getter 混入 computed 对象中
+      ...mapGetters([
+        'token'
+      ])
+  },
+  methods:{
+    logOut() {
+      this.$store.dispatch('LogOut').then(() => {
+        location.reload()// In order to re-instantiate the vue-router object to avoid bugs
+      })
+    }
+  },
+  created () {
+    console.log('token', this.token)
+    if(typeof this.token === 'string'){
+      let obj = JSON.parse(this.token)
+      this.name = obj.name
+    }else{
+      this.name = this.token.name
     }
   },
   components:{

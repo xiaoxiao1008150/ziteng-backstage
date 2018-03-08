@@ -35,6 +35,7 @@ export const lotteryRouterMixin = {
       // 通过 `vm` 访问组件实例
       vm.dialogVisible = false
       vm.setLotteryStatus(false)
+      // 设置全局标志，侧边栏对应标签active
     })
   },
   beforeRouteLeave (to, from, next) {
