@@ -120,36 +120,35 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-             let loading = this.$loading({
-              lock: true,
-              text: '注册成功,跳转到登录页面',
-              spinner: 'el-icon-loading',
-              background: 'rgba(0, 0, 0, 0.7)'
-            });
-            setTimeout(()=> {
-              loading.close()
-              this.$emit('signUpSuccess')
-            },1000)
+            //  let loading = this.$loading({
+            //   lock: true,
+            //   text: '注册成功,跳转到登录页面',
+            //   spinner: 'el-icon-loading',
+            //   background: 'rgba(0, 0, 0, 0.7)'
+            // });
+            // setTimeout(()=> {
+            //   loading.close()
+            //   this.$emit('signUpSuccess')
+            // },1000)
 
             // console.log('valid', this.$refs[formName].model)
-            // let data = qs.stringify(this.ruleForm)
+            let data = qs.stringify(this.ruleForm)
             // console.log('注册数据', data)
-            // createUser(data).then((res) => {
-            //   console.log('kk', res)
-            //   let data = res.data
-            //   if(data.code === 'ok') {
-            //     this.$notify({
-            //       title: '成功',
-            //       message: '注册成功',
-            //       type: 'success',
-            //       duration: 2000
-            //     })
-            //     this.close()//这里注意顺序
-            //     // 跳转到创建活动页面
-            //     // 发出事件， 注册成功
-            //     this.$emit('signUpSuccess')
-            //   }
-            // })
+            createUser(data).then((res) => {
+              let data = res.data
+              if(data.code === 'ok') {
+                this.$notify({
+                  title: '成功',
+                  message: '注册成功',
+                  type: 'success',
+                  duration: 2000
+                })
+                this.close()//这里注意顺序
+                // 跳转到创建活动页面
+                // 发出事件， 注册成功
+                this.$emit('signUpSuccess')
+              }
+            })
           } else {
             console.log('error submit!!');
             return false;

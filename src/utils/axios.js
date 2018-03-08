@@ -6,12 +6,12 @@ import { Message } from 'element-ui'
 import Vue from 'vue'
 // create an axios instance
 const service = axios.create({
+  baseURL: 'http://47.93.236.101:8888', // api的base_url
   // baseURL: 'http://192.168.31.241:8888', // api的base_url
-  baseURL: 'http://192.168.31.241:8888', // api的base_url
+  // baseURL: 'http://192.168.88.224:8888', // api的base_url
   timeout: 5000,// request timeout
 });
 
-var promiseArr = {}  // 用于记录每个请求的取消方法
 
 
 // request interceptor

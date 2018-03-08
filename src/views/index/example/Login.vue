@@ -85,9 +85,9 @@
           if (valid) {
             this.loading = true
             let init = this.ruleForm
-            // let data = qs.stringify(init) //测试不用
+            let data = qs.stringify(init) //测试不用
             
-          this.$store.dispatch('LoginByUsername', init).then(() => {
+          this.$store.dispatch('LoginByUsername', data).then(() => {
               this.$router.push({ path: '/create-project' });
               this.loading = false
               // this.$router.push({ path: '/' })
