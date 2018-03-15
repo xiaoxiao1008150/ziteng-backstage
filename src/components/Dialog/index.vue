@@ -13,7 +13,7 @@
         <div class="qrcode-wrapper">
           <div class="index-title">活动名称：{{currentLotteryItem.text}}</div>
           <div class="qrcode">
-            <qrcode 
+            <qrcode
                   value="http://47.93.236.101:8888/activities/template/0e24b56d-efc7-435d-bc22-9778cd15f5a2/INDEX" 
                   :options="{ size: 130 }">
             </qrcode>

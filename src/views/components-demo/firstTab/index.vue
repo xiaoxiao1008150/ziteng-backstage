@@ -42,8 +42,8 @@
                 <span>手机号地域</span>
                 <distpicker 
                 hide-area id="distpicker"
-                :province="select.province" 
-                :city="select.city"
+                :province="select.province.value" 
+                :city="select.city.value"
                 @province="selectProvince"
                 @city="selectCity"
                 @allCity="getAllCities"
@@ -207,7 +207,7 @@ export default {
           expiredTime: '',
           activityRule:'',
           settings:[
-            {key:'areaCode', value:''},
+            {key:'areaCode', value:{code:'', province:'' ,city:''}},
             {key:'takeNum', value:'1'},
             {key:'verifyCodeType', value:'IMAGE'},
           ],
@@ -222,8 +222,8 @@ export default {
       help:0,
       tep :[],//因为“奖项设置行数是不固定的，所以tep的长度不要固定住”
       aid :[true,true,true,true,true],
-      select: { province: '', city: '', area: '' },
-      // select: { province: {}, city: {}, area: '' },
+      // select: { province: '', city: '', area: '' },
+      select: { province: {}, city: {}, area: '' },
       cityArr:[],
       resultSelect:'',
       autoDefinie: false,
@@ -277,11 +277,11 @@ export default {
       this.close()
     },
     selectProvince(value) {
-      this.select.province = value.value
+      this.select.province = value
       console.log('province', value)
     },
     selectCity(value) {
-      this.select.city = value.value
+      this.select.city = value
       console.log('city',value)
 
     },
@@ -444,48 +444,49 @@ export default {
         // this.$refs[formName].validate((valid) => {
         let data = this.ruleForm
         //除”奖项设置“之外区域的验证
-        for (var prop in data) {
-          if(!data[prop]){
-            let label = this.switchKeyName(prop)
-            this.setAlert(`${label}未填写`)
-            return
-          }
-        }
-        // 判断日期填写是否正确
-        if(this.ruleForm.startTime > this.ruleForm.expiredTime){
-          this.setAlert(`开始时间不能大于结束时间`)
-          return
-        }
-        if(!this.select.province){
-          this.setAlert('手机号区域未填写')
-          return
-        }
+        // for (var prop in data) {
+        //   if(!data[prop]){
+        //     let label = this.switchKeyName(prop)
+        //     this.setAlert(`${label}未填写`)
+        //     return
+        //   }
+        // }
+        // // 判断日期填写是否正确
+        // if(this.ruleForm.startTime > this.ruleForm.expiredTime){
+        //   this.setAlert(`开始时间不能大于结束时间`)
+        //   return
+        // }
+        // 不选默认是全国
+        // if(!this.select.province){
+        //   this.setAlert('手机号区域未填写')
+        //   return
+        // }
         // ”奖项设置“ 验证，借助 this.tep的值
         // console.log('ruleForm', this.ruleForm)
-        this.setlotteryData()
-        let len = this.tep.length
-        let changeData = this.ruleForm.prizeSettings
-        let changeAll = 0
-        for(let i=0; i<len ;i++){
-          if(!this.tep[i]){
-            this.setAlert(`奖项设置第${i+1}行未填写完整======`)
-            return
-          }
-          // changeAll += parseInt(changeData[i].weight)
-        }
-        // 填写完整了，验证数量是否输入负数，数量最小值为1
-        for(let i=0; i<len ;i++){
-          if(this.tep[i] && changeData[i].number<1){
-            this.setAlert(`奖项设置第${i+1}行数量必须大于0`)
-            return
-          }
-          changeAll += parseInt(changeData[i].weight)
-        }
-        //验证概率之和
-        if(changeAll!==100){
-          this.setAlert(`中奖概率之和必须是100`)
-          return
-        }
+        // this.setlotteryData()
+        // let len = this.tep.length
+        // let changeData = this.ruleForm.prizeSettings
+        // let changeAll = 0
+        // for(let i=0; i<len ;i++){
+        //   if(!this.tep[i]){
+        //     this.setAlert(`奖项设置第${i+1}行未填写完整======`)
+        //     return
+        //   }
+        //   // changeAll += parseInt(changeData[i].weight)
+        // }
+        // // 填写完整了，验证数量是否输入负数，数量最小值为1
+        // for(let i=0; i<len ;i++){
+        //   if(this.tep[i] && changeData[i].number<1){
+        //     this.setAlert(`奖项设置第${i+1}行数量必须大于0`)
+        //     return
+        //   }
+        //   changeAll += parseInt(changeData[i].weight)
+        // }
+        // //验证概率之和
+        // if(changeAll!==100){
+        //   this.setAlert(`中奖概率之和必须是100`)
+        //   return
+        // }
         //验证数据完毕，开始提交数据
         valid = true
         if(valid) {
@@ -496,19 +497,50 @@ export default {
               background: 'rgba(0, 0, 0, 0.7)'
             });
             //处理城市选择区域数据
-            if(this.select.province.code && this.select.city){
-               this.resultSelect = this.select.province.code + ',' + this.select.city.code
+            console.log('省',this.select)
+            // console.log('市',this.select.city)
+            let code
+            let province
+            let city
+            // let vmProvince = this.select.province.code
+            // if(vmProvince ==='110000'){//北京市
+            //   code = '110000'
+            //   province = '北京市'
+            //   city = ''
+            // }else if( vmProvince ==='120000'){
+            //     code = '120000'
+            //     province = '天津市'
+            //     city = ''
+            // }else if( vmProvince ==='310000'){
+            //     code = "310000"
+            //     province = '上海市'
+            //     city = ''
+            // }else if( vmProvince ==='310000'){
+            //     code = "310000"
+            //     province = '上海市'
+            //     city = ''
+            // }
+            if(this.select.province.code && this.select.city.code){
+              console.log('省')
+               code = this.select.province.code + ',' + this.select.city.code
+               province = this.select.province.value
+               city = this.select.city.value
             }
-            if(this.select.province.code && !this.select.city){
+            if(this.select.province.code && !this.select.city.code){//没有选择城市的时候，this.select.city是undefined
+              console.log('省 + 市')
               let cityString = this.cityArr.join(',')
-              this.resultSelect = this.select.province.code + ',' + cityString
+              code = this.select.province.code + ',' + cityString
+              province = this.select.province.value
+              city = ''
             }
             // 说明是全国
-            if(!this.select.province.code ){
-              this.resultSelect = '0'
+            if(!this.select.province.code){
+              console.log('全国')
+              code = '0'
+              province = ''
+              city = ''
             }
-            console.log('resultSelect',this.resultSelect    )
-            this.ruleForm.settings[0].value = this.resultSelect
+            this.ruleForm.settings[0].value = {code,province,city}
             //处理时间区域数据
             this.ruleForm.startTime = this.ruleForm.startTime.getTime()
             this.ruleForm.expiredTime = this.ruleForm.expiredTime.getTime()
@@ -553,57 +585,76 @@ export default {
       }
   },
   created () {
+    console.log('执行')
     // 如果路由有query参数 那么是编辑活动
     let queryId = this.$route.query.id
     if(queryId){
       let type = this.$route.meta.type
       this.currentItemFromRouter = type
-      if(this.currentItemFromRouter !== 'slyder'){
+      if(type !== 'slyder'){
           this.autoDefinie = true
       }else{
           this.autoDefinie = false
       }
+      // 根据id 获取活动具体信息
       let initData = {
-        activityName:"测试",
-        activityRule:"哈",
-        expiredTime:'2015-10-20',
-        prizeSettings:[
-          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''},
-          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''},
-          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''},
-          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''},
-          {name:'一集',category:'流量',price:'10M',number:'100',weight:'10',value:''}
-        ],
-        settings:[
-                    {key:'areaCode', value:"130000,130100"},
-                    {key:'takeNum', value:'7'},
-                    {key:'verifyCodeType', value:'IMAGE'},
-                  ],
-        startTime:'2015-10-01',
-        templateNo:"234567"
-      }
+        "id": "6ea91b6b-26b6-4120-8799-a2e5b69511b3",
+        "activityName": "抽",
+        "templateNo": "234567",
+        "startTime": "2018-03-21 16:00:00",
+        "expiredTime": "2018-04-03 16:00:00",
+        "activityRule": "发的",
+         "settings": "[{\"activityId\":\"6ea91b6b-26b6-4120-8799-a2e5b69511b3\",\"createdTime\":1520991958000,\"id\":\"0e030dc7-13e2-4ccc-a601-6ff59acc5b72\",\"key\":\"verifyCodeType\",\"status\":\"ENABLED\",\"value\":\"IMAGE\",\"version\":0},{\"activityId\":\"6ea91b6b-26b6-4120-8799-a2e5b69511b3\",\"createdTime\":1520991958000,\"id\":\"4d002d55-a3bb-4ab8-9753-1cf872e81d8f\",\"key\":\"takeNum\",\"status\":\"ENABLED\",\"value\":\"1\",\"version\":0},{\"activityId\":\"6ea91b6b-26b6-4120-8799-a2e5b69511b3\",\"createdTime\":1520991958000,\"id\":\"a835df8f-f9a7-4b5d-94a1-de91ac6453ce\",\"key\":\"areaCode\",\"status\":\"ENABLED\",\"value\":\"{\\\"code\\\":\\\"130000,130100,130200,130300,130400,130500,130600,130700,130800,130900,131000,131100\\\",\\\"province\\\":\\\"辽宁省\\\",\\\"city\\\":\\\"大连市\\\"}\",\"version\":0}]",
+        "prizeSettings": "[{\"activityId\":\"6ea91b6b-26b6-4120-8799-a2e5b69511b3\",\"category\":\"流量\",\"createdTime\":1520991958000,\"id\":\"6bf095e6-7fd0-49c3-8f6a-ecc0f80f3b14\",\"name\":\"一等奖\",\"number\":100,\"price\":\"10M\",\"status\":\"ENABLED\",\"version\":0,\"weight\":100.0}]",
+        "status": "0"
+    }
+    // 处理settings 格式
+      initData.settings = JSON.parse(initData.settings)
+      initData.prizeSettings = JSON.parse(initData.prizeSettings)
       // 更改时间格式
       initData.startTime = new Date(initData.startTime)
       initData.expiredTime = new Date(initData.expiredTime)
       // 处理省市数据
-      // var select = initData.settings[0].value
-      // var selectArr = select.split(',')
-      // console.log('sele', selectArr)
-      //   console.log('im', selectArr[0])
-      //   console.log('imfsfds', selectArr.slice(1))
+      let pData = JSON.parse(initData.settings[2].value)
+        console.log('sc',pData )
 
-      // //  表示"市"是全选的
-      // if(selectArr && selectArr.length > 2){
-      //   this.select.province = selectArr[0]
-      //   // 但是页面显示是空的 因此 不能设置this.select.city 缓存到this对象
-      //   // this.select.city = selectArr.slice(1)
-      //   //"市" 只有一个
-      // }else if(selectArr && selectArr.length === 2){
-      //   this.select.province = selectArr[0]
-      //   console.log('prfd', this.select.province)
-      //   this.select.city = selectArr[1]
-      // }
-      this.ruleForm = initData
+      // 全国
+      if(pData.code==='0'){
+
+      }else if(pData.province && pData.city ){//省+市
+        console.log('ceshi',pData.province,pData.city )
+        this.select.province.value = pData.province 
+        this.select.city.value = pData.city
+      }else if(pData.province && !pData.city){//全省
+        this.select.province.value = pData.province 
+      }
+      this.ruleForm.startTime = initData.startTime
+      this.ruleForm.activityRule = initData.activityRule
+      this.ruleForm.expiredTime = initData.expiredTime
+      this.ruleForm.templateNo = initData.templateNo
+      this.ruleForm.activityName = initData.activityName
+      // 处理settings 中的数据
+      let takeNumValue
+      initData.settings.forEach(function(item) {
+        if(item.key==='takeNum'){
+          takeNumValue = item.value
+        }
+      })
+      this.ruleForm.settings = [
+            {key:'areaCode', value:{code:'', province:'' ,city:''}},
+            {key:'takeNum', value:takeNumValue},
+            {key:'verifyCodeType', value:'IMAGE'},
+      ]
+
+      // 处理prize settings 中的数据
+      let arr = []
+      initData.prizeSettings.forEach(function(item) {
+        let {name,category,price,number,weight} = item
+        let obj = {name,category,price,number,weight}
+        arr.push(obj)
+      })
+      this.ruleForm.prizeSettings = arr
+      console.log('change', this.ruleForm)
 
     }else{
         let type = this.$route.meta.type

@@ -13,15 +13,18 @@
         style="width: 100%">
         <el-table-column
           label="活动名称"
-          prop="name"
+          prop="activityName"
           align="center"
           width="180">
         </el-table-column>
         <el-table-column
           label="活动时间"
           align="center"
-          prop="time"
           width="180">
+           <template slot-scope="scope">
+            <p >{{ scope.row.startTime }}</p>
+            <p >{{ scope.row.expiredTime }}</p>
+          </template> 
         </el-table-column>
         <el-table-column
           label="全部状态"
@@ -93,18 +96,28 @@
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
   import { activityManageList,activityPublish } from 'api/manage_activity'
+  import { mapGetters,mapMutations} from 'vuex'
 
   export default {
     data () {
       return {
         tableData: [{
-          name: '大转盘抽奖',
-          time: '2018-01-10 09：00：00',
-          status: '0'
-        },{
-          name: '大转盘抽奖2',
-          time: '2018-01-10 09：00：00',
-          status: '1'
+            "id": "6ea91b6b-26b6-4120-8799-a2e5b69511b3",
+            "activityName": "抽",
+            "templateNo": "234567",
+            "startTime": "2018-03-21 16:00:00",
+            "expiredTime": "2018-04-03 16:00:00",
+            "activityRule": "发的",
+            "status": "0"
+        },
+        {
+            "id": "f53a3e2f-99b2-490a-a7e5-508f95bc55c1",
+            "activityName": "抽红包",
+            "templateNo": "234567",
+            "startTime": "2018-03-14 16:00:00",
+            "expiredTime": "2018-04-04 16:00:00",
+            "activityRule": "规则",
+            "status": "0"
         }],
         activeName:'first',
         showModal:false,
@@ -119,11 +132,21 @@
       }
     },
     methods:{
+      ...mapMutations([
+      'setCurrentLottery'
+    ]),
       editLottery (item) {
         //item携带了项目的所有信息 获取id -》获取全部信息到 创建活动页面 展示该项目的全部数据
         //（根据后台接口）
         //根据携带的 templateNo获得需要跳转的路由，根据路由的query  created 函数获取数据
-        this.$router.push({ path: `/create-project/slyder/123456?id=222`,})
+        let templateNo = item.templateNo
+        let type
+        if(templateNo==='123456'){
+          type='slyder'
+        }else if(templateNo==='234567'){
+          type='envelope'
+        }
+        this.$router.push({ path: `/create-project/${type}/${templateNo}?id=${item.id}`,})
       },
       changeStatus (val) {
         let result
@@ -215,10 +238,9 @@
       //   this.edit = true
       // }
     },
-    created () {
-      console.log('是否执行')
+    activated () {
       // 获取活动审核 待审核列表
-      // this.activityManageList()
+      this.activityManageList()
     },
     components:{
       // Date,
