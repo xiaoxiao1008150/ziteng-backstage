@@ -160,7 +160,7 @@
           { prop: 'contract_name', label: '企业名称' },
           { prop: 'contact_name', label: '联系人' },
           { prop: 'mobile_number', label: '手机号' },
-          { prop: 'id', label: '注册时间' },
+          { prop: 'start_time', label: '注册时间' },
         ],
         colConfigs1:[
           { prop: 'contract_name', label: '企业名称' },
@@ -220,10 +220,11 @@
         })
       },
       fetchUserList1 () {
-        // this.loading = true
+        this.loading = true
         fetchUserList().then((res) =>{
+          console.log('res again', res)
           this.userList = res.data.list
-          // this.loading = false
+          this.loading = false
           this.tepHelp = true
           this.close()
         }).catch(()=>{
@@ -436,9 +437,9 @@
                 console.log('测试res', res)
                 let data = res.data
                 if(data.code === 'ok') {
+                  this.fetchUserList1()
                   this.$refs[formName].resetFields();
                   // 重新拉取待审核列表 此处不用table 加载图标，
-                  this.fetchUserList1()
                   // 开启 客户列表拉取数据 开关
                   this.tabHelp = true
                   this.close()

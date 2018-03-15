@@ -15,7 +15,7 @@ export default {
   data () {
     return{
       text:'发送验证码',
-      time: 5
+      time: 30
     }
   },
   methods:{
@@ -29,8 +29,7 @@ export default {
             return
           }
           if(this.time===0){
-            this.time = 5
-            console.log('time', this.time)
+            this.time = 30
             this.$emit('stop')
             clearInterval(timer)
           }
@@ -44,6 +43,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .code-btn
+    display:inline-block
     width:90px
     height:40px
     background:#adadad

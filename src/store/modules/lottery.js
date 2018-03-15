@@ -12,10 +12,11 @@ const lottery = {
   state: {
     lotteryData:lotteryData,
     // lotteryData:[],//测试
-    currentLotteryItem: {num:'01',text:'超级大转盘',type:'slyder',templateNo:'123456'},
-    // currentLotteryItem: {},
+    // currentLotteryItem: {num:'01',text:'超级大转盘',type:'slyder',templateNo:'123456'},
+    currentLotteryItem: {},
     isCreate: false,
-    preparePath:''
+    preparePath:'',// 设置离开时候点击的url地址
+    isSubmit:false
   },
 
   mutations: {
@@ -32,6 +33,9 @@ const lottery = {
     },
     setPreparePath: (state, item) => {
       state.preparePath = item
+    },
+    setIsSubmit: (state, item) => {
+      state.isSubmit = item
     }
   }
 }

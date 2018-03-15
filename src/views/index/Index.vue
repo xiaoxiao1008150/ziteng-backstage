@@ -108,10 +108,11 @@ export default {
   vertical-align:sub
 .banner
   height:300px
+  margin: 0 -25px;
   background:url(../../common/images/background.jpg) no-repeat center
   background-size:100% 100%
-  @media screen and (min-width: 1200px)
-    height:500px
+  // @media screen and (min-width: 1200px)
+  //   height:500px
 .client-management
   display:table-cell
   button

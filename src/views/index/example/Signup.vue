@@ -26,9 +26,9 @@
         <captcha @click.native="getCaptcha" :countDown="countDown" @stop="stop"></captcha>
         <!-- <button class="code-btn" @click="getCaptcha">发送验证码</button> -->
       </el-form-item>
-       <!-- <el-form-item class="zi-btn"> -->
-        <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">注册</el-button>
-      <!-- </el-form-item> -->
+       <el-form-item class="import-btn">
+        <el-button type="primary" :disabled="isDisabled" :loading="loading" class="info-btn" @click="submitForm('ruleForm')">注册</el-button>
+      </el-form-item>
     </el-form>
       <div class="skip">已有账号,<span href="" @click="$emit('close','login')">去登录</span></div>
   </div>
@@ -67,9 +67,20 @@
           callback();
         }
       };
+      var validatePass3 = (rule, value, callback) => {
+        if (!this.ruleForm.mobileNumber) {
+          callback(new Error('请先输入手机号码'));
+        } else if (value === '') {
+          callback(new Error('请输入验证码'));
+        } else {
+          callback();
+        }
+      };
       return {
         countDown:false,
         captchaValue:null,
+        isDisabled:false,
+        loading:false,
         ruleForm: {
           contractName: '',
           contactName: '',
@@ -96,7 +107,7 @@
             { required: true, validator: validatePass2, trigger: 'blur' }
           ],
           verifyCode: [
-            { required: true, message: '请输入验证码', trigger: 'blur' },
+            { required: true, validator: validatePass3, trigger: 'blur' },
           ],
         }
       }
@@ -106,13 +117,26 @@
         this.countDown = false
       },
       getCaptcha () {
-        this.countDown = true
-        //在这里post短信验证码，data mobileNumber
-        // getCaptcha(data).then((res)=>{
-        //   if(res.data.code==='ok'){
-        //     this.countDown = true
-        //   }
-        // })
+        this.$refs.ruleForm.validateField('verifyCode' ,message => {
+          if(!message){
+            this.countDown = true
+            //在这里post短信验证码，data mobileNumber
+            let data = this.ruleForm.mobileNumber
+
+            getCaptcha(data).then((res)=>{
+              if(res.data && res.data.code==='ok'){
+                // 证实后台已经发送验证码 开始倒计时
+                this.countDown = true
+              }else{
+                this.$message({
+                  message: '请稍后尝试',
+                  type: 'error',
+                  duration: 2* 1000
+                });
+              }
+            })
+          }
+        })
       },
       close () {
         this.$emit('close')
@@ -132,10 +156,15 @@
             // },1000)
 
             // console.log('valid', this.$refs[formName].model)
+            this.loading = true
+            // 按钮禁止，防止重复提交
+            this.isDisabled = true
             let data = qs.stringify(this.ruleForm)
             // console.log('注册数据', data)
             createUser(data).then((res) => {
+              console.log('regis res', res)
               let data = res.data
+              let message = res.data.message
               if(data.code === 'ok') {
                 this.$notify({
                   title: '成功',
@@ -147,8 +176,22 @@
                 // 跳转到创建活动页面
                 // 发出事件， 注册成功
                 this.$emit('signUpSuccess')
+              }else if(message==='验证码错误'){
+                this.$message({
+                  message: '验证码错误',
+                  type: 'error',
+                  duration: 2* 1000
+                });
+              }else{
+                this.$message({
+                  message: '请稍后再试',
+                  type: 'error',
+                  duration: 2* 1000
+                });
               }
             })
+            this.isDisabled = false
+            this.loading = false
           } else {
             console.log('error submit!!');
             return false;

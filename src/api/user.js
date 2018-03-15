@@ -55,9 +55,8 @@ export function createUser(data) {
 
 export function getCaptcha(data) {
   return http({
-    url: '/sms/verifyCode',
+    url: `/marketing/api/register/send?phoneNumber=${data}`,
     method: 'post',
-    data
   })
 }
 

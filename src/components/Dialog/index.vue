@@ -14,7 +14,7 @@
           <div class="index-title">活动名称：{{currentLotteryItem.text}}</div>
           <div class="qrcode">
             <qrcode 
-                  value="http://192.168.31.241:8888/activities/template/0e24b56d-efc7-435d-bc22-9778cd15f5a2/INDEX" 
+                  value="http://47.93.236.101:8888/activities/template/0e24b56d-efc7-435d-bc22-9778cd15f5a2/INDEX" 
                   :options="{ size: 130 }">
             </qrcode>
             <!-- <img class="qrcode-img" src="/static/images/qrcode.jpg"> -->
@@ -37,7 +37,7 @@
       </div>
     </div>
     <div slot="body" v-if="showLoginPop">
-      <div class="close-tep"><span>请您先登录</span><span class="fr" @click="close">X</span></div>
+      <div class="close-tep"><span>请您先登录</span><span class="fr" @click="close"><i class="el-icon-close"></i></span></div>
     </div>
   </modal>
 </template>
@@ -59,7 +59,7 @@
     data () {
       return {
         //通过设置不同的数据，返回不同的二维码,最好是通过 lottery 的当前模板对象获取网址
-        qrcode:{val: "https://github.com",size: 130}, 
+        // qrcode:{val: "https://github.com",size: 130},
         disabled:true,
         url:'http://www.ziteng.com',
         styleObject:{
@@ -111,10 +111,10 @@
       },
       createProject () {
         // 判断用户是否已经登录，未登录，弹窗提示登录
-        // if(this.status!=='已经注册'){
-        //   this.showMainPop = false
-        //   this.showLoginPop = true
-        // }else{
+        if(this.status !=='login'){
+          this.showMainPop = false
+          this.showLoginPop = true
+        }else{
           // let name = this.setRouterName()
           this.$emit('close')
           // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
@@ -124,7 +124,7 @@
           if(name){
             this.$router.push({ path: `/create-project/${name}/${templateNo}`,})
           }
-        // }
+        }
       }
     },
     created () {

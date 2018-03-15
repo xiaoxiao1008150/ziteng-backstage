@@ -4,7 +4,7 @@ import { getToken, setToken, removeToken } from 'utils/auth'
 const user = {
   state: {
     user: '',
-    status: '未注册',
+    status: 'login',
     code: '',
     token: getToken(),
     name: '',
@@ -55,41 +55,18 @@ const user = {
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
-      //     let data = {
-      //         "id": "7317106a-b6f6-4193-81a3-bf5b1b3aa081",
-      //         "login_name": "13029499224",
-      //         "mobile_number": "13029499224",
-      //         "contract_name": "天津支行",
-      //         "contact_name": "杰杰",
-      //         "status": "1",
-      //         "password": "",
-      //         "start_time": "2018-03-03 14:38:30",
-      //         "expired_time": "2018-03-14 00:00:00",
-      //         "authorities": [
-      //             {
-      //                 "authority": "AUTHORITY_DEFAULT"
-      //             }
-      //         ]
-      //     };
-      //     //首先获取id ,缓存到本地 在用户进入路由之前拉取用户信息
-      //       // setToken(data.id)
-      //       setToken({id:data.id,name:data.contact_name})
-      //       commit('SET_TOKEN', {id:data.id,name:data.contact_name})
-      //       resolve()
           login(userInfo).then(res => {
+            console.log('userres', res)
               let result = res.data
               if(result.code === 'ok') {
                 let data = result.data
-                setToken(data.id)
+                // setToken(data.id)
                 setToken({id:data.id,name:data.contact_name})
                 commit('SET_TOKEN', {id:data.id,name:data.contact_name})
-                resolve()
+                commit('SET_STATUS', 'login')
               }
-            // commit('SET_TOKEN', data.id)
-            // setToken(res.data.id)
-            // resolve()
-          }).catch(error => {
-            reject(error)
+              // 数据传到页面中
+              resolve(res)
           })
       });
     },

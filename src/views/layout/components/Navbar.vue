@@ -38,12 +38,13 @@ export default {
     }
   },
   created () {
-    console.log('token', this.token)
-    if(typeof this.token === 'string'){
-      let obj = JSON.parse(this.token)
-      this.name = obj.name
-    }else{
-      this.name = this.token.name
+    if(this.token){
+      if(typeof this.token === 'string'){
+        let obj = JSON.parse(this.token)
+        this.name = obj.name
+      }else{
+        this.name = this.token.name
+      }
     }
   },
   components:{

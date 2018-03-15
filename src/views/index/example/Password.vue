@@ -21,7 +21,9 @@
         <el-input v-model="form.captcha" placeholder="请确认验证码"></el-input>
         <button class="code-btn">发送验证码</button>
       </el-form-item> -->
+      <el-form-item class="import-btn">
         <el-button type="primary"  class="info-btn" @click="goToConfirmPassword('ruleForm')">下一步</el-button>
+      </el-form-item>
     </el-form>
   </div>
   <div class="" slot="body" v-else>
@@ -46,6 +48,7 @@
   // import formBase from './formBase'
   import Modal from 'components/Modal'
   import  Captcha from 'components/Captcha'
+  import {getCaptchaForget} from 'api/login'
 
   export default {
     data () {
@@ -64,6 +67,15 @@
           callback(new Error('请再次输入密码'));
         } else if (value !== this.ruleForm1.password) {
           callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
+      var validatePass3 = (rule, value, callback) => {
+        if (!this.ruleForm.tel) {
+          callback(new Error('请先输入手机号码'));
+        } else if (value === '') {
+          callback(new Error('请输入验证码'));
         } else {
           callback();
         }
@@ -90,7 +102,7 @@
               { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
             ],
             captcha: [
-              { required: true, message: '请输入验证码', trigger: 'blur' },
+              { required: true, validator: validatePass3, trigger: 'blur' },
             ]
           },
           rules1: {
@@ -108,13 +120,26 @@
         this.countDown = false
       },
       getCaptcha () {
-        this.countDown = true
-        //在这里post短信验证码，data mobileNumber
-        // getCaptcha(data).then((res)=>{
-        //   if(res.data.code==='ok'){
-        //     this.countDown = true
-        //   }
-        // })
+        this.$refs.ruleForm.validateField('captcha' ,message => {
+          if(!message){
+            this.countDown = true
+            //在这里post短信验证码，data mobileNumber
+            let data = this.ruleForm.tel
+            // let data = qs.stringify(phoneNum)
+            getCaptchaForget(data).then((res)=>{
+              if(res.data && res.data.code==='ok'){
+                // 证实后台已经发送验证码 开始倒计时
+                this.countDown = true
+              }else{
+                this.$message({
+                  message: '请稍后尝试',
+                  type: 'error',
+                  duration: 2* 1000
+                });
+              }
+            })
+          }
+        })
       },
       goToConfirmPassword(formName) {
         this.$refs[formName].validate((valid) => {

@@ -42,6 +42,8 @@
                 <span>手机号地域</span>
                 <distpicker 
                 hide-area id="distpicker"
+                :province="select.province" 
+                :city="select.city"
                 @province="selectProvince"
                 @city="selectCity"
                 @allCity="getAllCities"
@@ -221,7 +223,7 @@ export default {
       tep :[],//因为“奖项设置行数是不固定的，所以tep的长度不要固定住”
       aid :[true,true,true,true,true],
       select: { province: '', city: '', area: '' },
-      // select: { province: 440000, city: '广州市', area: '海珠区' },
+      // select: { province: {}, city: {}, area: '' },
       cityArr:[],
       resultSelect:'',
       autoDefinie: false,
@@ -251,7 +253,8 @@ export default {
   methods:{
     ...mapMutations([
       'setClickSave', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
-      'setLotteryStatus'
+      'setLotteryStatus',
+      'setIsSubmit'
     ]),
     close () {
       // this.dialogVisible = false
@@ -269,18 +272,18 @@ export default {
           // 在这里重置表单
           // this.resetForm('ruleForm')
           this.$router.push({path:url})
-        },1000)
+        },500)
       }
       this.close()
     },
     selectProvince(value) {
-
-      this.select.province = value
-      console.log('province', this.select.province)
+      this.select.province = value.value
       console.log('province', value)
     },
     selectCity(value) {
-      this.select.city = value
+      this.select.city = value.value
+      console.log('city',value)
+
     },
     getAllCities (cities) {
       for (let key in cities) {
@@ -500,6 +503,10 @@ export default {
               let cityString = this.cityArr.join(',')
               this.resultSelect = this.select.province.code + ',' + cityString
             }
+            // 说明是全国
+            if(!this.select.province.code ){
+              this.resultSelect = '0'
+            }
             console.log('resultSelect',this.resultSelect    )
             this.ruleForm.settings[0].value = this.resultSelect
             //处理时间区域数据
@@ -516,30 +523,32 @@ export default {
             // let data = qs.stringify(arr)
             // console.log('创建活动数据form', this.ruleForm)
             console.log('创建活动数据', object)
-            // createActivity(data).then((res) =>{
-            //   let data = res.data
-            //   console.log('处理结果',res)
-            //   if(data.code==='ok'){
-            //     console.log('form', this.ruleForm)
-            //     this.resetForm(formName)
-            //     this.$router.push({ path: `/management/`,})
-            //   }else{
-            //     alert('请稍后处理')
-            //   }
-            //     loading.close()
-            // })
+            createActivity(data).then((res) =>{
+              let data = res.data
+              console.log('处理结果',res)
+              if(data.code==='ok'){
+                this.setIsSubmit(true)
+                console.log('form', this.ruleForm)
+                alert('创建成功')
+                this.resetForm(formName)
+                this.$router.push({ path: `/management/`,})
+              }else{
+                alert('请稍后处理')
+              }
+                this.loading.close()
+            })
             //数据提交之后 重置表单
             // 跳转到客户审核页面
             // this.$refs.ruleForm.resetFields();
             // this.resetForm(formName)
-            var that = this
-            setTimeout(() => {
-              console.log('important', this.ruleForm)
-              // this.$router.push({ path: `/management/`,})
-              // that.resetForm(formName)
-            // this.showLoading = false
-              that.loading.close()
-             }, 3000);
+            // var that = this
+            // setTimeout(() => {
+            //   console.log('important', this.ruleForm)
+            //   // this.$router.push({ path: `/management/`,})
+            //   // that.resetForm(formName)
+            // // this.showLoading = false
+            //   that.loading.close()
+            //  }, 3000);
         }
       }
   },

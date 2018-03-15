@@ -47,8 +47,6 @@
       </div>
     </div>
     <zi-dialog
-      :imgUrl=currentLotteryItem.num
-      :title=currentLotteryItem.text
       v-if="showModal"
       @close="showModal = false" 
       >
@@ -110,20 +108,20 @@ export default {
       return result
     },
     getTemplates () {
-      // this.setLoading()
-      // getTemplates().then((res) =>{
-      //   let data = res.data
-      //   console.log('template', res)
-      //   if(data.code === 'ok') {
-      //     let result = this.changeTemplateData(data.list)
-      //     // this.lotteryData = result
-      //     // 将异步获取的数据 放到vuex全局
-      //     this.initLotteryData(result)
-      //     this.loading.close()
-      //   }
-      // }).catch((res) =>{
-      //   this.loading.close()
-      // })
+      this.setLoading()
+      getTemplates().then((res) =>{
+        let data = res.data
+        console.log('template', res)
+        if(data.code === 'ok') {
+          let result = this.changeTemplateData(data.list)
+          // this.lotteryData = result
+          // 将异步获取的数据 放到vuex全局
+          this.initLotteryData(result)
+          this.loading.close()
+        }
+      }).catch((res) =>{
+        this.loading.close()
+      })
     },
     openModel(item) {
       this.showModal = true

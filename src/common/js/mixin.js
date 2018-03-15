@@ -18,13 +18,15 @@ export const lotteryRouterMixin = {
   // 使用对象展开运算符将 getter 混入 computed 对象中
     ...mapGetters([
       'isCreate',
-      'preparePath'
+      'preparePath',
+      'isSubmit'
     ])
   },
   methods:{
     ...mapMutations([
       'setPreparePath',
-      'setLotteryStatus'
+      'setLotteryStatus',
+      'setIsSubmit'
     ]),
     close () {
       this.dialogVisible = false
@@ -35,17 +37,23 @@ export const lotteryRouterMixin = {
       // 通过 `vm` 访问组件实例
       vm.dialogVisible = false
       vm.setLotteryStatus(false)
+      vm.setIsSubmit(false)
       // 设置全局标志，侧边栏对应标签active
     })
   },
   beforeRouteLeave (to, from, next) {
+    // 路由离开之前判断是否是提交表单之后的离开 是 直接离开 不用弹窗
       //设置想要去的路由  vuex
-      console.log('走')
-      console.log('isCreate',this.isCreate)
-      this.setPreparePath(to.path)
-      this.dialogVisible = true
-      if(this.isCreate) {
+      if(this.isSubmit) {
+        this.close();
         next()
+      }else{
+        console.log('isCreate',this.isCreate)
+        this.setPreparePath(to.path)
+        this.dialogVisible = true
+        if(this.isCreate) {
+          next()
+        }
       }
   },
 }
