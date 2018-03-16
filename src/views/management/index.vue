@@ -9,7 +9,7 @@
       <el-table
         fit highlight-current-row
         v-loading="listLoading" element-loading-text="拼命加载中"
-        :data="tableData"
+        :data="userList"
         style="width: 100%">
         <el-table-column
           label="活动名称"
@@ -52,7 +52,7 @@
               size="mini"
               type="success"
               plain
-              @click="publishTtn"
+              @click="publishTtn(scope.row)"
               :disabled="scope.row.status==='1'"
               >发布</el-button>
             <el-button
@@ -64,7 +64,7 @@
               size="mini"
               type="primary"
               plain
-              @click="openDialog">预览</el-button>
+              @click="openDialog(scope.row)">预览</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -83,9 +83,8 @@
       </div>
     </modal>
     <zi-dialog
-      :imgUrl=num
-      :title=title
       :hasCreated=hasCreated
+      :currentActivity="currentActivity"
       v-if="showModal"
       @close="showModal = false" 
       >
@@ -97,28 +96,12 @@
   import Dialog from 'components/Dialog'
   import { activityManageList,activityPublish } from 'api/manage_activity'
   import { mapGetters,mapMutations} from 'vuex'
+  import qs from 'qs'
 
   export default {
     data () {
       return {
-        tableData: [{
-            "id": "6ea91b6b-26b6-4120-8799-a2e5b69511b3",
-            "activityName": "抽",
-            "templateNo": "234567",
-            "startTime": "2018-03-21 16:00:00",
-            "expiredTime": "2018-04-03 16:00:00",
-            "activityRule": "发的",
-            "status": "0"
-        },
-        {
-            "id": "f53a3e2f-99b2-490a-a7e5-508f95bc55c1",
-            "activityName": "抽红包",
-            "templateNo": "234567",
-            "startTime": "2018-03-14 16:00:00",
-            "expiredTime": "2018-04-04 16:00:00",
-            "activityRule": "规则",
-            "status": "0"
-        }],
+        userList: [],
         activeName:'first',
         showModal:false,
         title:'超级大转盘',
@@ -128,7 +111,8 @@
         value: '',
         listLoading:false,
         loading:false,
-        isPublish:false
+        isPublish:false,
+        handleItem:{}
       }
     },
     methods:{
@@ -139,6 +123,7 @@
         //item携带了项目的所有信息 获取id -》获取全部信息到 创建活动页面 展示该项目的全部数据
         //（根据后台接口）
         //根据携带的 templateNo获得需要跳转的路由，根据路由的query  created 函数获取数据
+
         let templateNo = item.templateNo
         let type
         if(templateNo==='123456'){
@@ -146,7 +131,8 @@
         }else if(templateNo==='234567'){
           type='envelope'
         }
-        this.$router.push({ path: `/create-project/${type}/${templateNo}?id=${item.id}`,})
+        this.$router.push({ path: `/create-project/envelope/234567?id=${item.id}`,})
+        // this.$router.push({ path: `/create-project/${type}/${templateNo}?id=${item.id}`,})
       },
       changeStatus (val) {
         let result
@@ -180,17 +166,21 @@
       },
       //按钮加载的时候
       activityManageList1 () {
-        fetchUserList().then((res) =>{
+        activityManageList().then((res) =>{
           this.userList = res.data.list
           this.tepHelp = true
+          this.loading = false
           this.close()
         })
       },
       close(){
         this.isPublish = false
+        this.showModal = false
       },
-      openDialog () {
+      openDialog (item) {
         this.showModal = true
+        console.log('pass', this.currentActivity)
+        this.currentActivity  = item
       },
       handleCommand(command) {
         this.$message('click on item ' + command);
@@ -203,14 +193,21 @@
         console.log('row', row)
         return row.status === value;
       },
-      publishTtn () {
+      publishTtn (item) {
         this.isPublish = true
+        let id = item.id
+        let status = '1'
+        this.handleItem = {id,status}
       },
       publish () {
+        let init = this.handleItem
+        let postData = qs.stringify(init)
         this.loading = true
-        activityPublish().then((res) =>{
+        activityPublish(postData).then((res) =>{
+          console.log('发布',res)
           let data = res.data
           if(data.code === 'ok') {
+            console.log('action')
             // 重新拉取待审核列表 此处不用table 加载图标，
             this.activityManageList1()
             this.close()
@@ -225,18 +222,7 @@
         }).catch(()=>{
           this.loading = false
         })
-      },
-      // passVerify () {
-      //   console.log('passVerify')
-      //   this.pass = true
-      // },
-      // close () {
-      //   this.pass = false
-      //   this.edit = false
-      // },
-      // startEdit () {
-      //   this.edit = true
-      // }
+      }
     },
     activated () {
       // 获取活动审核 待审核列表

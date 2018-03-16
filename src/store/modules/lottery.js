@@ -10,8 +10,8 @@ let lotteryData = [
 
 const lottery = {
   state: {
-    lotteryData:lotteryData,
-    // lotteryData:[],//测试
+    // lotteryData:lotteryData,
+    lotteryData:[],//测试
     // currentLotteryItem: {num:'01',text:'超级大转盘',type:'slyder',templateNo:'123456'},
     currentLotteryItem: {},
     isCreate: false,

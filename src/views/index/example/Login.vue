@@ -45,9 +45,11 @@
       var validatePass3 = (rule, value, callback) => {
         if (!this.ruleForm._loginName) {
           callback(new Error('请先输入手机号码'));
-        } else if (value === '') {
-          callback(new Error('请输入验证码'));
-        } else {
+        } 
+        // else if (value === '') {
+        //   callback(new Error('请输入验证码'));
+        // }
+         else {
           callback();
         }
       };

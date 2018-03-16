@@ -7,14 +7,15 @@
 </span>
       <div class="index-tep">
         <div class="index-img">
-          <img class="item-img" :src="'/static/images/' + currentLotteryItem.num + '-scan.jpg' ">
+          <img class="item-img" :src="'/static/images/' + list.num + '-scan.jpg' ">
           <img class="arrow" src="/static/images/arrow.jpg ">
         </div>
         <div class="qrcode-wrapper">
-          <div class="index-title">活动名称：{{currentLotteryItem.text}}</div>
+          <!-- <div class="index-title">活动名称：{{list.text}}</div> -->
+          <div class="index-title">活动名称：{{detail ? list.activityName : list.text}}</div>
           <div class="qrcode">
             <qrcode
-                  value="http://47.93.236.101:8888/activities/template/0e24b56d-efc7-435d-bc22-9778cd15f5a2/INDEX" 
+                  :value="qrcode.val"
                   :options="{ size: 130 }">
             </qrcode>
             <!-- <img class="qrcode-img" src="/static/images/qrcode.jpg"> -->
@@ -25,7 +26,7 @@
           </div>
         </div>
         <div v-if="hasCreated" class="url-item">
-            <input id="url-input" v-model="url"></input>
+            <input id="url-input" v-model="qrcode.val"></input>
              <el-tooltip :disabled="disabled" content="链接已复制" placement="bottom">
               <el-button
               type="primary"
@@ -54,19 +55,27 @@
       hasCreated:{
         type:Boolean,
         default:false
+      },
+      currentActivity:{
+        type: Object,
+        default: function () {
+          return {}
+        }
       }
     },
     data () {
       return {
         //通过设置不同的数据，返回不同的二维码,最好是通过 lottery 的当前模板对象获取网址
-        // qrcode:{val: "https://github.com",size: 130},
+        qrcode:{val: "",size: 130},
         disabled:true,
         url:'http://www.ziteng.com',
         styleObject:{
           height:'0',
         },
         showLoginPop:false,
-        showMainPop:true
+        showMainPop:true,
+        list:[],
+        detail:false
       }
     },
     created () {
@@ -84,28 +93,6 @@
       },
       copyUrl () {
       },
-      // setRouterName () {
-      //   let n = this.currentLotteryItem && this.currentLotteryItem.text
-      //   let result
-      //   switch(n)
-      //   {
-      //   case '超级大转盘':
-      //     result = 'slyder'
-      //     break;
-      //   case '抽红包':
-      //     result = 'envelope'
-      //     break;
-      //   case '欢乐拼图':
-      //     result = 'jigsaw'
-      //     break;
-      //   case '开宝箱':
-      //     result = 'box'
-      //     break;
-      //   default:
-      //     result = false
-      //   }
-      //   return result
-      // },
       close () {
         this.$emit('close')
       },
@@ -115,6 +102,8 @@
           this.showMainPop = false
           this.showLoginPop = true
         }else{
+          //新添加的
+          this.showLoginPop = false
           // let name = this.setRouterName()
           this.$emit('close')
           // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
@@ -128,8 +117,19 @@
       }
     },
     created () {
+        console.log('ac')
+        if(this.currentActivity.url){
+          console.log('currentActivity',this.currentActivity)
+          this.detail = true
+          this.list = this.currentActivity
+          this.qrcode.val = this.list.url
+        }else{
+          console.log('no',this.currentLotteryItem)
+          this.list = this.currentLotteryItem
+        }
     },
-    mounted () {
+    activated () {
+
       // console.log('res',this.$refs.qrcode)
       // let el = this.$refs.qrcode
       // var qrcode = new QRCode(el, {

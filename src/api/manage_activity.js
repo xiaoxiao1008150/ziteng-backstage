@@ -1,9 +1,9 @@
 import http from 'utils/axios'
 
 // 活动管理 获取列表
-export function activityManageList(data) {
+export function activityManageList() {
   return http({
-    url: `/user`,
+    url: `/marketing/activityClient/show`,
     method: 'post',
   })
 }
@@ -11,7 +11,15 @@ export function activityManageList(data) {
 // 活动管理  发布操作
 export function activityPublish(data) {
   return http({
-    url: `/user`,
+    url: `/marketing/activityClient/editInfo?${data}`,
+    method: 'post',
+  })
+}
+
+// 活动管理  编辑操作
+export function activityEdit(data) {
+  return http({
+    url: `/marketing/activityClient/showOne?activityId=${data}`,
     method: 'post',
   })
 }

@@ -47,46 +47,46 @@ export const constantRouterMap = [
        { path: 'info/:id', component: _import('management/Info'), name: 'management', meta: { title: '用户参与详情' }},
     ]
   },
-  {
-    path: '/client-verify',
-    component: Layout,
-    redirect: '/client-verify/index',
-    // redirect: 'noredirect',
-    meta: {
-      roles: ['admin'],
-      title: '客户审核',
-      icon: 'kehu'
-    },
-    children:[
-       { path: 'index', component: _import('clientVerify/index'),
-         name: 'client-verify',
-         meta: {
-          title: '客户审核',
-          roles: ['admin']
-        }
-      }
-    ]
-  },
-  {
-    path: '/project-verify',
-    component: Layout,
-    redirect: '/project-verify/index',
-    // redirect: 'noredirect',
-    meta: {
-      roles: ['admin'],
-      title: '活动审核',
-      icon: 'plus-activity'
-    },
-    children:[
-       {  path: 'index', component: _import('projectVerify/index'),
-          name: 'project-verify',
-          meta: { 
-            title: '活动审核',
-            roles: ['admin']
-          }
-      }
-    ]
-  },
+  // {
+  //   path: '/client-verify',
+  //   component: Layout,
+  //   redirect: '/client-verify/index',
+  //   // redirect: 'noredirect',
+  //   meta: {
+  //     roles: ['admin'],
+  //     title: '客户审核',
+  //     icon: 'kehu'
+  //   },
+  //   children:[
+  //      { path: 'index', component: _import('clientVerify/index'),
+  //        name: 'client-verify',
+  //        meta: {
+  //         title: '客户审核',
+  //         roles: ['admin']
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/project-verify',
+  //   component: Layout,
+  //   redirect: '/project-verify/index',
+  //   // redirect: 'noredirect',
+  //   meta: {
+  //     roles: ['admin'],
+  //     title: '活动审核',
+  //     icon: 'plus-activity'
+  //   },
+  //   children:[
+  //      {  path: 'index', component: _import('projectVerify/index'),
+  //         name: 'project-verify',
+  //         meta: { 
+  //           title: '活动审核',
+  //           roles: ['admin']
+  //         }
+  //     }
+  //   ]
+  // },
   
   {
     path: '/center',

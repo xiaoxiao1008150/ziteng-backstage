@@ -1,7 +1,7 @@
 <template>
 <div>
   <el-row :gutter="20" style="margin-bottom:140px">
-    <el-col class="margin-col" :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in lotteryData" :key="index">
+    <el-col class="margin-col" :xs="{span: 12}" :sm="{span: 12}" :md="{span: 6}"  v-for="(item,index) in list" :key="index">
       <el-card :body-style="{ padding: '0px' }">
         <img class="example-img" :src="'/static/images/' + item.num + '.jpg'">
         <div class="example-text">
@@ -32,18 +32,58 @@
 import Dialog from 'components/Dialog'
 import Modal from 'components/Modal'
 import { mapGetters, mapMutations} from 'vuex'
+import { getTemplates } from 'api/activity'
+
 
 export default {
   name: 'example',
   data() {
     return {
       showModal:false,
+      list:[]
     }
   },
    methods: {
     ...mapMutations([
-      'setCurrentLottery'
+      'setCurrentLottery',
+      'initLotteryData'
     ]),
+    changeTemplateData (arr) {
+      let result = []
+      arr.forEach((item,index) =>{
+        if(item.template_no === '123456') {
+          result[index] = {num:'01',text:'超级大转盘',type:'slyder',templateNo:item.template_no}
+        }else if(item.template_no === '234567'){
+          result[index] = {num:'02',text:'抽红包',type:'envelope',templateNo:item.template_no}
+        }
+      })
+      return result
+    },
+    getTemplates () {
+      this.setLoading()
+      getTemplates().then((res) =>{
+        let data = res.data
+        if(data.code === 'ok') {
+          let result = this.changeTemplateData(data.list)
+          this.list = result
+          // 将异步获取的数据 放到vuex全局
+          this.initLotteryData(result)
+          console.log('template', result)
+
+          this.loading.close()
+        }
+      }).catch((res) =>{
+        this.loading.close()
+      })
+    },
+    setLoading () {
+      this.loading = this.$loading({
+        lock: true,
+        text: '加载中',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+    },
     openModel (item) {
       this.showModal = true
       this.setCurrentLottery(item)
@@ -51,6 +91,9 @@ export default {
     close () {
       this.showModal = false
     }
+  },
+  created () {
+    this.getTemplates()
   },
   computed: {
   // 使用对象展开运算符将 getter 混入 computed 对象中
