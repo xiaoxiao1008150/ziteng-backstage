@@ -72,7 +72,7 @@
           callback(new Error('请先输入手机号码'));
         } else if (value === '') {
           callback(new Error('请输入验证码'));
-        } else {
+        }else {
           callback();
         }
       };
@@ -81,6 +81,7 @@
         captchaValue:null,
         isDisabled:false,
         loading:false,
+        flag:true,
         ruleForm: {
           contractName: '',
           contactName: '',
@@ -113,28 +114,32 @@
       }
     },
     methods:{
-      stop () {
+      stop (flag) {
         this.countDown = false
+        this.flag = flag
       },
       getCaptcha () {
         this.$refs.ruleForm.validateField('verifyCode' ,message => {
-          if(!message){
-            this.countDown = true
-            //在这里post短信验证码，data mobileNumber
-            let data = this.ruleForm.mobileNumber
+          if(message !== '请先输入手机号码'){
+            if(this.flag){
+              this.flag = false
+              this.countDown = true
+              //在这里post短信验证码，data mobileNumber
+              let data = this.ruleForm.mobileNumber
 
-            getCaptcha(data).then((res)=>{
-              if(res.data && res.data.code==='ok'){
-                // 证实后台已经发送验证码 开始倒计时
-                this.countDown = true
-              }else{
-                this.$message({
-                  message: '请稍后尝试',
-                  type: 'error',
-                  duration: 2* 1000
-                });
-              }
-            })
+              getCaptcha(data).then((res)=>{
+                if(res.data && res.data.code==='ok'){
+                  // 证实后台已经发送验证码 开始倒计时
+                  this.countDown = true
+                }else{
+                  this.$message({
+                    message: '请稍后尝试',
+                    type: 'error',
+                    duration: 2* 1000
+                  });
+                }
+              })
+            }
           }
         })
       },

@@ -1,7 +1,7 @@
 <template>
-  <button class="code-btn" :countDown="countDown" :disabled="countDown">
+  <span class="code-btn" :countDown="countDown" :disabled="countDown">
     {{countDown ? (time+'s') : text}}
-  </button>
+  </span>
 </template>
 <script>
 export default {
@@ -30,7 +30,7 @@ export default {
           }
           if(this.time===0){
             this.time = 30
-            this.$emit('stop')
+            this.$emit('stop',true)
             clearInterval(timer)
           }
         },1000)

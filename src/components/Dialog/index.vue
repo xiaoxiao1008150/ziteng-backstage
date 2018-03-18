@@ -103,6 +103,7 @@
           this.showLoginPop = true
         }else{
           //新添加的
+          this.showMainPop = true
           this.showLoginPop = false
           // let name = this.setRouterName()
           this.$emit('close')
@@ -117,7 +118,6 @@
       }
     },
     created () {
-        console.log('ac')
         if(this.currentActivity.url){
           console.log('currentActivity',this.currentActivity)
           this.detail = true

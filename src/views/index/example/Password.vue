@@ -72,17 +72,22 @@
         }
       };
       var validatePass3 = (rule, value, callback) => {
-        if (!this.ruleForm.tel) {
-          callback(new Error('请先输入手机号码'));
-        } else if (value === '') {
-          callback(new Error('请输入验证码'));
-        } else {
-          callback();
-        }
+        this.$refs.ruleForm.validateField('tel' ,message => {
+          if (message==='请输入手机号码') {
+            callback(new Error(message));
+          }else if (message==='手机号码输入不正确') {
+            callback(new Error('请输入验证码'));
+          }  else if (value === '') {
+            callback(new Error('请输入验证码'));
+          } else {
+            callback();
+          }
+        })
       };
       return {
         countDown:false,
         showInfo:true,
+        flag:true,
         // showPassword:false
           ruleForm: {
             tel: '',
@@ -116,28 +121,32 @@
         }
     },
     methods: {
-      stop () {
+      stop (flag) {
         this.countDown = false
+        this.flag = flag
       },
       getCaptcha () {
         this.$refs.ruleForm.validateField('captcha' ,message => {
           if(!message){
-            this.countDown = true
-            //在这里post短信验证码，data mobileNumber
-            let data = this.ruleForm.tel
-            // let data = qs.stringify(phoneNum)
-            getCaptchaForget(data).then((res)=>{
-              if(res.data && res.data.code==='ok'){
-                // 证实后台已经发送验证码 开始倒计时
-                this.countDown = true
-              }else{
-                this.$message({
-                  message: '请稍后尝试',
-                  type: 'error',
-                  duration: 2* 1000
-                });
-              }
-            })
+            if(this.flag){
+              this.flag = false
+              this.countDown = true
+              //在这里post短信验证码，data mobileNumber
+              let data = this.ruleForm.tel
+
+              getCaptchaForget(data).then((res)=>{
+                if(res.data && res.data.code==='ok'){
+                  // 证实后台已经发送验证码 开始倒计时
+                  this.countDown = true
+                }else{
+                  this.$message({
+                    message: '请稍后尝试',
+                    type: 'error',
+                    duration: 2* 1000
+                  });
+                }
+              })
+            }
           }
         })
       },
