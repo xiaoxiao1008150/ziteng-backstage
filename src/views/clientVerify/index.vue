@@ -4,72 +4,76 @@
     <span><i class="el-icon-arrow-left
 "></i></span>
     <span>客户审核</span></div>
-    <div class="verify-content">
-      <el-tabs v-model="activeName" @tab-click="tabChange">
-        <el-tab-pane label="待审核" name="first">
-          <el-table  fit highlight-current-row
-             v-loading="listLoading" element-loading-text="拼命加载中"
-            :data="userList" style="width: 100%">
+    <div class="verify-lay">
+      <div class="verify-content">
+        <el-tabs v-model="activeName" @tab-click="tabChange">
+          <el-tab-pane label="待审核" name="first">
+            <el-table  fit highlight-current-row
+               v-loading="listLoading" element-loading-text="拼命加载中"
+               height="600"
+              :data="userList" style="width: 100%">
+                <el-table-column align="center" width="180"
+                  v-for="{ prop, label } in colConfigs"
+                  :key="prop"
+                  :prop="prop"
+                  :label="label">
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="270">
+                  <template slot-scope="scope">
+                  <el-button
+                      size="mini"
+                      type="primary"
+                      plain
+                      @click="passVerify(scope.row.id, scope.row.status)"
+                      >通过</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      plain
+                      @click="reject(scope.row.id)"
+                      >拒绝</el-button>
+                  </template>
+                </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="客户列表" name="second">
+            <el-table fit highlight-current-row
+            v-loading="listLoading" element-loading-text="拼命加载中"
+            :data="userListAll"
+            height="600"
+            style="width: 100%">
               <el-table-column align="center" width="180"
                 v-for="{ prop, label } in colConfigs"
                 :key="prop"
                 :prop="prop"
                 :label="label">
               </el-table-column>
-              <el-table-column label="操作" align="center" width="270">
+              <el-table-column
+                label="全部状态"
+                prop="status"
+                align="center"
+                width="180"
+                :filters="filters"
+                :filter-method="filterTag"
+              >
+                <template slot-scope="scope">
+                  {{changeStatus(scope.row.status)}}
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" align="center" width="90">
                 <template slot-scope="scope">
                 <el-button
                     size="mini"
                     type="primary"
                     plain
-                    @click="passVerify(scope.row.id, scope.row.status)"
-                    >通过</el-button>
-                  <el-button
-                    size="mini"
-                    type="danger"
-                    plain
-                    @click="reject(scope.row.id)"
-                    >拒绝</el-button>
+                    @click="startEdit(scope.row.id, scope.row.status,scope.row.start_time,)"
+                    >编辑</el-button>
                 </template>
               </el-table-column>
           </el-table>
-        </el-tab-pane>
-        <el-tab-pane label="客户列表" name="second">
-          <el-table fit highlight-current-row
-          v-loading="listLoading" element-loading-text="拼命加载中"
-          :data="userListAll" 
-          style="width: 100%">
-            <el-table-column align="center" width="180"
-              v-for="{ prop, label } in colConfigs"
-              :key="prop"
-              :prop="prop"
-              :label="label">
-            </el-table-column>
-            <el-table-column
-              label="全部状态"
-              prop="status"
-              align="center"
-              width="180"
-              :filters="filters"
-              :filter-method="filterTag"
-            >
-              <template slot-scope="scope">
-                {{changeStatus(scope.row.status)}}
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" align="center" width="90">
-              <template slot-scope="scope">
-              <el-button
-                  size="mini"
-                  type="primary"
-                  plain
-                  @click="startEdit(scope.row.id, scope.row.status,scope.row.start_time,)"
-                  >编辑</el-button>
-              </template>
-            </el-table-column>
-        </el-table>
-        </el-tab-pane>
-      </el-tabs>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
     <modal v-if="pass">
       <div slot="header">
@@ -139,7 +143,7 @@
 </template>
 <script>
   import Modal from 'components/Modal'
-  import { fetchUserList, userEdit, userReject ,fetchAllUser } from 'api/user'
+  import { fetchUserList, userEdit, userReject ,fetchAllUser } from 'api/client'
   import qs from 'qs'
 
   export default {

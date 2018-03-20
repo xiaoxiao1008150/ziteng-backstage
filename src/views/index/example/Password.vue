@@ -34,7 +34,7 @@
        <el-form-item label="确认密码" prop="confirmPassword">
         <el-input type="password" v-model="ruleForm1.confirmPassword" placeholder="请确认密码" auto-complete="off"></el-input>
       </el-form-item>
-        <el-button type="primary" class="info-btn" @click="submitForm('ruleForm1')">完成</el-button>
+        <el-button type="primary" class="info-btn" :loading="loading" @click="submitForm('ruleForm1')">完成</el-button>
     </el-form>
   </div>
 <!--   <div slot="footer" class="next">
@@ -74,12 +74,12 @@
       var validatePass3 = (rule, value, callback) => {
         this.$refs.ruleForm.validateField('tel' ,message => {
           if (message==='请输入手机号码') {
-            callback(new Error(message));
+            callback(new Error('请先输入手机号码'));
           }else if (message==='手机号码输入不正确') {
-            callback(new Error('请输入验证码'));
-          }  else if (value === '') {
-            callback(new Error('请输入验证码'));
-          } else {
+            callback(new Error(message));
+          }else if (value==='') {
+            callback(new Error('请输入验证码'))
+          }else {
             callback();
           }
         })
@@ -88,6 +88,7 @@
         countDown:false,
         showInfo:true,
         flag:true,
+        loading:false,
         // showPassword:false
           ruleForm: {
             tel: '',
@@ -127,7 +128,7 @@
       },
       getCaptcha () {
         this.$refs.ruleForm.validateField('captcha' ,message => {
-          if(!message){
+          if(message === '请输入验证码'){
             if(this.flag){
               this.flag = false
               this.countDown = true
@@ -181,7 +182,46 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            this.countDown = false
+            // console.log('valid', this.$refs[formName].model)
+            this.loading = true
+            // 按钮禁止，防止重复提交
+            this.isDisabled = true
+            let data = qs.stringify(this.ruleForm)
+            // console.log('注册数据', data)
+            createUser(data).then((res) => {
+              console.log('regis res', res)
+              let data = res.data
+              let message = res.data.message
+              if(data.code === 'ok') {
+                // this.$store.dispatch('SignUp')
+                // this.$notify({
+                //   title: '成功',
+                //   message: '注册成功',
+                //   type: 'success',
+                //   duration: 2000
+                // })
+                this.close()//这里注意顺序
+                // 跳转到创建活动页面
+                // 发出事件， 注册成功
+                this.$emit('signUpSuccess')
+              }
+              else if(message==='验证码错误'){
+                this.$message({
+                  message: '验证码错误',
+                  type: 'error',
+                  duration: 2* 1000
+                });
+              }else{
+                this.$message({
+                  message: '请稍后再试',
+                  type: 'error',
+                  duration: 2* 1000
+                });
+              }
+            })
+            this.isDisabled = false
+            this.loading = false
           } else {
             console.log('error submit!!');
             return false;
@@ -197,36 +237,4 @@
 </script>
 <style lang="stylus" scoped>
 @import "~common/stylus/modal"
-// .form
-//   .input-item
-//     height:30px
-//     line-height:30px
-//     font-size :0
-//     margin-bottom:20px
-//   span
-//     display:inline-block
-//     width:60px
-//     vertical-align :middle
-//     text-align:justify
-//     font-size :12px
-//   .input-self
-//     width:280px
-//     height:30px !important
-//     vertical-align :middle
-//   .input-self.code
-//     width:150px
-//     margin-right:20px
-//   .code-btn
-//     width:110px
-//     height:30px
-//     background:#adadad
-//     border:none
-//     outline:none
-//     color:#fff
-//     border-radius:4px
-//     vertical-align :middle
-// .sign-btn
-//   width:260px
-// .next
-//   padding-bottom:40px
 </style>

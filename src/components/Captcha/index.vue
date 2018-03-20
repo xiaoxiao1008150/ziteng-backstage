@@ -53,4 +53,5 @@ export default {
     border-radius:4px
     vertical-align :middle
     cursor :pointer
+    text-align:center
 </style>

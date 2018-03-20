@@ -5,69 +5,72 @@
 "></i></span>
     <span>活动管理</span>
     </div>
-    <div class="verify-content" style="padding:30px 5%">
-      <el-table
-        fit highlight-current-row
-        v-loading="listLoading" element-loading-text="拼命加载中"
-        :data="userList"
-        style="width: 100%">
-        <el-table-column
-          label="活动名称"
-          prop="activityName"
-          align="center"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          label="活动时间"
-          align="center"
-          width="180">
-           <template slot-scope="scope">
-            <p >{{ scope.row.startTime }}</p>
-            <p >{{ scope.row.expiredTime }}</p>
-          </template> 
-        </el-table-column>
-        <el-table-column
-          label="全部状态"
-          prop="status"
-          align="center"
-          width="180"
-          :filters="filters"
-          :filter-method="filterTag"
-        >
-          <template slot-scope="scope">
-            {{changeStatus(scope.row.status)}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="用户参与详情"
-          align="center" 
-          width="130">
-          <template slot-scope="scope">
-            <span @click="goToInfo" class="look">查看</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" width="270">
-          <template slot-scope="scope">
-          <el-button
-              size="mini"
-              type="success"
-              plain
-              @click="publishTtn(scope.row)"
-              :disabled="scope.row.status==='1'"
-              >发布</el-button>
+    <div class="verify-lay">
+      <div class="verify-content" style="padding:30px 5%">
+        <el-table
+          fit highlight-current-row
+          v-loading="listLoading" element-loading-text="拼命加载中"
+          :data="userList"
+          height="600"
+          style="width: 100%">
+          <el-table-column
+            label="活动名称"
+            prop="activityName"
+            align="center"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            label="活动时间"
+            align="center"
+            width="180">
+             <template slot-scope="scope">
+              <p >{{ scope.row.startTime }}</p>
+              <p >{{ scope.row.expiredTime }}</p>
+            </template> 
+          </el-table-column>
+          <el-table-column
+            label="全部状态"
+            prop="status"
+            align="center"
+            width="180"
+            :filters="filters"
+            :filter-method="filterTag"
+          >
+            <template slot-scope="scope">
+              {{changeStatus(scope.row.status)}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="用户参与详情"
+            align="center" 
+            width="130">
+            <template slot-scope="scope">
+              <span @click="goToInfo" class="look">查看</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" width="270">
+            <template slot-scope="scope">
             <el-button
-              size="mini"
-              :disabled="scope.row.status==='1'"
-              @click="editLottery(scope.row)"
-              >编辑</el-button>
-            <el-button
-              size="mini"
-              type="primary"
-              plain
-              @click="openDialog(scope.row)">预览</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+                size="mini"
+                type="success"
+                plain
+                @click="publishTtn(scope.row)"
+                :disabled="scope.row.status==='1'"
+                >发布</el-button>
+              <el-button
+                size="mini"
+                :disabled="scope.row.status==='1'"
+                @click="editLottery(scope.row)"
+                >编辑</el-button>
+              <el-button
+                size="mini"
+                type="primary"
+                plain
+                @click="openDialog(scope.row)">预览</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
     <modal v-if="isPublish">
        <div slot="header">

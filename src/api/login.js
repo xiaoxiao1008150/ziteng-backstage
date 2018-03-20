@@ -31,11 +31,11 @@ export function getCaptchaForget(data) {
     method: 'post'
   })
 }
-export function getUserInfo(token) {
-  return request({
-    url: '/user',
-    method: 'get',
-    params: { token }
-  })
-}
+// export function getUserInfo(token) {
+//   return request({
+//     url: '/user',
+//     method: 'get',
+//     params: { token }
+//   })
+// }
 

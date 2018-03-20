@@ -4,79 +4,83 @@
     <span><i class="el-icon-arrow-left
 "></i></span>
     <span>活动审核</span></div>
-    <div class="verify-content">
-      <el-tabs v-model="activeName" @tab-click="tabChange">
-        <el-tab-pane label="待审核" name="first">
-          <el-table fit highlight-current-row 
-          v-loading="listLoading" element-loading-text="拼命加载中"
-          :data="vertifyData" style="width: 100%">
-              <el-table-column align="center"
-                v-for="{ prop, label, width } in colConfigs"
-                :key="prop"
-                :prop="prop"
-                :width="width"
-                :label="label">
-              </el-table-column>
-              <el-table-column label="操作" align="center" width="270">
-                <template slot-scope="scope">
-                <el-button
-                    size="mini"
-                    type="primary"
-                    plain
-                    @click="openPass"
-                    >通过</el-button>
+    <div class="verify-lay">
+      <div class="verify-content">
+        <el-tabs v-model="activeName" @tab-click="tabChange">
+          <el-tab-pane label="待审核" name="first">
+            <el-table fit highlight-current-row 
+            v-loading="listLoading" element-loading-text="拼命加载中"
+            height="600"
+            :data="vertifyData" style="width: 100%">
+                <el-table-column align="center"
+                  v-for="{ prop, label, width } in colConfigs"
+                  :key="prop"
+                  :prop="prop"
+                  :width="width"
+                  :label="label">
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="270">
+                  <template slot-scope="scope">
                   <el-button
-                    size="mini"
-                    type="danger"
-                    plain
-                    @click="openReject"
-                    >拒绝</el-button>
-                  <el-button
-                    size="mini"
-                    type="success"
-                    plain
-                    @click="openDialog">预览</el-button>
-                </template>
-              </el-table-column>
-          </el-table>
-        </el-tab-pane>
-        <el-tab-pane label="客户列表" name="second">
-          <el-table fit highlight-current-row
-          v-loading="listLoading" element-loading-text="拼命加载中" 
-          :data="vertifyData" style="width: 100%">
-            <el-table-column align="center"
-                v-for="{ prop, label, width } in colConfigs"
-                :key="prop"
-                :prop="prop"
-                :width="width"
-                :label="label">
-              </el-table-column>
-              <el-table-column
-                label="全部状态"
-                prop="status"
-                align="center"
-                width="180"
-                :filters="filters"
-                :filter-method="filterTag"
-              >
-              </el-table-column>
-              <el-table-column label="操作" align="center" width="270">
-                <template slot-scope="scope">
-                <el-button
-                    size="mini"
-                    >暂停</el-button>
-                  <el-button
-                    size="mini"
-                    >开始</el-button>
-                  <el-button
-                    size="mini"
-                    type="danger"
-                    @click="openDialog">预览</el-button>
-                </template>
-              </el-table-column>
+                      size="mini"
+                      type="primary"
+                      plain
+                      @click="openPass"
+                      >通过</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      plain
+                      @click="openReject"
+                      >拒绝</el-button>
+                    <el-button
+                      size="mini"
+                      type="success"
+                      plain
+                      @click="openDialog">预览</el-button>
+                  </template>
+                </el-table-column>
             </el-table>
-        </el-tab-pane>
-      </el-tabs>
+          </el-tab-pane>
+          <el-tab-pane label="活动列表" name="second">
+            <el-table fit highlight-current-row
+            v-loading="listLoading" element-loading-text="拼命加载中" 
+            height="600"
+            :data="vertifyData" style="width: 100%">
+              <el-table-column align="center"
+                  v-for="{ prop, label, width } in colConfigs"
+                  :key="prop"
+                  :prop="prop"
+                  :width="width"
+                  :label="label">
+                </el-table-column>
+                <el-table-column
+                  label="全部状态"
+                  prop="status"
+                  align="center"
+                  width="180"
+                  :filters="filters"
+                  :filter-method="filterTag"
+                >
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="270">
+                  <template slot-scope="scope">
+                  <el-button
+                      size="mini"
+                      >暂停</el-button>
+                    <el-button
+                      size="mini"
+                      >开始</el-button>
+                    <el-button
+                      size="mini"
+                      type="danger"
+                      @click="openDialog">预览</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
      <zi-dialog
       :hasCreated="hasCreated"
@@ -333,36 +337,4 @@
 </script>
 <style lang="stylus" scoped>
 @import "~common/stylus/modal"
-// @import "~common/stylus/table"
-
-// .verify-header
-//   text-align:left
-//   height:60px
-//   line-height:60px
-// .verify-content
-//   background:#fff
-// .verify-table
-//   font-size:13px
-//   margin:30px 5%;
-//   width:90%
-//   tr:first-child
-//     border-bottom:1px solid #ccc
-//   tr
-//     height:40px
-//   td
-//     padding:8px 10px
-//     vertical-align :middle
-//   .verify-aciton
-//     display:inline-block
-//     width:40px
-//     cursor :pointer
-//   .verify-aciton-pass
-//     color:#24b9f3
-//   .verify-aciton-reject
-//     color:red
-//   .time
-//     height:20px
-// #edit-select
-//   width:250px
-//   vertical-align :middle
 </style>

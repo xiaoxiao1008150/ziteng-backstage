@@ -1,19 +1,20 @@
-import { login, logout, getUserInfo } from 'api/login'
+import { login, logout } from 'api/login'
 import { getToken, setToken, removeToken } from 'utils/auth'
 
 const user = {
   state: {
     user: '',
-    status: '',
-    code: '',
+    status: 'login',
+    // status: 'noRegister',
+    code: '1',
     token: getToken(),
     name: '',
-    avatar: '',
-    introduction: '',
+    // avatar: '',
+    // introduction: '',
     roles: ['admin'],
-    setting: {
-      articlePlatform: []
-    },
+    // setting: {
+    //   articlePlatform: []
+    // },
     flag: true,
     info:{}
   },
@@ -25,21 +26,21 @@ const user = {
     SET_TOKEN: (state, token) => {
       state.token = token
     },
-    SET_INTRODUCTION: (state, introduction) => {
-      state.introduction = introduction
-    },
-    SET_SETTING: (state, setting) => {
-      state.setting = setting
-    },
+    // SET_INTRODUCTION: (state, introduction) => {
+    //   state.introduction = introduction
+    // },
+    // SET_SETTING: (state, setting) => {
+    //   state.setting = setting
+    // },
     SET_STATUS: (state, status) => {
       state.status = status
     },
     SET_NAME: (state, name) => {
       state.name = name
     },
-    SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar
-    },
+    // SET_AVATAR: (state, avatar) => {
+    //   state.avatar = avatar
+    // },
     SET_ROLES: (state, roles) => {
       state.roles = roles
     },
@@ -63,12 +64,17 @@ const user = {
                 // setToken(data.id)
                 setToken({id:data.id,name:data.contact_name})
                 commit('SET_TOKEN', {id:data.id,name:data.contact_name})
+                // 用户登录之后获取status  设置
                 commit('SET_STATUS', 'login')
+                commit('SET_CODE', data.status)
               }
               // 数据传到页面中
               resolve(res)
           })
       });
+    },
+    SignUp({commit,status}){
+      commit('SET_STATUS', 'register')
     },
 
     // // 获取用户信息
@@ -118,29 +124,29 @@ const user = {
     },
 
     // 前端 登出
-    FedLogOut({ commit }) {
-      return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        removeToken()
-        resolve()
-      })
-    },
+    // FedLogOut({ commit }) {
+    //   return new Promise(resolve => {
+    //     commit('SET_TOKEN', '')
+    //     removeToken()
+    //     resolve()
+    //   })
+    // },
 
     // 动态修改权限
-    ChangeRoles({ commit }, role) {
-      return new Promise(resolve => {
-        commit('SET_TOKEN', role)
-        setToken(role)
-        getUserInfo(role).then(response => {
-          const data = response.data
-          commit('SET_ROLES', data.roles)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          commit('SET_INTRODUCTION', data.introduction)
-          resolve()
-        })
-      })
-    }
+    // ChangeRoles({ commit }, role) {
+    //   return new Promise(resolve => {
+    //     commit('SET_TOKEN', role)
+    //     setToken(role)
+    //     getUserInfo(role).then(response => {
+    //       const data = response.data
+    //       commit('SET_ROLES', data.roles)
+    //       commit('SET_NAME', data.name)
+    //       commit('SET_AVATAR', data.avatar)
+    //       commit('SET_INTRODUCTION', data.introduction)
+    //       resolve()
+    //     })
+    //   })
+    // }
   }
 }
 

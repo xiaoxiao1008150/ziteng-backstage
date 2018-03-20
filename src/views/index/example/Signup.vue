@@ -68,13 +68,17 @@
         }
       };
       var validatePass3 = (rule, value, callback) => {
-        if (!this.ruleForm.mobileNumber) {
-          callback(new Error('请先输入手机号码'));
-        } else if (value === '') {
-          callback(new Error('请输入验证码'));
-        }else {
-          callback();
-        }
+        this.$refs.ruleForm.validateField('mobileNumber' ,message => {
+          if (message==='请输入手机号码') {
+            callback(new Error('请先输入手机号码'));
+          }else if (message==='手机号码输入不正确') {
+            callback(new Error(message));
+          }else if (value==='') {
+            callback(new Error('请输入验证码'))
+          }else {
+            callback();
+          }
+        })
       };
       return {
         countDown:false,
@@ -98,8 +102,8 @@
             { required: true, message: '请输入联系人', trigger: 'blur' },
           ],
           mobileNumber: [
-            { required: true, message: '请输入手机号码', trigger: 'blur' }
-            // { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+            { required: true, message: '请输入手机号码', trigger: 'blur' },
+            { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
           ],
           password: [
             { required: true,validator: validatePass, trigger: 'blur' }
@@ -120,7 +124,7 @@
       },
       getCaptcha () {
         this.$refs.ruleForm.validateField('verifyCode' ,message => {
-          if(message !== '请先输入手机号码'){
+          if(message === '请输入验证码'){
             if(this.flag){
               this.flag = false
               this.countDown = true
@@ -159,7 +163,7 @@
             //   loading.close()
             //   this.$emit('signUpSuccess')
             // },1000)
-
+            this.countDown = false
             // console.log('valid', this.$refs[formName].model)
             this.loading = true
             // 按钮禁止，防止重复提交
@@ -171,6 +175,7 @@
               let data = res.data
               let message = res.data.message
               if(data.code === 'ok') {
+                this.$store.dispatch('SignUp')
                 this.$notify({
                   title: '成功',
                   message: '注册成功',

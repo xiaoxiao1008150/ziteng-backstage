@@ -45,13 +45,17 @@
   export default {
     data () {
       var validatePass3 = (rule, value, callback) => {
-        if (!this.ruleForm._loginName) {
-          callback(new Error('请先输入手机号码'));
-        }else if (value === '') {
-          callback(new Error('请输入验证码'));
-        }else {
-          callback();
-        }
+        this.$refs.ruleForm.validateField('_loginName' ,message => {
+          if (message==='请输入手机号码') {
+            callback(new Error('请先输入手机号码'));
+          }else if (message==='手机号码输入不正确') {
+            callback(new Error(message));
+          }else if (value==='') {
+            callback(new Error('请输入验证码'))
+          }else {
+            callback();
+          }
+        })
       };
       return {
           isDisabled:false,
@@ -66,7 +70,7 @@
           rules: {
             _loginName: [
               { required: true, message: '请输入手机号码', trigger: 'blur' },
-              // { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+              { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
             ],
             _password: [
               { required: true,message: '请输入密码', trigger: 'blur' }
@@ -90,7 +94,7 @@
         // 对表单验证码字段进行验证
         this.$refs.ruleForm.validateField('_verCode' ,message => {
           // 说明有错误字段
-          if(message!=='请先输入手机号码'){
+          if(message ==='请输入验证码'){
             if(this.flag){
               this.flag = false
               this.countDown = true
@@ -118,6 +122,8 @@
         this.$refs.ruleForm.validate(valid => {
           // console.log('rule', this.ruleForm)
           if (valid) {
+            //验证码倒数 取消
+            this.countDown = false
             this.loading = true
             this.isDisabled = true
             let init = this.ruleForm
