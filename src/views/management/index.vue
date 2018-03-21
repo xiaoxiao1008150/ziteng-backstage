@@ -232,7 +232,6 @@
       this.activityManageList()
     },
     components:{
-      // Date,
       Modal,
       ziDialog:Dialog,
     }

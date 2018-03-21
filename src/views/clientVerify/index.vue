@@ -337,10 +337,6 @@
           // this.dialogVisible = false
           this.close()
         })
-        // setTimeout(()=>{
-        //   this.loading = false
-        //   this.dialogVisible = false
-        // },1000)
       },
       handleClose () {
         this.dialogVisible = false

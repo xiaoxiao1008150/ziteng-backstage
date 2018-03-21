@@ -4,7 +4,7 @@
     <span><i class="el-icon-arrow-left
 "></i></span>
     <span>活动审核</span></div>
-    <div class="verify-lay">
+    <div class="verify-lay" style="max-width:1100px">
       <div class="verify-content">
         <el-tabs v-model="activeName" @tab-click="tabChange">
           <el-tab-pane label="待审核" name="first">
@@ -19,7 +19,9 @@
                   :width="width"
                   :label="label">
                 </el-table-column>
-                <el-table-column label="操作" align="center" width="270">
+                <el-table-column label="操作" 
+                  fixed="right"
+                  align="center" width="220">
                   <template slot-scope="scope">
                   <el-button
                       size="mini"
@@ -62,14 +64,20 @@
                   :filters="filters"
                   :filter-method="filterTag"
                 >
+                 <template slot-scope="scope">
+                  {{changeStatus(scope.row.status)}}
+                </template>
                 </el-table-column>
-                <el-table-column label="操作" align="center" width="270">
+                  
+                <el-table-column label="操作" fixed="right" align="center" width="220">
                   <template slot-scope="scope">
                   <el-button
                       size="mini"
+                      @click="openPause"
                       >暂停</el-button>
                     <el-button
                       size="mini"
+                      @click="openStart"
                       >开始</el-button>
                     <el-button
                       size="mini"
@@ -89,20 +97,20 @@
       >
       </zi-dialog>
       <modal v-if="pass">
-       <div slot="header">
-        <span class="fl">提示</span>
-        <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
-      </div>
-      <div slot="body">
-        <div class="confirm">确定通过吗？</div>
-        <div>
-           <el-button @click="close">取消</el-button>
-           <el-button type="primary" @click="activityPass" :loading="loading">确定</el-button>
+         <div slot="header">
+          <span class="fl">提示</span>
+          <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
         </div>
-      </div>
-    </modal>
+        <div slot="body">
+          <div class="confirm">确定通过吗？</div>
+          <div>
+             <el-button @click="close">取消</el-button>
+             <el-button type="primary" @click="activityPass" :loading="loading">确定</el-button>
+          </div>
+        </div>
+      </modal>
     <modal v-if="reject">
-       <div slot="header">
+      <div slot="header">
         <span class="fl">提示</span>
         <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
       </div>
@@ -114,6 +122,32 @@
         </div>
       </div>
     </modal>
+    <modal v-if="pause">
+      <div slot="header">
+        <span class="fl">提示</span>
+        <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
+      </div>
+      <div slot="body">
+        <div class="confirm">确定暂停吗？</div>
+        <div>
+           <el-button @click="close">取消</el-button>
+           <el-button type="primary" @click="activityPause" :loading="loading">确定</el-button>
+        </div>
+      </div>
+    </modal>
+    <modal v-if="start">
+      <div slot="header">
+        <span class="fl">提示</span>
+        <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
+      </div>
+      <div slot="body">
+        <div class="confirm">确定开始吗？</div>
+        <div>
+           <el-button @click="close">取消</el-button>
+           <el-button type="primary" @click="activityStart" :loading="loading">确定</el-button>
+        </div>
+      </div>
+    </modal>
   </div>
 </template>
 <script>
@@ -121,7 +155,7 @@
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
   import { mapGetters,mapMutations } from 'vuex'
-  import { fetchVerfityList,fetchActivityListAll, activityPassVerfity,activityReject} from 'api/activity'
+  import { fetchVerfityList,fetchActivityListAll, activityPassVerfity,activityReject,activityStart,activityPause} from 'api/activity'
   import qs from 'qs'
 
 
@@ -166,6 +200,8 @@
               ]
           }
         ],
+        pause:false,
+        start:false,
         pass:false,
         reject:false,
         activeName:'first',
@@ -174,7 +210,7 @@
         showModal:false,
         hasCreated:true,
         tabHelp: true,
-        filters: [{text: '未发布',value: '未发布'}, {text: '审核中',value: '审核中'}, {text: '未开始',value: '未开始'},{text: '已激活',value: '已激活'},{text: '禁用',value: '禁用'},{text: '未通过',value: '未通过'},{text: '已结束',value: '已结束'},{text: '已关闭',value: '已关闭'}]
+        filters: [{text: '未发布',value: '0'},{text: '未开始',value: '2'},{text: '进行中',value: '3'},{text: '禁用',value: '4'},{text: '未通过',value: '5'},{text: '已结束',value: '6'},{text: '已关闭',value: '9'}]
       }
     },
     computed: {
@@ -228,6 +264,36 @@
       filterTag(value, row) {
         return row.status === value;
       },
+      changeStatus (val) {
+        let result
+        switch(val)
+          {
+          case '0':
+            result = '未发布'
+            break;
+          case '2':
+            result = '未开始'
+            break;
+          case '3':
+            result = '进行中'
+            break;
+          case '4':
+            result = '禁用'
+            break;
+          case '5':
+            result = '未通过'
+            break;
+          case '6':
+            result = '已结束'
+            break;
+          case '9':
+            result = '已关闭'
+            break;
+          default:
+            result = ''
+          }
+          return result
+      },
       tabChange (tab) {
         // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，第一次切换到”客户列表“ 才需要重新拉取
         // 第一次拉取客户列表
@@ -275,13 +341,6 @@
         }).catch((res) =>{
           this.loading = false
         })
-        // setTimeout(()=>{
-        //   // 重新拉取活动审核 待审核列表数据 this.fetchActivityByStatus1
-        //   // this.fetchActivityByStatus1()
-        //   // this.loading = false
-        //   // this.close()
-        //   // this.activeName = 'second'
-        // },1000)
       },
       activityReject () {
         this.loading = true
@@ -309,14 +368,48 @@
           // this.dialogVisible = false
           this.close()
         })
-        // setTimeout(()=>{
-        //   this.close()
-        //   this.loading = false
-        // },1000)
+      },
+      activityPause(){
+        this.loading = true
+        // 处理拒绝逻辑 data 根据接口传数据
+        let data = this.currentId
+        activityReject(data).then((res) =>{
+          let data = res.data
+          if(data.code === 'ok'){
+            this.loading = false
+            // this.dialogVisible = false
+            // 重新拉取数据
+            this.fetchVerfityList1()
+            this.tabHelp = true
+            this.close()
+          }else{
+            this.$message({
+              message: '请稍后尝试',
+              type: 'error',
+              duration: 2* 1000
+            });
+          }
+        }).catch(()=>{
+          console.log('kkk')
+          this.loading = false
+          // this.dialogVisible = false
+          this.close()
+        })
+      },
+      activityStart(){
+
       },
       close () {
         this.pass = false
         this.reject = false
+        this.start = false
+        this.pause = false
+      },
+      openPause(){
+        this.pause = true
+      },
+      openStart(){
+        this.start = true
       },
       openPass () {
         this.pass = true

@@ -55,3 +55,18 @@ export function activityReject(data) {
     method: 'post',
   })
 }
+//客户列表 操作 开始
+export function activityStart(data) {
+  return http({
+    url: `/user`,
+    method: 'post',
+  })
+}
+
+//客户列表 操作 暂停
+export function activityPause(data) {
+  return http({
+    url: `/user`,
+    method: 'post',
+  })
+}
