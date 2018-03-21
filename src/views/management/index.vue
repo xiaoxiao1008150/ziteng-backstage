@@ -10,7 +10,7 @@
         <el-table
           fit highlight-current-row
           v-loading="listLoading" element-loading-text="拼命加载中"
-          :data="userList"
+          :data="manageList"
           height="600"
           style="width: 100%">
           <el-table-column
@@ -118,9 +118,17 @@
         handleItem:{}
       }
     },
+    computed: {
+  // 使用对象展开运算符将 getter 混入 computed 对象中
+      ...mapGetters([
+        'manageList'
+      ])
+    },
     methods:{
       ...mapMutations([
-      'setCurrentLottery'
+      'setCurrentLottery',
+      'setManageList',
+      'manageUpdate'
     ]),
       editLottery (item) {
         //item携带了项目的所有信息 获取id -》获取全部信息到 创建活动页面 展示该项目的全部数据
@@ -161,7 +169,9 @@
       activityManageList () {
         this.listLoading = true
         activityManageList().then((res) =>{
-          this.userList = res.data.list
+          // this.userList = res.data.list
+          let list = res.data.list
+          this.setManageList(list)
           this.listLoading = false
         }).catch(()=>{
           this.listLoading = false
@@ -208,12 +218,14 @@
         this.loading = true
         activityPublish(postData).then((res) =>{
           console.log('发布',res)
-          let data = res.data
-          if(data.code === 'ok') {
-            console.log('action')
+          let result = res.data
+          if(result.code === 'ok') {
             // 重新拉取待审核列表 此处不用table 加载图标，
-            this.activityManageList1()
+            // 不再重新拉取数据 vuex 管理
+            let newObj = result.data
             this.close()
+            this.manageUpdate(newObj)
+            // this.activityManageList1()
           }else{
             this.$message({
               message: '请稍后尝试',

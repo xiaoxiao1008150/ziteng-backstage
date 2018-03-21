@@ -217,17 +217,25 @@
     // 使用对象展开运算符将 getter 混入 computed 对象中
       ...mapGetters([
         'lotteryData',
-        'currentLotteryItem'
+        'currentLotteryItem',
+        'aciByStatus',
+        'aciList'
       ])
     },
     methods:{
       ...mapMutations([
-        'setCurrentLottery', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+        'setCurrentLottery',
+        'setAciStatusList',
+        'setAciList',
+        'aciUpdate'
       ]),
       fetchVerfityList () {
         this.listLoading = true
         fetchVerfityList().then((res) =>{
-          this.userList = res.data.list
+          // this.userList = res.data.list
+          // 使用vuex 管理
+          let list = res.data.list
+          this.setAciStatusList(list)
           this.listLoading = false
         }).catch(()=>{
           this.listLoading = false
@@ -303,7 +311,10 @@
           fetchActivityListAll().then((res) =>{
             let result = res.data
             if(result.code==='ok'){
-              this.userListAll = result.list
+              // this.userListAll = result.list
+              // 使用vuex 管理
+              let list = result.list
+              this.setAciList(list)
               this.listLoading = false
             }
           }).catch(()=>{
@@ -324,10 +335,14 @@
         //传递相关数据 根据 接口
         let data = qs.stringify()
         activityPassVerfity(data).then((res) =>{
-          let data = res.data
+          let result = res.data
           if(data.code === 'ok') {
             // 重新拉取待审核列表 此处不用table 加载图标，
-            this.fetchVerfityList1()
+            // this.fetchVerfityList1()
+            // 不再拉取数据， 使用vuex 管理
+            let id = result.data.id
+            this.aciRemove(id)
+            // 待审核列表去除这项数据
             this.tabHelp = true
             this.close()
           }else{
@@ -347,12 +362,15 @@
         // 处理拒绝逻辑 data 根据接口传数据
         let data = this.currentId
         activityReject(data).then((res) =>{
-          let data = res.data
-          if(data.code === 'ok'){
+          let result = res.data
+          if(result.code === 'ok'){
             this.loading = false
             // this.dialogVisible = false
             // 重新拉取数据
-            this.fetchVerfityList1()
+            // this.fetchVerfityList1()
+             // 不再拉取数据， 使用vuex 管理
+            let newObj = result.data
+            this.aciUpdate(newObj)
             this.tabHelp = true
             this.close()
           }else{
@@ -373,14 +391,17 @@
         this.loading = true
         // 处理拒绝逻辑 data 根据接口传数据
         let data = this.currentId
-        activityReject(data).then((res) =>{
+        activityPause(data).then((res) =>{
           let data = res.data
           if(data.code === 'ok'){
             this.loading = false
             // this.dialogVisible = false
-            // 重新拉取数据
-            this.fetchVerfityList1()
-            this.tabHelp = true
+            // // 重新拉取数据
+            // this.fetchVerfityList1()
+             // 不再拉取数据， 使用vuex 管理
+            let id = result.data.id
+            this.aciUpdate(id)
+            // this.tabHelp = true
             this.close()
           }else{
             this.$message({
@@ -397,7 +418,34 @@
         })
       },
       activityStart(){
-
+        this.loading = true
+        // 处理拒绝逻辑 data 根据接口传数据
+        let data = this.currentId
+        activityStart(data).then((res) =>{
+          let data = res.data
+          if(data.code === 'ok'){
+            this.loading = false
+            // this.dialogVisible = false
+            // // 重新拉取数据
+            // this.fetchVerfityList1()
+             // 不再拉取数据， 使用vuex 管理
+            let id = result.data.id
+            this.aciUpdate(id)
+            // this.tabHelp = true
+            this.close()
+          }else{
+            this.$message({
+              message: '请稍后尝试',
+              type: 'error',
+              duration: 2* 1000
+            });
+          }
+        }).catch(()=>{
+          console.log('kkk')
+          this.loading = false
+          // this.dialogVisible = false
+          this.close()
+        })
       },
       close () {
         this.pass = false
@@ -420,7 +468,7 @@
     },
     activated () {
       // 获取活动审核 待审核列表
-      // this.fetchVerfityList()
+      this.fetchVerfityList()
     },
     components:{
       Modal,

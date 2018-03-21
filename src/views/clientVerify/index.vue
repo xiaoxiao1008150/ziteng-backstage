@@ -11,7 +11,7 @@
             <el-table  fit highlight-current-row
                v-loading="listLoading" element-loading-text="拼命加载中"
                height="600"
-              :data="userList" style="width: 100%">
+              :data="ListByStatus" style="width: 100%">
                 <el-table-column align="center" width="180"
                   v-for="{ prop, label } in colConfigs"
                   :key="prop"
@@ -39,7 +39,7 @@
           <el-tab-pane label="客户列表" name="second">
             <el-table fit highlight-current-row
             v-loading="listLoading" element-loading-text="拼命加载中"
-            :data="userListAll"
+            :data="clientList"
             height="600"
             style="width: 100%">
               <el-table-column align="center" width="180"
@@ -145,6 +145,7 @@
   import Modal from 'components/Modal'
   import { fetchUserList, userEdit, userReject ,fetchAllUser } from 'api/client'
   import qs from 'qs'
+  import { mapGetters,mapMutations} from 'vuex'
 
   export default {
     data () {
@@ -213,11 +214,26 @@
         tabHelp:true
       }
     },
+    computed: {
+  // 使用对象展开运算符将 getter 混入 computed 对象中
+      ...mapGetters([
+        'ListByStatus',
+        'clientList'
+      ])
+    },
     methods:{
-      fetchUserList () {
+      ...mapMutations([
+      'setStatusList', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+      'setClientList',
+      'handleRemove',
+      'handleUpdate'
+    ]),
+    fetchUserList () {
         this.listLoading = true
         fetchUserList().then((res) =>{
-          this.userList = res.data.list
+          // this.userList = res.data.list
+          this.setStatusList(res.data.list)
+          console.log('list',this.ListByStatus)
           this.listLoading = false
         }).catch(()=>{
           this.listLoading = false
@@ -282,7 +298,11 @@
             let result = res.data
             console.log('res', res)
             if(result.code==='ok'){
-              this.userListAll = result.list
+              // this.userListAll = result.list
+              let list = result.list
+              this.setClientList(list)
+              console.log('lit', list)
+              console.log('clientList', this.clientList)
               this.listLoading = false
             }else{
               this.$message({
@@ -320,8 +340,11 @@
           if(data.code === 'ok'){
             this.loading = false
             // this.dialogVisible = false
-            // 重新拉取数据
-            this.fetchUserList1()
+            // 重新拉取数据 
+            // this.fetchUserList1()
+            // 不用重新拉取 用 vuex管理
+            let id = data.data.id
+            this.handleRemove(id)
             this.tabHelp = true
             this.close()
           }else{
@@ -391,15 +414,17 @@
             this.$set(this.submitData, 'expiredTime', expiredTime)
             this.$set(this.submitData, 'status', status)
             // let data = this.submitData
-            console.log('编辑=== ', this.submitData)
+            // console.log('编辑=== ', this.submitData)
             let data = qs.stringify(this.submitData)
             userEdit(data).then((res) =>{
-              let data = res.data
-              if(data.code === 'ok') {
-                // alert('数据处理成功')
+              let result = res.data
+              if(result.code === 'ok') {
+                let newObj = result.data
+                this.handleUpdate(newObj)
                 this.$refs[formName].resetFields();
-                // 重新拉取列表
-                this.fetchAllUser1()
+                // 重新拉取列表 
+                // 不用重新拉取，用vuex 管理
+                // this.fetchAllUser1()
                 this.close()
               }else{
                 this.$message({
@@ -437,7 +462,12 @@
                 console.log('测试res', res)
                 let data = res.data
                 if(data.code === 'ok') {
-                  this.fetchUserList1()
+                  let newObj = data.data
+                  let id = newObj.id
+                  console.log('id', id)
+                  // this.fetchUserList1() 不再使用ajax 使用vuex
+                  this.handleRemove(id)
+                  console.log('clientList', this.ListByStatus)
                   this.$refs[formName].resetFields();
                   // 重新拉取待审核列表 此处不用table 加载图标，
                   // 开启 客户列表拉取数据 开关
