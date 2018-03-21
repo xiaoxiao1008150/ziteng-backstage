@@ -9,12 +9,7 @@ const user = {
     code: '1',
     token: getToken(),
     name: '',
-    // avatar: '',
-    // introduction: '',
     roles: ['admin'],
-    // setting: {
-    //   articlePlatform: []
-    // },
     flag: true,
     info:{}
   },
@@ -26,21 +21,12 @@ const user = {
     SET_TOKEN: (state, token) => {
       state.token = token
     },
-    // SET_INTRODUCTION: (state, introduction) => {
-    //   state.introduction = introduction
-    // },
-    // SET_SETTING: (state, setting) => {
-    //   state.setting = setting
-    // },
     SET_STATUS: (state, status) => {
       state.status = status
     },
     SET_NAME: (state, name) => {
       state.name = name
     },
-    // SET_AVATAR: (state, avatar) => {
-    //   state.avatar = avatar
-    // },
     SET_ROLES: (state, roles) => {
       state.roles = roles
     },
@@ -63,7 +49,8 @@ const user = {
                 let data = result.data
                 // setToken(data.id)
                 setToken({id:data.id,name:data.contact_name})
-                commit('SET_TOKEN', {id:data.id,name:data.contact_name})
+                // commit('SET_TOKEN', {id:data.id,name:data.contact_name})
+                commit('SET_TOKEN', data.SESSION)
                 // 用户登录之后获取status  设置
                 commit('SET_STATUS', 'login')
                 commit('SET_CODE', data.status)

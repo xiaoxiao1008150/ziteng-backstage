@@ -227,7 +227,8 @@
         'setCurrentLottery',
         'setAciStatusList',
         'setAciList',
-        'aciUpdate'
+        'aciUpdate',
+        'aciRemove'
       ]),
       fetchVerfityList () {
         this.listLoading = true

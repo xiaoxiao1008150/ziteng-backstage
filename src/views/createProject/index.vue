@@ -48,11 +48,10 @@
     </div>
     <zi-dialog
       v-if="showModal"
-      currentActivity={}
+      :currentActivity="{}"
       @close="showModal = false" 
       >
   </zi-dialog>
-  <!-- <loading :showLoading="showLoading"></loading> -->
   </div>
 </template>
 <script>
@@ -89,7 +88,7 @@ export default {
   methods: {
     ...mapMutations([
       'setCurrentLottery',
-      'initLotteryData' // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
+      'initLotteryData'
     ]),
 //     let lotteryData = [
 //   {num:'01',text:'超级大转盘',type:'slyder'},
