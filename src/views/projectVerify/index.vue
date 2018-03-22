@@ -11,13 +11,30 @@
             <el-table fit highlight-current-row 
             v-loading="listLoading" element-loading-text="拼命加载中"
             height="600"
-            :data="vertifyData" style="width: 100%">
+            :data="aciByStatus" style="width: 100%">
                 <el-table-column align="center"
                   v-for="{ prop, label, width } in colConfigs"
                   :key="prop"
                   :prop="prop"
                   :width="width"
                   :label="label">
+                </el-table-column>
+                <el-table-column
+                  label="活动时间"
+                  align="center"
+                  width="180">
+                   <template slot-scope="scope">
+                    <p >{{ scope.row.startTime }}</p>
+                    <p >{{ scope.row.expiredTime }}</p>
+                  </template> 
+                </el-table-column>
+                <el-table-column label="用户参与详情" 
+                  align="center" width="100">
+                  <template slot-scope="scope">
+                  <span
+                      class="look"
+                      >查看</span>
+                  </template>
                 </el-table-column>
                 <el-table-column label="操作" 
                   fixed="right"
@@ -27,19 +44,19 @@
                       size="mini"
                       type="primary"
                       plain
-                      @click="openPass"
+                      @click="openChange('pass',scope.row)"
                       >通过</el-button>
                     <el-button
                       size="mini"
                       type="danger"
                       plain
-                      @click="openReject"
+                      @click="openChange('reject',scope.row)"
                       >拒绝</el-button>
                     <el-button
                       size="mini"
                       type="success"
                       plain
-                      @click="openDialog">预览</el-button>
+                      @click="openDialog(scope.row)">预览</el-button>
                   </template>
                 </el-table-column>
             </el-table>
@@ -48,7 +65,7 @@
             <el-table fit highlight-current-row
             v-loading="listLoading" element-loading-text="拼命加载中" 
             height="600"
-            :data="vertifyData" style="width: 100%">
+            :data="aciList" style="width: 100%">
               <el-table-column align="center"
                   v-for="{ prop, label, width } in colConfigs"
                   :key="prop"
@@ -65,24 +82,25 @@
                   :filter-method="filterTag"
                 >
                  <template slot-scope="scope">
-                  {{changeStatus(scope.row.status)}}
+                  {{changeText(scope.row.status)}}
                 </template>
                 </el-table-column>
-                  
                 <el-table-column label="操作" fixed="right" align="center" width="220">
                   <template slot-scope="scope">
                   <el-button
                       size="mini"
-                      @click="openPause"
+                      @click="openChange('pause',scope.row)"
+                      :disabled="scope.row.status!=='3'"
                       >暂停</el-button>
                     <el-button
                       size="mini"
-                      @click="openStart"
+                      @click="openChange('start',scope.row)"
+                      :disabled="scope.row.status!=='2'"
                       >开始</el-button>
                     <el-button
                       size="mini"
                       type="danger"
-                      @click="openDialog">预览</el-button>
+                      @click="openDialog(scope.row)">预览</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -92,6 +110,7 @@
     </div>
      <zi-dialog
       :hasCreated="hasCreated"
+      :currentActivity="currentActivity"
       v-if="showModal"
       @close="showModal = false" 
       >
@@ -105,7 +124,7 @@
           <div class="confirm">确定通过吗？</div>
           <div>
              <el-button @click="close">取消</el-button>
-             <el-button type="primary" @click="activityPass" :loading="loading">确定</el-button>
+             <el-button type="primary" @click="changeStatus('pass')" :loading="loading">确定</el-button>
           </div>
         </div>
       </modal>
@@ -118,7 +137,7 @@
         <div class="confirm">确定拒绝吗？</div>
         <div>
            <el-button @click="close">取消</el-button>
-           <el-button type="primary" @click="activityReject" :loading="loading">确定</el-button>
+           <el-button type="primary" @click="changeStatus('reject')" :loading="loading">确定</el-button>
         </div>
       </div>
     </modal>
@@ -131,7 +150,7 @@
         <div class="confirm">确定暂停吗？</div>
         <div>
            <el-button @click="close">取消</el-button>
-           <el-button type="primary" @click="activityPause" :loading="loading">确定</el-button>
+           <el-button type="primary" @click="changeStatus('pause')" :loading="loading">确定</el-button>
         </div>
       </div>
     </modal>
@@ -144,18 +163,17 @@
         <div class="confirm">确定开始吗？</div>
         <div>
            <el-button @click="close">取消</el-button>
-           <el-button type="primary" @click="activityStart" :loading="loading">确定</el-button>
+           <el-button type="primary" @click="changeStatus('start')" :loading="loading">确定</el-button>
         </div>
       </div>
     </modal>
   </div>
 </template>
 <script>
-  // import Date from 'components/Date'
   import Modal from 'components/Modal'
   import Dialog from 'components/Dialog'
   import { mapGetters,mapMutations } from 'vuex'
-  import { fetchVerfityList,fetchActivityListAll, activityPassVerfity,activityReject,activityStart,activityPause} from 'api/activity'
+  import { fetchVerfityList,fetchActivityListAll, changeStatus} from 'api/manage_activity'
   import qs from 'qs'
 
 
@@ -163,12 +181,11 @@
     data () {
       return {
         colConfigs:[
-          { prop: 'id', label: '发布时间',width: '180'},
-          { prop: 'contract_name', label: '客户名称',width: '90' },
-          { prop: 'contact_name', label: '用户名',width: '90' },
-          { prop: 'mobile_number', label: '手机号' ,width: '140'},
-          { prop: 'password', label: '活动名称',width: '120' },
-          { prop: '', label: '活动时间',width: '90' },
+          { prop: 'publishTime', label: '发布时间',width: '180'},
+          { prop: 'customer', label: '客户名称',width: '90' },
+          { prop: 'contact', label: '用户名',width: '90' },
+          { prop: 'mobile', label: '手机号' ,width: '140'},
+          { prop: 'activityName', label: '活动名称',width: '120' },
         ],
         vertifyData: [
           {
@@ -227,12 +244,14 @@
         'setCurrentLottery',
         'setAciStatusList',
         'setAciList',
+        'aciUpdateByStatus',
         'aciUpdate',
         'aciRemove'
       ]),
       fetchVerfityList () {
         this.listLoading = true
         fetchVerfityList().then((res) =>{
+          console.log('res', res)
           // this.userList = res.data.list
           // 使用vuex 管理
           let list = res.data.list
@@ -253,8 +272,10 @@
       handleCommand(command) {
         this.$message('click on item ' + command);
       },
-      openDialog () {
+      openDialog (item) {
         this.showModal = true
+        console.log('pass', this.currentActivity)
+        this.currentActivity  = item
         // 在这里获取活动名称
         // this.setCurrentLottery(item)
       },
@@ -273,7 +294,7 @@
       filterTag(value, row) {
         return row.status === value;
       },
-      changeStatus (val) {
+      changeText (val) {
         let result
         switch(val)
           {
@@ -310,12 +331,15 @@
           // this.fetchAllUser
           this.listLoading = true
           fetchActivityListAll().then((res) =>{
+            console.log('lie', res)
             let result = res.data
             if(result.code==='ok'){
               // this.userListAll = result.list
               // 使用vuex 管理
               let list = result.list
               this.setAciList(list)
+              this.listLoading = false
+            }else{
               this.listLoading = false
             }
           }).catch(()=>{
@@ -330,21 +354,67 @@
         //   this.tabHelp = false
         // }
       },
-      activityPass () {
+      changeStatus (flag) {
         // 数据处理 1. 提交处理的待审核客户操作结果:取消不处理， 确定改变状态
         this.loading = true
         //传递相关数据 根据 接口
-        let data = qs.stringify()
-        activityPassVerfity(data).then((res) =>{
+        // let initData = this.currentItem
+        let {id} = this.currentItem
+        let status
+        if(flag === 'pass') {
+          status = '2'
+        }else if(flag === 'reject'){
+          status = '5'
+        }else if(flag === 'pause'){
+          status = '4'
+        }else if(flag === 'start'){
+          status = '3'
+        }
+        let obj = {id:id,status:status}
+        console.log('传递数据', obj)
+        let data = qs.stringify(obj)
+        // changeStatus(data).then((res) =>{
+        //   let result = res.data
+        //   if(data.code === 'ok') {
+        //     // 重新拉取待审核列表 此处不用table 加载图标，
+        //     // this.fetchVerfityList1()
+        //     // 不再拉取数据， 使用vuex 管理
+        //     let id = result.data.id
+        //     this.aciRemove(id)
+        //     // 待审核列表去除这项数据
+        //     this.tabHelp = true
+        //     this.close()
+        //   }else{
+        //     this.$message({
+        //       message: '请稍后尝试',
+        //       type: 'error',
+        //       duration: 2* 1000
+        //     });
+        //   }
+        //   this.loading = false
+        // }).catch((res) =>{
+        //   this.loading = false
+        // })
+        this.middleFun(flag,data)
+      },
+      middleFun (flag,data) {
+        changeStatus(data).then((res) =>{
+          console.log('res data', res)
           let result = res.data
-          if(data.code === 'ok') {
+          if(result.code === 'ok') {
             // 重新拉取待审核列表 此处不用table 加载图标，
             // this.fetchVerfityList1()
             // 不再拉取数据， 使用vuex 管理
             let id = result.data.id
-            this.aciRemove(id)
+            let newObj = result.data
+            if(flag === 'pass' || flag ==='reject'){
+              this.aciRemove(id)
+            }else{
+              this.aciUpdate(newObj)
+            }
             // 待审核列表去除这项数据
             this.tabHelp = true
+            this.loading = false
             this.close()
           }else{
             this.$message({
@@ -358,114 +428,164 @@
           this.loading = false
         })
       },
-      activityReject () {
-        this.loading = true
-        // 处理拒绝逻辑 data 根据接口传数据
-        let data = this.currentId
-        activityReject(data).then((res) =>{
-          let result = res.data
-          if(result.code === 'ok'){
-            this.loading = false
-            // this.dialogVisible = false
-            // 重新拉取数据
-            // this.fetchVerfityList1()
-             // 不再拉取数据， 使用vuex 管理
-            let newObj = result.data
-            this.aciUpdate(newObj)
-            this.tabHelp = true
-            this.close()
-          }else{
-            this.$message({
-              message: '请稍后尝试',
-              type: 'error',
-              duration: 2* 1000
-            });
-          }
-        }).catch(()=>{
-          console.log('kkk')
-          this.loading = false
-          // this.dialogVisible = false
-          this.close()
-        })
-      },
-      activityPause(){
-        this.loading = true
-        // 处理拒绝逻辑 data 根据接口传数据
-        let data = this.currentId
-        activityPause(data).then((res) =>{
-          let data = res.data
-          if(data.code === 'ok'){
-            this.loading = false
-            // this.dialogVisible = false
-            // // 重新拉取数据
-            // this.fetchVerfityList1()
-             // 不再拉取数据， 使用vuex 管理
-            let id = result.data.id
-            this.aciUpdate(id)
-            // this.tabHelp = true
-            this.close()
-          }else{
-            this.$message({
-              message: '请稍后尝试',
-              type: 'error',
-              duration: 2* 1000
-            });
-          }
-        }).catch(()=>{
-          console.log('kkk')
-          this.loading = false
-          // this.dialogVisible = false
-          this.close()
-        })
-      },
-      activityStart(){
-        this.loading = true
-        // 处理拒绝逻辑 data 根据接口传数据
-        let data = this.currentId
-        activityStart(data).then((res) =>{
-          let data = res.data
-          if(data.code === 'ok'){
-            this.loading = false
-            // this.dialogVisible = false
-            // // 重新拉取数据
-            // this.fetchVerfityList1()
-             // 不再拉取数据， 使用vuex 管理
-            let id = result.data.id
-            this.aciUpdate(id)
-            // this.tabHelp = true
-            this.close()
-          }else{
-            this.$message({
-              message: '请稍后尝试',
-              type: 'error',
-              duration: 2* 1000
-            });
-          }
-        }).catch(()=>{
-          console.log('kkk')
-          this.loading = false
-          // this.dialogVisible = false
-          this.close()
-        })
-      },
+      // activityPass () {
+      //   // 数据处理 1. 提交处理的待审核客户操作结果:取消不处理， 确定改变状态
+      //   this.loading = true
+      //   //传递相关数据 根据 接口
+      //   // let initData = this.currentItem
+      //   let {id, status} = this.currentItem
+      //   let obj = {id:id,status:status}
+      //   let data = qs.stringify(obj)
+      //   changeStatus(data).then((res) =>{
+      //     let result = res.data
+      //     if(data.code === 'ok') {
+      //       // 重新拉取待审核列表 此处不用table 加载图标，
+      //       // this.fetchVerfityList1()
+      //       // 不再拉取数据， 使用vuex 管理
+      //       let id = result.data.id
+      //       this.aciRemove(id)
+      //       // 待审核列表去除这项数据
+      //       this.tabHelp = true
+      //       this.close()
+      //     }else{
+      //       this.$message({
+      //         message: '请稍后尝试',
+      //         type: 'error',
+      //         duration: 2* 1000
+      //       });
+      //     }
+      //     this.loading = false
+      //   }).catch((res) =>{
+      //     this.loading = false
+      //   })
+      // },
+      // activityReject () {
+      //   this.loading = true
+      //   // 处理拒绝逻辑 data 根据接口传数据
+      //   let data = this.currentId
+      //   changeStatus(data).then((res) =>{
+      //     let result = res.data
+      //     if(result.code === 'ok'){
+      //       this.loading = false
+      //       // this.dialogVisible = false
+      //       // 重新拉取数据
+      //       // this.fetchVerfityList1()
+      //        // 不再拉取数据， 使用vuex 管理
+      //       let newObj = result.data
+      //       this.aciUpdate(newObj)
+      //       this.tabHelp = true
+      //       this.close()
+      //     }else{
+      //       this.$message({
+      //         message: '请稍后尝试',
+      //         type: 'error',
+      //         duration: 2* 1000
+      //       });
+      //     }
+      //   }).catch(()=>{
+      //     console.log('kkk')
+      //     this.loading = false
+      //     // this.dialogVisible = false
+      //     this.close()
+      //   })
+      // },
+      // activityPause(){
+      //   this.loading = true
+      //   // 处理拒绝逻辑 data 根据接口传数据
+      //   let data = this.currentId
+      //   changeStatus(data).then((res) =>{
+      //     let data = res.data
+      //     if(data.code === 'ok'){
+      //       this.loading = false
+      //       // this.dialogVisible = false
+      //       // // 重新拉取数据
+      //       // this.fetchVerfityList1()
+      //        // 不再拉取数据， 使用vuex 管理
+      //       let id = result.data.id
+      //       this.aciUpdate(id)
+      //       // this.tabHelp = true
+      //       this.close()
+      //     }else{
+      //       this.$message({
+      //         message: '请稍后尝试',
+      //         type: 'error',
+      //         duration: 2* 1000
+      //       });
+      //     }
+      //   }).catch(()=>{
+      //     console.log('kkk')
+      //     this.loading = false
+      //     // this.dialogVisible = false
+      //     this.close()
+      //   })
+      // },
+      // activityStart(){
+      //   this.loading = true
+      //   // 处理拒绝逻辑 data 根据接口传数据
+      //   let data = this.currentId
+      //   changeStatus(data).then((res) =>{
+      //     let data = res.data
+      //     if(data.code === 'ok'){
+      //       this.loading = false
+      //       // this.dialogVisible = false
+      //       // // 重新拉取数据
+      //       // this.fetchVerfityList1()
+      //        // 不再拉取数据， 使用vuex 管理
+      //       let id = result.data.id
+      //       this.aciUpdate(id)
+      //       // this.tabHelp = true
+      //       this.close()
+      //     }else{
+      //       this.$message({
+      //         message: '请稍后尝试',
+      //         type: 'error',
+      //         duration: 2* 1000
+      //       });
+      //     }
+      //   }).catch(()=>{
+      //     console.log('kkk')
+      //     this.loading = false
+      //     // this.dialogVisible = false
+      //     this.close()
+      //   })
+      // },
       close () {
         this.pass = false
         this.reject = false
         this.start = false
         this.pause = false
       },
-      openPause(){
-        this.pause = true
-      },
-      openStart(){
-        this.start = true
-      },
-      openPass () {
-        this.pass = true
-      },
-      openReject () {
-        this.reject = true
-      },
+      openChange(flag, item) {
+        console.log('2')
+        if(flag === 'pass') {
+          this.pass = true
+        }else if(flag === 'reject'){
+          this.reject = true
+        }else if(flag === 'pause'){
+          this.pause = true
+        }else if(flag === 'start'){
+          this.start = true
+        }
+          this.currentItem = item
+      }
+
+      // openPause(item){
+      //   this.pause = true
+      //   this.currentItem = item
+      // },
+      // openStart(item){
+      //   this.start = true
+      //   this.currentItem = item
+      // },
+      // openPass (item) {
+      //   this.pass = true
+      //   this.currentItem = item
+      //   console.log('item')
+      // },
+      // openReject (item) {
+      //   this.reject = true
+      //   this.currentItem = item
+      // },
     },
     activated () {
       // 获取活动审核 待审核列表

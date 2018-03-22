@@ -10,7 +10,10 @@ import Layout from '../views/layout/Layout'
 
 // 不用权限的公共页面 layout是一节路由，子路由根据左侧的标签进行变化
 export const constantRouterMap = [
-
+  {
+    path: '/',
+    redirect: '/login'
+  },
   {
     path: '/login',
     // redirect: '/login',
@@ -27,7 +30,7 @@ export const constantRouterMap = [
     },
     children:[
        { path: 'index', component: _import('createProject/index'),  meta: { type: '创建活动'}},
-       { path: 'slyder/:no', component: _import('components-demo/slyder/index'),  meta: { keepAlive: false,type: 'slyder',title:'超级大转盘' }},
+       { path: 'slyder/:no', component: _import('components-demo/slyder/index'),  meta: { type: 'slyder',title:'超级大转盘' }},
        { path: 'envelope/:no', component: _import('components-demo/envelope/index'),  meta: { type: 'envelope' ,title:'抽红包'}},
        { path: 'box', component: _import('components-demo/box/index'), name: 'box-demo', meta: { type: 'box',title:'开宝箱' }},
        { path: 'jigsaw', component: _import('components-demo/jigsaw/index'), meta: { type: 'jigsaw',title:'欢乐拼图' }}

@@ -50,7 +50,9 @@ const user = {
                 // setToken(data.id)
                 setToken({id:data.id,name:data.contact_name})
                 // commit('SET_TOKEN', {id:data.id,name:data.contact_name})
-                commit('SET_TOKEN', data.SESSION)
+                // commit('SET_TOKEN', data.SESSION)
+                let session = data.SESSION
+                document.cookie="SESSION=" + session
                 // 用户登录之后获取status  设置
                 commit('SET_STATUS', 'login')
                 commit('SET_CODE', data.status)

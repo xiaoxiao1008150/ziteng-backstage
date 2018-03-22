@@ -289,14 +289,21 @@
           return result
       },
       tabChange (tab) {
+        // console.log('tab', tab)
         // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，第一次切换到”客户列表“ 才需要重新拉取
         // 第一次拉取客户列表
+        //添加路由
+         if(tab.name === 'first') {
+          this.$router.push({path:'/client-verify/index'})
+        }else if(tab.name === 'second') {
+          this.$router.push({path:'/client-verify/index?tab=second'})
+        }
         if(this.tabHelp && tab.active && tab.name === 'second'){
+          console.log('router action')
           // this.fetchAllUser
           this.listLoading = true
           fetchAllUser().then((res) =>{
             let result = res.data
-            console.log('res', res)
             if(result.code==='ok'){
               // this.userListAll = result.list
               let list = result.list
@@ -494,7 +501,17 @@
       }
     },
     activated () {
-      this.fetchUserList()
+      // this.fetchUserList()
+      console.log('active')
+      let query = this.$route.query.tab
+      if(query && query=== 'second'){
+        let tabObj = {active:true,name:'second'}
+        this.activeName = 'second'
+        this.tabChange(tabObj)
+      }else{
+        this.activeName = 'first'
+        this.fetchUserList()
+      }
     },
     components:{
       Modal

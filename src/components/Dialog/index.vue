@@ -129,15 +129,6 @@
         }
     },
     activated () {
-
-      // console.log('res',this.$refs.qrcode)
-      // let el = this.$refs.qrcode
-      // var qrcode = new QRCode(el, {
-      //   text: 'http://192.168.31.241:8888/activities/template/0e24b56d-efc7-435d-bc22-9778cd15f5a2/INDEX',
-      //   width: 130,
-      //   height: 130
-      // });
-      // new QRCode(el, 'your content');
     },
     components:{
       Modal,

@@ -1,4 +1,4 @@
-const clientList = {
+const activityList = {
   state:{
     aciByStatus: [],
     aciList:[]
@@ -13,9 +13,17 @@ const clientList = {
     aciRemove(state, id) {
       state.aciByStatus = state.aciByStatus.filter(obj => obj.id !== id)
     },
+    aciUpdateByStatus(state, newObj) {
+      let id  =  newObj.id
+      state.aciByStatus = state.aciByStatus.map(
+        obj => {
+         return  (obj.id === id ? Object.assign(obj, newObj) : obj)
+        }
+      )
+    },
     aciUpdate(state, newObj) {
       let id  =  newObj.id
-      state.clientList = state.clientList.map(
+      state.aciList = state.aciList.map(
         obj => {
          return  (obj.id === id ? Object.assign(obj, newObj) : obj)
         }
@@ -26,4 +34,4 @@ const clientList = {
     },
   }
 }
-export default clientList
+export default activityList

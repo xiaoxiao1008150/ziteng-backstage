@@ -55,11 +55,11 @@
                 type="success"
                 plain
                 @click="publishTtn(scope.row)"
-                :disabled="scope.row.status==='1'"
+                :disabled="scope.row.status!== '0'"
                 >发布</el-button>
               <el-button
                 size="mini"
-                :disabled="scope.row.status==='1'"
+                :disabled="scope.row.status!== '0'"
                 @click="editLottery(scope.row)"
                 >编辑</el-button>
               <el-button
@@ -110,7 +110,7 @@
         title:'超级大转盘',
         num:'01',
         hasCreated:true,
-        filters: [{text: '未发布',value: '0'}, {text: '审核中',value: '1'}, {text: '未开始',value: '2'},{text: '未通过',value: '5'}],
+        filters: [{text: '未发布',value: '0'}, {text: '审核中',value: '1'}, {text: '未开始',value: '2'},{text: '进行中',value: '3'},{text: '未通过',value: '5'}],
         value: '',
         listLoading:false,
         loading:false,
@@ -157,6 +157,9 @@
             break;
           case '2':
             result = '未开始'
+            break;
+          case '3':
+            result = '进行中'
             break;
           case '5':
             result = '未通过'

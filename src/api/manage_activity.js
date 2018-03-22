@@ -38,7 +38,7 @@ export function fetchVerfityList() {
 // 获取所有客户的活动列表，包括所有状态
 export function fetchActivityListAll() {
   return http({
-    url: `/marketing/activityClient/getActivityWithStatus?_status=[0,1,2,3,4,5,6]`,
+    url: `/marketing/activityClient/getActivityWithStatus?_status=0,2,3,4,5,6,9`,
     method: 'post',
   })
 }
@@ -50,12 +50,12 @@ export function changeStatus(data) {
   })
 }
 // // 待审核  操作 通过
-// export function activityPassVerfity(data) {
-//   return http({
-//     url: `/user`,
-//     method: 'post',
-//   })
-// }
+export function fetchInfoList(data) {
+  return http({
+    url: `/user`,
+    method: 'post',
+  })
+}
 
 // // 待审核  操作 拒绝
 // export function activityReject(data) {
