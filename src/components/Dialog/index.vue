@@ -11,14 +11,12 @@
           <img class="arrow" src="/static/images/arrow.jpg ">
         </div>
         <div class="qrcode-wrapper">
-          <!-- <div class="index-title">活动名称：{{list.text}}</div> -->
           <div class="index-title">活动名称：{{detail ? list.activityName : list.text}}</div>
           <div class="qrcode">
             <qrcode
                   :value="qrcode.val"
                   :options="{ size: 130 }">
             </qrcode>
-            <!-- <img class="qrcode-img" src="/static/images/qrcode.jpg"> -->
             <div class="qrcode-text">微信扫一扫体验活动</div>
           </div>
           <div v-if="!hasCreated">
@@ -46,9 +44,6 @@
   import Modal from '../Modal'
   import { mapGetters} from 'vuex'
   import Qrcode from '@xkeshi/vue-qrcode';
-
-  // import { mapGetters,mapMutations} from 'vuex'
-  // import VueClipboard from 'vue-clipboard2'
 
   export default {
     props:{

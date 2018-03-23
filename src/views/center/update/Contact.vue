@@ -84,6 +84,7 @@
                   // 证实后台已经发送验证码 开始倒计时
                   this.countDown = true
                 }else{
+                  this.countDown = false
                   this.$message({
                     message: '请稍后尝试',
                     type: 'error',
@@ -100,6 +101,7 @@
         this.$refs.formName.validate(valid => {
           // console.log('rule', this.ruleForm)
           if (valid) {
+            this.countDown = false
             this.loading = true
             // this.isDisabled = true
             let init = this.ruleForm

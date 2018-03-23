@@ -43,10 +43,19 @@
             height="600"
             style="width: 100%">
               <el-table-column align="center" width="180"
-                v-for="{ prop, label } in colConfigs"
+                v-for="{ prop, label } in colConfigs1"
                 :key="prop"
                 :prop="prop"
                 :label="label">
+              </el-table-column>
+              <el-table-column
+                label="有效期"
+                align="center"
+                width="180">
+                 <template slot-scope="scope">
+                  <p >{{ scope.row.start_time }}</p>
+                  <p >{{ scope.row.expired_time }}</p>
+                </template> 
               </el-table-column>
               <el-table-column
                 label="全部状态"
@@ -171,7 +180,6 @@
           { prop: 'contract_name', label: '企业名称' },
           { prop: 'contact_name', label: '联系人' },
           { prop: 'mobile_number', label: '手机号' },
-          { prop: 'id', label: '账号有效期' },
         ],
         loading:false,
         userList: [],
@@ -293,23 +301,20 @@
         // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，第一次切换到”客户列表“ 才需要重新拉取
         // 第一次拉取客户列表
         //添加路由
-         if(tab.name === 'first') {
-          this.$router.push({path:'/client-verify/index'})
-        }else if(tab.name === 'second') {
-          this.$router.push({path:'/client-verify/index?tab=second'})
-        }
+
         if(this.tabHelp && tab.active && tab.name === 'second'){
           console.log('router action')
           // this.fetchAllUser
           this.listLoading = true
           fetchAllUser().then((res) =>{
             let result = res.data
+            console.log('tes', result)
             if(result.code==='ok'){
               // this.userListAll = result.list
               let list = result.list
               this.setClientList(list)
-              console.log('lit', list)
-              console.log('clientList', this.clientList)
+              // console.log('lit', list)
+              // console.log('clientList', this.clientList)
               this.listLoading = false
             }else{
               this.$message({
@@ -320,7 +325,7 @@
               this.listLoading = false
             }
           }).catch(()=>{
-            console.log('shibai')
+            // console.log('shibai')
             this.listLoading = false
           })
           this.tabHelp = false
@@ -501,17 +506,7 @@
       }
     },
     activated () {
-      // this.fetchUserList()
-      console.log('active')
-      let query = this.$route.query.tab
-      if(query && query=== 'second'){
-        let tabObj = {active:true,name:'second'}
-        this.activeName = 'second'
-        this.tabChange(tabObj)
-      }else{
-        this.activeName = 'first'
-        this.fetchUserList()
-      }
+      this.fetchUserList()
     },
     components:{
       Modal

@@ -373,28 +373,6 @@
         let obj = {id:id,status:status}
         console.log('传递数据', obj)
         let data = qs.stringify(obj)
-        // changeStatus(data).then((res) =>{
-        //   let result = res.data
-        //   if(data.code === 'ok') {
-        //     // 重新拉取待审核列表 此处不用table 加载图标，
-        //     // this.fetchVerfityList1()
-        //     // 不再拉取数据， 使用vuex 管理
-        //     let id = result.data.id
-        //     this.aciRemove(id)
-        //     // 待审核列表去除这项数据
-        //     this.tabHelp = true
-        //     this.close()
-        //   }else{
-        //     this.$message({
-        //       message: '请稍后尝试',
-        //       type: 'error',
-        //       duration: 2* 1000
-        //     });
-        //   }
-        //   this.loading = false
-        // }).catch((res) =>{
-        //   this.loading = false
-        // })
         this.middleFun(flag,data)
       },
       middleFun (flag,data) {
@@ -428,127 +406,6 @@
           this.loading = false
         })
       },
-      // activityPass () {
-      //   // 数据处理 1. 提交处理的待审核客户操作结果:取消不处理， 确定改变状态
-      //   this.loading = true
-      //   //传递相关数据 根据 接口
-      //   // let initData = this.currentItem
-      //   let {id, status} = this.currentItem
-      //   let obj = {id:id,status:status}
-      //   let data = qs.stringify(obj)
-      //   changeStatus(data).then((res) =>{
-      //     let result = res.data
-      //     if(data.code === 'ok') {
-      //       // 重新拉取待审核列表 此处不用table 加载图标，
-      //       // this.fetchVerfityList1()
-      //       // 不再拉取数据， 使用vuex 管理
-      //       let id = result.data.id
-      //       this.aciRemove(id)
-      //       // 待审核列表去除这项数据
-      //       this.tabHelp = true
-      //       this.close()
-      //     }else{
-      //       this.$message({
-      //         message: '请稍后尝试',
-      //         type: 'error',
-      //         duration: 2* 1000
-      //       });
-      //     }
-      //     this.loading = false
-      //   }).catch((res) =>{
-      //     this.loading = false
-      //   })
-      // },
-      // activityReject () {
-      //   this.loading = true
-      //   // 处理拒绝逻辑 data 根据接口传数据
-      //   let data = this.currentId
-      //   changeStatus(data).then((res) =>{
-      //     let result = res.data
-      //     if(result.code === 'ok'){
-      //       this.loading = false
-      //       // this.dialogVisible = false
-      //       // 重新拉取数据
-      //       // this.fetchVerfityList1()
-      //        // 不再拉取数据， 使用vuex 管理
-      //       let newObj = result.data
-      //       this.aciUpdate(newObj)
-      //       this.tabHelp = true
-      //       this.close()
-      //     }else{
-      //       this.$message({
-      //         message: '请稍后尝试',
-      //         type: 'error',
-      //         duration: 2* 1000
-      //       });
-      //     }
-      //   }).catch(()=>{
-      //     console.log('kkk')
-      //     this.loading = false
-      //     // this.dialogVisible = false
-      //     this.close()
-      //   })
-      // },
-      // activityPause(){
-      //   this.loading = true
-      //   // 处理拒绝逻辑 data 根据接口传数据
-      //   let data = this.currentId
-      //   changeStatus(data).then((res) =>{
-      //     let data = res.data
-      //     if(data.code === 'ok'){
-      //       this.loading = false
-      //       // this.dialogVisible = false
-      //       // // 重新拉取数据
-      //       // this.fetchVerfityList1()
-      //        // 不再拉取数据， 使用vuex 管理
-      //       let id = result.data.id
-      //       this.aciUpdate(id)
-      //       // this.tabHelp = true
-      //       this.close()
-      //     }else{
-      //       this.$message({
-      //         message: '请稍后尝试',
-      //         type: 'error',
-      //         duration: 2* 1000
-      //       });
-      //     }
-      //   }).catch(()=>{
-      //     console.log('kkk')
-      //     this.loading = false
-      //     // this.dialogVisible = false
-      //     this.close()
-      //   })
-      // },
-      // activityStart(){
-      //   this.loading = true
-      //   // 处理拒绝逻辑 data 根据接口传数据
-      //   let data = this.currentId
-      //   changeStatus(data).then((res) =>{
-      //     let data = res.data
-      //     if(data.code === 'ok'){
-      //       this.loading = false
-      //       // this.dialogVisible = false
-      //       // // 重新拉取数据
-      //       // this.fetchVerfityList1()
-      //        // 不再拉取数据， 使用vuex 管理
-      //       let id = result.data.id
-      //       this.aciUpdate(id)
-      //       // this.tabHelp = true
-      //       this.close()
-      //     }else{
-      //       this.$message({
-      //         message: '请稍后尝试',
-      //         type: 'error',
-      //         duration: 2* 1000
-      //       });
-      //     }
-      //   }).catch(()=>{
-      //     console.log('kkk')
-      //     this.loading = false
-      //     // this.dialogVisible = false
-      //     this.close()
-      //   })
-      // },
       close () {
         this.pass = false
         this.reject = false
@@ -568,24 +425,6 @@
         }
           this.currentItem = item
       }
-
-      // openPause(item){
-      //   this.pause = true
-      //   this.currentItem = item
-      // },
-      // openStart(item){
-      //   this.start = true
-      //   this.currentItem = item
-      // },
-      // openPass (item) {
-      //   this.pass = true
-      //   this.currentItem = item
-      //   console.log('item')
-      // },
-      // openReject (item) {
-      //   this.reject = true
-      //   this.currentItem = item
-      // },
     },
     activated () {
       // 获取活动审核 待审核列表

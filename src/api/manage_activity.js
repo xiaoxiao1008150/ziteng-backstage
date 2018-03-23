@@ -19,7 +19,7 @@ export function activityPublish(data) {
 // 活动管理  编辑操作
 export function activityEdit(data) {
   return http({
-    url: `/marketing/activityClient/showOne?activityId=${data}`,
+    url: `/marketing/activityClient/showOne?_activityId=${data}`,
     method: 'post',
   })
 }
@@ -28,7 +28,7 @@ export function activityEdit(data) {
 //  获取活动审核 待审核 列表
 export function fetchVerfityList() {
   return http({
-    url: `/marketing/activityClient/getActivityWithStatus?_status=0`,
+    url: `/marketing/activityClient/getActivityWithStatus?_status=1`,
     method: 'post',
   })
 }
@@ -49,34 +49,10 @@ export function changeStatus(data) {
     method: 'post',
   })
 }
-// // 待审核  操作 通过
+//  待审核  查看
 export function fetchInfoList(data) {
   return http({
     url: `/user`,
     method: 'post',
   })
 }
-
-// // 待审核  操作 拒绝
-// export function activityReject(data) {
-//   return http({
-//     url: `/user`,
-//     method: 'post',
-//   })
-// }
-// //客户列表 操作 开始
-// export function activityStart(data) {
-//   return http({
-//     url: `/user`,
-//     method: 'post',
-//   })
-// }
-
-// //客户列表 操作 暂停
-
-// export function activityPause(data) {
-//   return http({
-//     url: `/user`,
-//     method: 'post',
-//   })
-// }

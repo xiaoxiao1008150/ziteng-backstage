@@ -136,6 +136,7 @@
                   // 证实后台已经发送验证码 开始倒计时
                   this.countDown = true
                 }else{
+                  this.countDown = false
                   this.$message({
                     message: '请稍后尝试',
                     type: 'error',
@@ -192,6 +193,7 @@
                   type: 'error',
                   duration: 2* 1000
                 });
+
               }else{
                 this.$message({
                   message: '请稍后再试',
