@@ -172,6 +172,7 @@
       activityManageList () {
         this.listLoading = true
         activityManageList().then((res) =>{
+          console.log('res', res)
           // this.userList = res.data.list
           let list = res.data.list
           this.setManageList(list)

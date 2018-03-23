@@ -216,10 +216,10 @@
         //注意此处的value设置为数字，对应的是后台返回数据的status字段
         filters: [{text: '正常',value: '1'}, {text: '禁用',value: '2'}
         ,{text: '未通过',value: '3'}],
-        value: '',
-        value1:'',//这个是弹窗编辑的选择框对应的数据
-        dialogVisible: false,
-        tabHelp:true
+        // value: '',
+        // value1:'',
+        dialogVisible: false
+        // tabHelp:true
       }
     },
     computed: {
@@ -240,43 +240,17 @@
         this.listLoading = true
         fetchUserList().then((res) =>{
           // this.userList = res.data.list
-          this.setStatusList(res.data.list)
-          console.log('list',this.ListByStatus)
-          this.listLoading = false
-        }).catch(()=>{
-          this.listLoading = false
-        })
-      },
-      fetchUserList1 () {
-        this.loading = true
-        fetchUserList().then((res) =>{
-          console.log('res again', res)
-          this.userList = res.data.list
-          this.loading = false
-          this.tepHelp = true
-          this.close()
-        }).catch(()=>{
-          // this.loading = false
-        })
-      },
-      fetchAllUser1 () {
-        // this.loading = true
-        fetchAllUser().then((res) =>{
           let result = res.data
-          if(result.code==='ok'){
-            this.userListAll = result.list
-            // this.loading = false
+          if(result.code === 'ok') {
+            this.setStatusList(res.data.list)
           }
+          this.listLoading = false
         }).catch(()=>{
-          // this.loading = false
+          this.listLoading = false
         })
       },
       filterTag(value, row) {
         return row.status === value;
-      },
-      toggleStatus (item) {
-        // item返回状态 commond，请求相关数据
-        console.log('te', item)
       },
       changeStatus (val) {
         let result
@@ -297,39 +271,36 @@
           return result
       },
       tabChange (tab) {
-        // console.log('tab', tab)
+        console.log('cha e')
         // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，第一次切换到”客户列表“ 才需要重新拉取
         // 第一次拉取客户列表
         //添加路由
-
-        if(this.tabHelp && tab.active && tab.name === 'second'){
-          console.log('router action')
-          // this.fetchAllUser
-          this.listLoading = true
-          fetchAllUser().then((res) =>{
-            let result = res.data
-            console.log('tes', result)
-            if(result.code==='ok'){
-              // this.userListAll = result.list
-              let list = result.list
-              this.setClientList(list)
-              // console.log('lit', list)
-              // console.log('clientList', this.clientList)
+        if(tab.name === 'first') {
+          this.$router.push({path:'/client-verify/index?tab=first'})
+          this.fetchUserList()
+        }else if(tab.name === 'second') {
+            this.$router.push({path:'/client-verify/index?tab=second'})
+            this.listLoading = true
+            fetchAllUser().then((res) =>{
+              let result = res.data
+              if(result.code==='ok'){
+                let list = result.list
+                this.setClientList(list)
+                this.listLoading = false
+              }else{
+                this.$message({
+                  message: '请稍后尝试',
+                  type: 'error',
+                  duration: 2* 1000
+                });
+                this.listLoading = false
+              }
+            }).catch(()=>{
               this.listLoading = false
-            }else{
-              this.$message({
-                message: '请稍后尝试',
-                type: 'error',
-                duration: 2* 1000
-              });
-              this.listLoading = false
-            }
-          }).catch(()=>{
-            // console.log('shibai')
-            this.listLoading = false
-          })
-          this.tabHelp = false
+            })
+            // this.tabHelp = false
         }
+
       },
       passVerify (id, status) {
         this.pass = true
@@ -352,12 +323,12 @@
           if(data.code === 'ok'){
             this.loading = false
             // this.dialogVisible = false
-            // 重新拉取数据 
+            // 重新拉取数据
             // this.fetchUserList1()
             // 不用重新拉取 用 vuex管理
             let id = data.data.id
             this.handleRemove(id)
-            this.tabHelp = true
+            // this.tabHelp = true
             this.close()
           }else{
             this.$message({
@@ -483,7 +454,7 @@
                   this.$refs[formName].resetFields();
                   // 重新拉取待审核列表 此处不用table 加载图标，
                   // 开启 客户列表拉取数据 开关
-                  this.tabHelp = true
+                  // this.tabHelp = true
                   this.close()
                 }else{
                   alert('请稍后处理')
@@ -506,7 +477,24 @@
       }
     },
     activated () {
-      this.fetchUserList()
+      // this.fetchUserList()
+      // this.fetchUserList()
+      // console.log('active')
+      let query = this.$route.query.tab
+      let tabObj
+      if(query) {
+        if( query=== 'second'){
+          tabObj = {active:true,name:'second'}
+          this.activeName = 'second'
+        }else if(query=== 'first'){
+          tabObj = {active:true,name:'first'}
+          this.activeName = 'first'
+        }
+        console.log('tbo', tabObj)
+        this.tabChange(tabObj)
+      }else{
+        this.fetchUserList()
+      }
     },
     components:{
       Modal

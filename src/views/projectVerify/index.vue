@@ -226,8 +226,8 @@
         loading: false,
         showModal:false,
         hasCreated:true,
-        tabHelp: true,
-        filters: [{text: '未发布',value: '0'},{text: '未开始',value: '2'},{text: '进行中',value: '3'},{text: '禁用',value: '4'},{text: '未通过',value: '5'},{text: '已结束',value: '6'},{text: '已关闭',value: '9'}]
+        // tabHelp: true,
+        filters: [{text: '未发布',value: '0'},{text: '未开始',value: '2'},{text: '进行中',value: '3'},{text: '禁用',value: '4'},{text: '未通过',value: '5'},{text: '已结束',value: '6'}]
       }
     },
     computed: {
@@ -251,22 +251,16 @@
       fetchVerfityList () {
         this.listLoading = true
         fetchVerfityList().then((res) =>{
-          console.log('res', res)
           // this.userList = res.data.list
           // 使用vuex 管理
-          let list = res.data.list
-          this.setAciStatusList(list)
+          let result = res.code
+          if(result.code ==='ok'){
+            let list = res.data.list
+            this.setAciStatusList(list)
+          }
           this.listLoading = false
         }).catch(()=>{
           this.listLoading = false
-        })
-      },
-      //按钮加载的时候
-      fetchVerfityList1 () {
-        fetchUserList().then((res) =>{
-          this.userList = res.data.list
-          this.tepHelp = true
-          this.close()
         })
       },
       handleCommand(command) {
@@ -316,9 +310,6 @@
           case '6':
             result = '已结束'
             break;
-          case '9':
-            result = '已关闭'
-            break;
           default:
             result = ''
           }
@@ -327,32 +318,23 @@
       tabChange (tab) {
         // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，第一次切换到”客户列表“ 才需要重新拉取
         // 第一次拉取客户列表
-        if(this.tabHelp && tab.active && tab.name === 'second'){
-          // this.fetchAllUser
+        if(tab.name === 'first') {
+          this.$router.push({path:'/project-verify/index?tab=first'})
+          this.fetchVerfityList()
+        }else if(tab.name === 'second') {
+          this.$router.push({path:'/project-verify/index?tab=second'})
           this.listLoading = true
           fetchActivityListAll().then((res) =>{
-            console.log('lie', res)
             let result = res.data
             if(result.code==='ok'){
-              // this.userListAll = result.list
-              // 使用vuex 管理
               let list = result.list
               this.setAciList(list)
-              this.listLoading = false
-            }else{
-              this.listLoading = false
             }
+            this.listLoading = false
           }).catch(()=>{
             this.listLoading = false
           })
-          this.tabHelp = false
         }
-        // // tab 切换的时候不需要 每次都拉取列表，只在待审核列表处理数据的情况下，/ 第一次切换到”客户列表“ 才需要重新拉取
-        // // 第一次拉取客户列表
-        // if(this.tabHelp && tab.active && tab.name === 'second'){
-        //   // 获取所有客户的活动列表 this.fetchActivityList()
-        //   this.tabHelp = false
-        // }
       },
       changeStatus (flag) {
         // 数据处理 1. 提交处理的待审核客户操作结果:取消不处理， 确定改变状态
@@ -371,13 +353,11 @@
           status = '3'
         }
         let obj = {id:id,status:status}
-        console.log('传递数据', obj)
         let data = qs.stringify(obj)
         this.middleFun(flag,data)
       },
       middleFun (flag,data) {
         changeStatus(data).then((res) =>{
-          console.log('res data', res)
           let result = res.data
           if(result.code === 'ok') {
             // 重新拉取待审核列表 此处不用table 加载图标，
@@ -391,7 +371,7 @@
               this.aciUpdate(newObj)
             }
             // 待审核列表去除这项数据
-            this.tabHelp = true
+            // this.tabHelp = true
             this.loading = false
             this.close()
           }else{
@@ -413,7 +393,6 @@
         this.pause = false
       },
       openChange(flag, item) {
-        console.log('2')
         if(flag === 'pass') {
           this.pass = true
         }else if(flag === 'reject'){
@@ -428,7 +407,20 @@
     },
     activated () {
       // 获取活动审核 待审核列表
-      this.fetchVerfityList()
+      let query = this.$route.query.tab
+      let tabObj
+      if(query) {
+        if( query=== 'second'){
+          tabObj = {active:true,name:'second'}
+          this.activeName = 'second'
+        }else if(query=== 'first'){
+          tabObj = {active:true,name:'first'}
+          this.activeName = 'first'
+        }
+        this.tabChange(tabObj)
+      }else{
+        this.fetchVerfityList()
+      }
     },
     components:{
       Modal,

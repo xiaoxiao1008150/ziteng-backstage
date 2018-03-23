@@ -35,7 +35,7 @@ service.interceptors.request.use(config => {
   // removePending(config)
   // pending.push({ u: config.url + '&' + config.method, f: cancel });
   console.log('pending',pending)
-  // console.log('config', config);
+  console.log('config', config);
   config.headers = {
     'Content-Type':'application/x-www-form-urlencoded'
   };
@@ -54,7 +54,8 @@ service.interceptors.request.use(config => {
 // respone interceptor
 service.interceptors.response.use(
   response => {
-    // removePending(response.config);  //在一个ajax响应后再执行一下取消操作，把已经完成的请求从pending中移除 
+    removePending(response.config);  //在一个ajax响应后再执行一下取消操作，把已经完成的请求从pending中移除 
+    console.log('respone', response)
     return response;
   },
   error => {
@@ -64,7 +65,7 @@ service.interceptors.response.use(
       type: 'error',
       duration: 2* 1000
     });
-    // removePending(res.config);  //在一个ajax响应后再执行一下取消操作，把已经完成的请求从pending中移除 
+    removePending(res.config);  //在一个ajax响应后再执行一下取消操作，把已经完成的请求从pending中移除 
     return Promise.reject(error);
   });
 

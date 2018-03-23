@@ -7,8 +7,11 @@
     <div class="" slot="body">
     <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
       </el-form-item>
+      <el-form-item label="联系人" prop="name">
+        <el-input v-model="ruleForm.name" placeholder="请输入新的联系人" auto-complete="off"></el-input>
+      </el-form-item>
       <el-form-item label="联系人" prop="tel">
-        <el-input v-model="ruleForm.tel" placeholder="请输入联系人" auto-complete="off"></el-input>
+        <span >11111111</span>
       </el-form-item>
       <el-form-item label="验证码" prop="captcha">
         <el-input class="captcha" v-model="ruleForm.captcha" placeholder="请确认验证码"></el-input>
@@ -45,13 +48,12 @@
           falg:true,
           loading:false,
           ruleForm: {
-            tel: '',
+            name: '',
             captcha: ''
           },
           rules: {
-            tel: [
-              { required: true, message: '请输入手机号码', trigger: 'blur' },
-              { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+            name: [
+              { required: true, message: '请输入新的联系人', trigger: 'blur' },
               ],
             captcha: [
               { required: true,validator: validatePass3, trigger: 'blur' }
@@ -69,7 +71,6 @@
         this.countDown = false
       },
       getCaptcha () {
-        // this.countDown = true
         this.$refs.ruleForm.validateField('captcha' ,message => {
           // 说明有错误字段
           if(message ==='请输入验证码'){
@@ -78,7 +79,6 @@
               this.countDown = true
               //在这里post短信验证码，data mobileNumber
               let data = this.ruleForm.tel
-              // let data = qs.stringify(phoneNum)
               getCaptcha(data).then((res)=>{
                 if(res.data && res.data.code==='ok'){
                   // 证实后台已经发送验证码 开始倒计时
@@ -99,7 +99,6 @@
       submitForm(formName) {
         // this.$router.push({ path: '/create-project/index' })
         this.$refs.formName.validate(valid => {
-          // console.log('rule', this.ruleForm)
           if (valid) {
             this.countDown = false
             this.loading = true
