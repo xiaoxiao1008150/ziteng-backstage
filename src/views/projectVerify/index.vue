@@ -37,7 +37,6 @@
                   </template>
                 </el-table-column>
                 <el-table-column label="操作" 
-                  fixed="right"
                   align="center" width="220">
                   <template slot-scope="scope">
                   <el-button
@@ -85,7 +84,7 @@
                   {{changeText(scope.row.status)}}
                 </template>
                 </el-table-column>
-                <el-table-column label="操作" fixed="right" align="center" width="220">
+                <el-table-column label="操作" align="center" width="220">
                   <template slot-scope="scope">
                   <el-button
                       size="mini"
@@ -251,11 +250,12 @@
       fetchVerfityList () {
         this.listLoading = true
         fetchVerfityList().then((res) =>{
+          console.log('e', res)
           // this.userList = res.data.list
           // 使用vuex 管理
-          let result = res.code
+          let result = res.data
           if(result.code ==='ok'){
-            let list = res.data.list
+            let list = result.list
             this.setAciStatusList(list)
           }
           this.listLoading = false

@@ -11,7 +11,6 @@
 // import { Navbar, Sidebar, AppMain, TagsView } from './components'
 import Sidebar from './components/Sidebar/index'
 import Navbar from './components/Navbar'
-import TagsView from './components/TagsView'
 import AppMain from './components/AppMain'
 
 export default {
@@ -19,7 +18,6 @@ export default {
     Navbar,//顶部右边的一些设置
     Sidebar,//左侧栏目
     AppMain,//右边栏
-    TagsView
   }
 }
 </script>

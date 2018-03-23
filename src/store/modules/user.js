@@ -6,7 +6,7 @@ const user = {
     user: '',
     status: 'login',
     // status: 'noRegister',
-    code: '1',
+    code: '0',
     token: getToken(),
     name: '',
     roles: ['admin'],
@@ -48,7 +48,8 @@ const user = {
               if(result.code === 'ok') {
                 let data = result.data
                 // setToken(data.id)
-                setToken({id:data.id,name:data.contact_name})
+                // 获取token 如果token 中code的值是1正常，那么
+                setToken({id:data.id,name:data.contact_name,code:data.status})
                 commit('SET_TOKEN', {id:data.id,name:data.contact_name})
                 // commit('SET_TOKEN', data.SESSION)
                 // let session = data.SESSION

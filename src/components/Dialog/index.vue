@@ -38,6 +38,9 @@
     <div slot="body" v-if="showLoginPop">
       <div class="close-tep"><span>请您先登录</span><span class="fr" @click="close"><i class="el-icon-close"></i></span></div>
     </div>
+    <div slot="body" v-if="showCodePop">
+      <div class="close-tep"><span>{{codeStr}}</span><span class="fr" @click="close"><i class="el-icon-close"></i></span></div>
+    </div>
   </modal>
 </template>
 <script>
@@ -69,6 +72,8 @@
         },
         showLoginPop:false,
         showMainPop:true,
+        showCodePop:false,
+        codeStr:'',
         list:[],
         detail:false
       }
@@ -80,6 +85,7 @@
       ...mapGetters([
         'currentLotteryItem',
         'status',
+        'code'
       ])
     },
     methods:{
@@ -95,20 +101,36 @@
         // 判断用户是否已经登录，未登录，弹窗提示登录
         if(this.status !=='login'){
           this.showMainPop = false
+          this.showCodePop = false
           this.showLoginPop = true
         }else{
+          console.log('code', this.code)
           //新添加的
-          this.showMainPop = true
+          // this.showMainPop = false
           this.showLoginPop = false
+          // this.showCodePop = true
           // let name = this.setRouterName()
           this.$emit('close')
-          // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
-          // 获取模板预览地址 赋值到二维码的value 动态的
-          let name = this.currentLotteryItem.type
-          let templateNo = this.currentLotteryItem.templateNo
-          if(name){
-            this.$router.push({ path: `/create-project/${name}/${templateNo}`,})
+          if(this.code === '1') {//正常状态
+            this.showCodePop = false
+            this.showMainPop = true
+            // 添加一个判断，如果用户的状态是审核中的话，那么不能创建活动
+            // 拉取用户的最新信息
+
+            // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
+            // 获取模板预览地址 赋值到二维码的value 动态的
+            let name = this.currentLotteryItem.type
+            let templateNo = this.currentLotteryItem.templateNo
+            if(name){
+              this.$router.push({ path: `/create-project/${name}/${templateNo}`,})
+            }
+          }else if(this.code === '0') {
+            this.showCodePop = true
+            console.log('showCodePop', this.showCodePop)
+            this.showMainPop = false
+            this.codeStr = '正在审核'
           }
+
         }
       }
     },
@@ -121,6 +143,10 @@
         }else{
           console.log('no',this.currentLotteryItem)
           this.list = this.currentLotteryItem
+        }
+        // 拉取用户信息 判断当前的code 代码
+        if(this.code !==1){
+          // 获取用户信息
         }
     },
     activated () {
