@@ -8,7 +8,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 // import VDistpicker from 'v-distpicker'
-// import './permission' // permission control
+import './permission' // permission control
 import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VueClipboard)

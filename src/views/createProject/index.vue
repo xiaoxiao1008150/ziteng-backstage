@@ -8,16 +8,21 @@
       <div class="sort-bottom">
         <div class="festival sort">
           <span>节日:</span>
-          <span class="all" @click="openFullScreen">全部</span>
+          <span class="all" :class="{noactive: jsIndex!=='all'}" @click="openFullScreen('all')">全部</span>
           <ul class="sort-ul">
-            <li  @click="openFullScreen" v-for="(item,index) in festivalData" :key="index">{{item}}</li>
+            <li  :class="{active: index===jsIndex}" 
+              @click="openFullScreen(index)" 
+              v-for="(item,index) in festivalData" 
+              :key="index">{{item}}</li>
           </ul>
         </div>
         <div class="sort">
             <span>类型:</span>
-            <span class="all" @click="openFullScreen" >全部</span>
+            <span class="all" :class="{noactive: jsIndex1!=='all'}" @click="openFullScreen1('all')" >全部</span>
             <ul class="sort-ul">
-             <li @click="openFullScreen" v-for="(item,index) in levelData" :key="index">{{item}}</li>
+             <li 
+             :class="{active: index===jsIndex1}"
+              @click="openFullScreen1(index)" v-for="(item,index) in levelData" :key="index">{{item}}</li>
             </ul>
         </div>
       </div>
@@ -72,7 +77,9 @@ export default {
       showModal:false,
       festivalData: festivalData,
       levelData:levelData,
-      loadingObj:''
+      loadingObj:'',
+      jsIndex:'all',
+      jsIndex1:'all'
     }
   },
   computed: {
@@ -127,7 +134,6 @@ export default {
     openModel(item) {
       this.showModal = true
       this.setCurrentLottery(item)
-      // console.log('cuttt',this.currentLotteryItem )
     },
     setLoading () {
       this.loading = this.$loading({
@@ -137,13 +143,20 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       });
     },
-    openFullScreen() {
-      // this.showLoading = true
+    midFun (type, index) {
+      this.jsIndex = ''
+      this.jsIndex1 = ''
+      this[type] = index
       this.setLoading()
       setTimeout(() => {
-        // this.showLoading = false
-        this.loading.close()
-      }, 500);
+          this.loading.close()
+        }, 500);
+    },
+    openFullScreen(index) {
+      this.midFun('jsIndex', index)
+    },
+    openFullScreen1(index) {
+      this.midFun('jsIndex1', index)
     }
   },
   components:{
@@ -197,6 +210,8 @@ export default {
 .sort-ul li
   float:left
   cursor:pointer
+.sort-ul > .active
+  color:#0dc1f1
 .sort span,.sort-ul li
   padding: 0 10px
 .sort span:first-child
@@ -206,6 +221,8 @@ export default {
 .all
   color:#0dc1f1
   cursor:pointer
+.all.noactive
+  color:#000
 .recommend
   padding: 0 10px
 .re-title

@@ -103,7 +103,7 @@
           ],
           mobileNumber: [
             { required: true, message: '请输入手机号码', trigger: 'blur' },
-            { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+            { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确',trigger: 'blur' }
           ],
           password: [
             { required: true,validator: validatePass, trigger: 'blur' }

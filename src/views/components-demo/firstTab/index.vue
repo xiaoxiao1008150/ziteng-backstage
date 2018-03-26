@@ -282,15 +282,12 @@ export default {
     },
     selectProvince(value) {
       if(this.start){
-        console.log('action')
         this.middle = true //开启省市变化
       }
       this.select.province = value
-      console.log('province', value)
     },
     selectCity(value) {
       this.select.city = value
-      console.log('city',value)
 
     },
     getAllCities (cities) {

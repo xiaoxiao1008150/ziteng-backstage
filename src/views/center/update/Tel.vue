@@ -15,7 +15,7 @@
         <!-- <button class="code-btn">发送验证码</button> -->
         <captcha @click.native="getCaptcha" :countDown="countDown" @stop="stop"></captcha>
       </el-form-item>
-        <el-button type="primary" class="info-btn" @click="submitForm('ruleForm')">确认</el-button>
+        <el-button type="primary" class="info-btn" @click="submitForm">确认</el-button>
     </el-form>
   </div>
   </modal>
@@ -52,7 +52,7 @@
           rules: {
             tel: [
               { required: true, message: '请输入手机号码', trigger: 'blur' },
-              { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确' }
+              { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确',trigger: 'blur'}
             ],
             captcha: [
               { required: true,validator: validatePass3, trigger: 'blur' }
@@ -94,10 +94,12 @@
       },
       close () {
         this.$emit('close')
+        this.countDown = false
+        this.$refs.ruleForm.resetFields();
       },
-         submitForm(formName) {
+      submitForm() {
         // this.$router.push({ path: '/create-project/index' })
-        this.$refs.formName.validate(valid => {
+        this.$refs.ruleForm.validate(valid => {
           // console.log('rule', this.ruleForm)
           if (valid) {
             this.countDown = false

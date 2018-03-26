@@ -4,7 +4,7 @@
     <div slot="body" class="index-dialog" v-if="showMainPop">
         <span class="close-icon" @click="close">
           <i class="el-icon-close"></i>
-</span>
+        </span>
       <div class="index-tep">
         <div class="index-img">
           <img class="item-img" :src="'/static/images/' + list.num + '-scan.jpg' ">
@@ -99,40 +99,65 @@
       },
       createProject () {
         // 判断用户是否已经登录，未登录，弹窗提示登录
-        if(this.status !=='login'){
-          this.showMainPop = false
+        // 首页未注册时候
+        this.showMainPop = false
+        if(this.status ==='noRegister'){
           this.showCodePop = false
           this.showLoginPop = true
-        }else{
-          console.log('code', this.code)
-          //新添加的
-          // this.showMainPop = false
+        }
+        if(this.status === 'login'){
           this.showLoginPop = false
-          // this.showCodePop = true
-          // let name = this.setRouterName()
-          this.$emit('close')
-          if(this.code === '1') {//正常状态
+          let code = this.code
+          if(code==='0') {//审核中
+            this.codeStr = '审核中'
+            this.showCodePop = true
+          }else if(this.code ==='2'){
+            this.codeStr = '禁用'
+            this.showCodePop = true
+          }else if(this.code ==='3'){
+            this.codeStr = '未通过'
+            this.showCodePop = true
+          }else{
             this.showCodePop = false
-            this.showMainPop = true
-            // 添加一个判断，如果用户的状态是审核中的话，那么不能创建活动
-            // 拉取用户的最新信息
-
-            // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
-            // 获取模板预览地址 赋值到二维码的value 动态的
+            this.codeStr = '正常'
             let name = this.currentLotteryItem.type
             let templateNo = this.currentLotteryItem.templateNo
             if(name){
               this.$router.push({ path: `/create-project/${name}/${templateNo}`,})
             }
-          }else if(this.code === '0') {
-            this.showCodePop = true
-            console.log('showCodePop', this.showCodePop)
-            this.showMainPop = false
-            this.codeStr = '正在审核'
+            this.close()
           }
+    
+          // alert(this.codeStr)
+        }
+          // console.log('code', this.code)
+          // //新添加的
+          // // this.showMainPop = false
+          // this.showLoginPop = false
+          // // this.showCodePop = true
+          // // let name = this.setRouterName()
+          // this.$emit('close')
+          // if(this.code === '1') {//正常状态
+          //   this.showCodePop = false
+          //   this.showMainPop = true
+          //   // 添加一个判断，如果用户的状态是审核中的话，那么不能创建活动
+          //   // 拉取用户的最新信息
+
+          //   // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
+          //   // 获取模板预览地址 赋值到二维码的value 动态的
+          //   let name = this.currentLotteryItem.type
+          //   let templateNo = this.currentLotteryItem.templateNo
+          //   if(name){
+          //     this.$router.push({ path: `/create-project/${name}/${templateNo}`,})
+          //   }
+          // }else if(this.code === '0') {
+          //   this.showCodePop = true
+          //   console.log('showCodePop', this.showCodePop)
+          //   this.showMainPop = false
+          //   this.codeStr = '正在审核'
+          // }
 
         }
-      }
     },
     created () {
         if(this.currentActivity.url){

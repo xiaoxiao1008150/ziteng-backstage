@@ -46,7 +46,6 @@ const permission = {
       // let flag = true
       let center = constantRouterMap.pop()
       state.routers = constantRouterMap.concat(routers).concat(center)
-      console.log('router', state.routers)
 
     }
   },

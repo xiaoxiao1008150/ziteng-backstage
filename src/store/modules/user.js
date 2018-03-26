@@ -1,16 +1,35 @@
 import { login, logout } from 'api/login'
-import { getToken, setToken, removeToken } from 'utils/auth'
+import { getToken, setToken, removeToken , handleCookie} from 'utils/auth'
+setToken({name:'cui',code:'1',status:'login'})
+let data = {
+        "id": "7317106a-b6f6-4193-81a3-bf5b1b3aa081",
+        "login_name": "13029499224",
+        "mobile_number": "13029499224",
+        "contract_name": "天津支行",
+        "contact_name": "张霄峰",
+        "status": "1",
+        "password": "",
+        "start_time": "2018-03-03 14:38:30",
+        "expired_time": "2018-03-14 00:00:00",
+        "authorities": [
+            {
+                "authority": "AUTHORITY_DEFAULT"
+            }
+        ]
+    }
+localStorage.setItem('USER_INFO', JSON.stringify(data))
 
+// handleCookie()
 const user = {
   state: {
     user: '',
-    status: 'login',
+    status: handleCookie('status'),
     // status: 'noRegister',
-    code: '0',
+    code: handleCookie('code'),
     token: getToken(),
-    name: '',
+    name: handleCookie('name'),
     roles: ['admin'],
-    flag: true,
+    // flag: true,
     info:{}
   },
 
@@ -30,15 +49,15 @@ const user = {
     SET_ROLES: (state, roles) => {
       state.roles = roles
     },
-    SET_FLAG: (state, flag) => {
-      state.flag = flag
-    }
+    // SET_FLAG: (state, flag) => {
+    //   state.flag = flag
+    // }
   },
 
   actions: {
-    setFlag({ commit }, flag) {
-      commit('SET_FLAG', flag)
-    },
+    // setFlag({ commit }, flag) {
+    //   commit('SET_FLAG', flag)
+    // },
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
@@ -47,16 +66,14 @@ const user = {
               let result = res.data
               if(result.code === 'ok') {
                 let data = result.data
-                // setToken(data.id)
                 // 获取token 如果token 中code的值是1正常，那么
-                setToken({id:data.id,name:data.contact_name,code:data.status})
-                commit('SET_TOKEN', {id:data.id,name:data.contact_name})
-                // commit('SET_TOKEN', data.SESSION)
-                // let session = data.SESSION
-                // document.cookie="SESSION=" + session
-                // 用户登录之后获取status  设置
+                   // 用户登录之后获取status  设置
                 commit('SET_STATUS', 'login')
                 commit('SET_CODE', data.status)
+                setToken({id:data.id,name:data.contact_name,code:data.status,status:state.status})
+                localStorage.setItem('USER_INFO', data)
+                commit('SET_TOKEN', {id:data.id,name:data.contact_name})
+                // document.cookie="SESSION=" + session
               }
               // 数据传到页面中
               resolve(res)
@@ -111,32 +128,7 @@ const user = {
       //     reject(error)
       //   })
       })
-    },
-
-    // 前端 登出
-    // FedLogOut({ commit }) {
-    //   return new Promise(resolve => {
-    //     commit('SET_TOKEN', '')
-    //     removeToken()
-    //     resolve()
-    //   })
-    // },
-
-    // 动态修改权限
-    // ChangeRoles({ commit }, role) {
-    //   return new Promise(resolve => {
-    //     commit('SET_TOKEN', role)
-    //     setToken(role)
-    //     getUserInfo(role).then(response => {
-    //       const data = response.data
-    //       commit('SET_ROLES', data.roles)
-    //       commit('SET_NAME', data.name)
-    //       commit('SET_AVATAR', data.avatar)
-    //       commit('SET_INTRODUCTION', data.introduction)
-    //       resolve()
-    //     })
-    //   })
-    // }
+    }
   }
 }
 
