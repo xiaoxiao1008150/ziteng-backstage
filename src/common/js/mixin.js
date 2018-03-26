@@ -48,7 +48,6 @@ export const lotteryRouterMixin = {
         this.close();
         next()
       }else{
-        console.log('isCreate',this.isCreate)
         this.setPreparePath(to.path)
         this.dialogVisible = true
         if(this.isCreate) {

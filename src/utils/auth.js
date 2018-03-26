@@ -16,7 +16,6 @@ export function removeToken() {
 }
 export function handleCookie(key) {
   let token = getToken()
-  console.log('token', token)
   let obj = JSON.parse(token)
   return obj[key]
 }

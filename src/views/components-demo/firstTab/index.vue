@@ -134,7 +134,7 @@
         <span class="fr cursor" @click="close"><i class="el-icon-close"></i></span>
       </div>
       <div slot="body">
-        <div class="confirm">确定放弃创建表格吗？</div>
+        <div class="confirm">{{this.queryId ? '确定放弃修改表格吗？' : '确定放弃创建表格吗？'}}</div>
         <div>
            <el-button @click="calcelConfirm">取消</el-button>
            <el-button type="primary" @click="confirmGiveUp">确定</el-button>
@@ -322,7 +322,11 @@ export default {
     setTepData (len) {
       this.tep = []
       for(let i=0;i<len;i++) {
-        this.tep[i] = false
+        if(this.queryId) {
+          this.tep[i] = true
+        }else{
+         this.tep[i] = false
+        }
       }
     },
     validate (len,item) {
@@ -352,6 +356,7 @@ export default {
     setlotteryData () {
       //获取最终“奖项设置”的行数
       let item = this.ruleForm.prizeSettings
+      console.log('item', item.length)
       let len = item.length
       // if(this.add) {
         this.setTepData(len)
@@ -469,11 +474,11 @@ export default {
           return
         }
         //”奖项设置“ 验证，借助 this.tep的值
-        console.log('ruleForm', this.ruleForm)
         this.setlotteryData()
         let len = this.tep.length
         let changeData = this.ruleForm.prizeSettings
         let changeAll = 0
+        console.log('this.tep', this.tep)
         for(let i=0; i<len ;i++){
           if(!this.tep[i]){
             this.setAlert(`奖项设置第${i+1}行未填写完整======`)
@@ -497,30 +502,31 @@ export default {
         //验证数据完毕，开始提交数据
         valid = true
         if(valid) {
-            this.loading = this.$loading({
-              lock: true,
-              text: '正在提交...',
-              spinner: 'el-icon-loading',
-              background: 'rgba(0, 0, 0, 0.7)'
-            });
+          this.setLoading('正在提交,请勿离开...')
+            // this.loading = this.$loading({
+            //   lock: true,
+            //   text: '正在提交...',
+            //   spinner: 'el-icon-loading',
+            //   background: 'rgba(0, 0, 0, 0.7)'
+            // });
             //处理城市选择区域数据
-            console.log('省',this.select)
+            // console.log('省',this.select)
             // console.log('市',this.select.city)
             let code
             let province
             let city
-            console.log('this.queryId ', this.queryId )
+            // console.log('this.queryId ', this.queryId )
             if(!this.queryId || this.start || (this.start && this.middle) ) {
-              console.log('this action')
+              // console.log('this action')
               if(this.select.province.code && this.select.city.code){
-                console.log('省 + 市')
+                // console.log('省 + 市')
 
                  code = this.select.province.code + ',' + this.select.city.code
                  province = this.select.province.value
                  city = this.select.city.value
               }
               if(this.select.province.code && !this.select.city.code){//没有选择城市的时候，this.select.city是undefined
-                console.log('省')
+                // console.log('省')
                 let cityString = this.cityArr.join(',')
                 code = this.select.province.code + ',' + cityString
                 province = this.select.province.value
@@ -528,14 +534,14 @@ export default {
               }
               // 说明是全国
               if(!this.select.province.code){
-                console.log('全国')
+                // console.log('全国')
                 code = '0'
                 province = ''
                 city = ''
               }
-              console.log('code',code)
-              console.log('province',province)
-              console.log('city',city)
+              // console.log('code',code)
+              // console.log('province',province)
+              // console.log('city',city)
               this.ruleForm.settings[0].value = {code,province,city}
             }
             //处理时间区域数据
@@ -563,7 +569,7 @@ export default {
       },
     handle (fun,data,formName) {
         fun(data).then((res) =>{
-          console.log('form',res)
+          // console.log('form',res)
           let data = res.data
           if(data.code==='ok'){
             this.setIsSubmit(true)
@@ -576,6 +582,14 @@ export default {
             this.loading.close()
           }
       })
+    },
+    setLoading (text) {
+      this.loading = this.$loading({
+          lock: true,
+          text: text,
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
     }
   },
   created () {
@@ -592,12 +606,14 @@ export default {
       }
       let activityId = this.queryId
       // console.log('activityId',activityId)
-      this.loading = true
+      // this.loading = true
+      this.setLoading('正在拉取数据中...')
       let initData
       activityEdit(activityId).then((res) =>{
         console.log('res', res)
         let data = res.data
         if(data.code ==='ok'){
+          console.log(1)
           initData = data.data
           console.log('id init', initData)
           // 处理settings 格式
@@ -607,15 +623,19 @@ export default {
           initData.startTime = new Date(initData.startTime)
           initData.expiredTime = new Date(initData.expiredTime)
           // // 处理省市数据
-          let pData = JSON.parse(initData.settings[2].value)
+          let settings = initData.settings
+          let pData
+          settings.forEach((item, index) =>{
+            if(item.key === 'areaCode'){
+              pData = JSON.parse(initData.settings[index].value)
+            }
+          })
           console.log('sc',pData )
-
           // // // 全国
           if(pData.code==='0'){
             console.log('')
           }else if(pData.province && pData.city ){//省+市
-            console.log('ceshi',pData.province,pData.city )
-            this.select.province.value = pData.province 
+            this.select.province.value = pData.province
             this.select.city.value = pData.city
             // 设置code
           }else if(pData.province && !pData.city){//全省
@@ -630,7 +650,6 @@ export default {
           this.ruleForm.expiredTime = initData.expiredTime
           this.ruleForm.templateNo = initData.templateNo
           this.ruleForm.activityName = initData.activityName
-          console.log('action')
 
           // 处理settings 中的数据
           let takeNumValue
@@ -666,11 +685,31 @@ export default {
             arr.push(obj)
           })
           this.ruleForm.prizeSettings = arr
+          let psLen = arr.length
+          this.setTepData(psLen)
+
           console.log('change', this.ruleForm)
+        }else{// 如果数据请求不成功,返回活动管理标签
+          this.setIsSubmit(true)
+          console.log('else')
+          // this.$router.push({ path: `/management/`,})
+          this.$message({
+              message: '请稍后尝试',
+              type: 'error',
+              duration: 2* 1000
+          });
         }
-        this.loading = false
-      }).catch(()=>{
-        this.loading = false
+        this.loading.close()
+      }).catch((error)=>{
+          console.log('catch',error)
+        this.loading.close()
+        this.setIsSubmit(true)
+        // this.$router.push({ path: `/management/`,})
+        this.$message({
+              message: '请稍后尝试',
+              type: 'error',
+              duration: 2* 1000
+            });
       })
 
     }else{
