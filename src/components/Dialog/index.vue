@@ -127,46 +127,15 @@
             }
             this.close()
           }
-    
-          // alert(this.codeStr)
         }
-          // console.log('code', this.code)
-          // //新添加的
-          // // this.showMainPop = false
-          // this.showLoginPop = false
-          // // this.showCodePop = true
-          // // let name = this.setRouterName()
-          // this.$emit('close')
-          // if(this.code === '1') {//正常状态
-          //   this.showCodePop = false
-          //   this.showMainPop = true
-          //   // 添加一个判断，如果用户的状态是审核中的话，那么不能创建活动
-          //   // 拉取用户的最新信息
-
-          //   // 在这里判断是那个模块点击的弹窗，关闭后，还是定位到本身的页面，而不是跳转 可能需要全局vuex
-          //   // 获取模板预览地址 赋值到二维码的value 动态的
-          //   let name = this.currentLotteryItem.type
-          //   let templateNo = this.currentLotteryItem.templateNo
-          //   if(name){
-          //     this.$router.push({ path: `/create-project/${name}/${templateNo}`,})
-          //   }
-          // }else if(this.code === '0') {
-          //   this.showCodePop = true
-          //   console.log('showCodePop', this.showCodePop)
-          //   this.showMainPop = false
-          //   this.codeStr = '正在审核'
-          // }
-
         }
     },
     created () {
         if(this.currentActivity.url){
-          console.log('currentActivity',this.currentActivity)
           this.detail = true
           this.list = this.currentActivity
           this.qrcode.val = this.list.url
         }else{
-          console.log('no',this.currentLotteryItem)
           this.list = this.currentLotteryItem
         }
         // 拉取用户信息 判断当前的code 代码

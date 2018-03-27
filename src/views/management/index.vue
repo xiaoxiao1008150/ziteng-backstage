@@ -89,7 +89,7 @@
       :hasCreated=hasCreated
       :currentActivity="currentActivity"
       v-if="showModal"
-      @close="showModal = false" 
+      @close="showModal = false"
       >
       </zi-dialog>
   </div>
@@ -172,7 +172,6 @@
       activityManageList () {
         this.listLoading = true
         activityManageList().then((res) =>{
-          console.log('res', res)
           // this.userList = res.data.list
           let list = res.data.list
           this.setManageList(list)
@@ -182,21 +181,20 @@
         })
       },
       //按钮加载的时候
-      activityManageList1 () {
-        activityManageList().then((res) =>{
-          this.userList = res.data.list
-          this.tepHelp = true
-          this.loading = false
-          this.close()
-        })
-      },
+      // activityManageList1 () {
+      //   activityManageList().then((res) =>{
+      //     this.userList = res.data.list
+      //     this.tepHelp = true
+      //     this.loading = false
+      //     this.close()
+      //   })
+      // },
       close(){
         this.isPublish = false
         this.showModal = false
       },
       openDialog (item) {
         this.showModal = true
-        console.log('pass', this.currentActivity)
         this.currentActivity  = item
       },
       handleCommand(command) {
@@ -206,8 +204,6 @@
         this.$router.push({ path: `/management/info/1` })
       },
       filterTag(value, row) {
-        console.log('value', value)
-        console.log('row', row)
         return row.status === value;
       },
       publishTtn (item) {
@@ -221,7 +217,6 @@
         let postData = qs.stringify(init)
         this.loading = true
         activityPublish(postData).then((res) =>{
-          console.log('发布',res)
           let result = res.data
           if(result.code === 'ok') {
             // 重新拉取待审核列表 此处不用table 加载图标，

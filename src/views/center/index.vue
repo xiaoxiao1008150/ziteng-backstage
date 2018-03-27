@@ -56,7 +56,7 @@
         <span class="may-change" @click="change('password')">修改登录密码</span>
       </div>
       <tel v-show="showModalTel" @close="close"></tel>
-      <contact v-show="showModalContact" @close="close" :tel="userInfo.mobile_number"></contact>
+      <contact v-show="showModalContact" @close="close"></contact>
       <password v-show="showModalPassword" @close="close"></password>
     </div>
   </div>

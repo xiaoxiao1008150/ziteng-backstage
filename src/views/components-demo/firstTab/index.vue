@@ -356,11 +356,8 @@ export default {
     setlotteryData () {
       //获取最终“奖项设置”的行数
       let item = this.ruleForm.prizeSettings
-      console.log('item', item.length)
       let len = item.length
-      // if(this.add) {
-        this.setTepData(len)
-      // }
+      this.setTepData(len)
       this.validate(len, item)
     },
     change (value) {
@@ -478,7 +475,6 @@ export default {
         let len = this.tep.length
         let changeData = this.ruleForm.prizeSettings
         let changeAll = 0
-        console.log('this.tep', this.tep)
         for(let i=0; i<len ;i++){
           if(!this.tep[i]){
             this.setAlert(`奖项设置第${i+1}行未填写完整======`)
@@ -503,21 +499,13 @@ export default {
         valid = true
         if(valid) {
           this.setLoading('正在提交,请勿离开...')
-            // this.loading = this.$loading({
-            //   lock: true,
-            //   text: '正在提交...',
-            //   spinner: 'el-icon-loading',
-            //   background: 'rgba(0, 0, 0, 0.7)'
-            // });
             //处理城市选择区域数据
             // console.log('省',this.select)
             // console.log('市',this.select.city)
             let code
             let province
             let city
-            // console.log('this.queryId ', this.queryId )
             if(!this.queryId || this.start || (this.start && this.middle) ) {
-              // console.log('this action')
               if(this.select.province.code && this.select.city.code){
                 // console.log('省 + 市')
 
@@ -534,14 +522,10 @@ export default {
               }
               // 说明是全国
               if(!this.select.province.code){
-                // console.log('全国')
                 code = '0'
                 province = ''
                 city = ''
               }
-              // console.log('code',code)
-              // console.log('province',province)
-              // console.log('city',city)
               this.ruleForm.settings[0].value = {code,province,city}
             }
             //处理时间区域数据
@@ -557,7 +541,6 @@ export default {
             object.prizeSettings = JSON.stringify(object.prizeSettings)
             // 处理模板标号 templateNo
             let data = qs.stringify(object)
-            // console.log('创建活动数据form', this.ruleForm)
             console.log('创建活动数据', object)
             // 判断是新建还是更新用
             if(this.queryId) {
@@ -569,7 +552,6 @@ export default {
       },
     handle (fun,data,formName) {
         fun(data).then((res) =>{
-          // console.log('form',res)
           let data = res.data
           if(data.code==='ok'){
             this.setIsSubmit(true)
@@ -592,28 +574,23 @@ export default {
         });
     }
   },
-  created () {
-    // 如果路由有query参数 那么是编辑活动
-    this.queryId = this.$route.query.id
-    if(this.queryId){
-      this.start = true
-      let type = this.$route.meta.type
-      this.currentItemFromRouter = type
+  beforeRouteEnter (to, from, next) {
+    next(vm =>{
+      // let vm = vm
+      vm.start = true
+      let type = vm.$route.meta.type
+      vm.currentItemFromRouter = type
       if(type !== 'slyder'){
-          this.autoDefinie = true
+          vm.autoDefinie = true
       }else{
-          this.autoDefinie = false
+          vm.autoDefinie = false
       }
-      let activityId = this.queryId
-      // console.log('activityId',activityId)
-      // this.loading = true
-      this.setLoading('正在拉取数据中...')
+      let activityId = vm.queryId
+      vm.setLoading('正在拉取数据中...')
       let initData
       activityEdit(activityId).then((res) =>{
-        console.log('res', res)
         let data = res.data
         if(data.code ==='ok'){
-          console.log(1)
           initData = data.data
           console.log('id init', initData)
           // 处理settings 格式
@@ -630,26 +607,25 @@ export default {
               pData = JSON.parse(initData.settings[index].value)
             }
           })
-          console.log('sc',pData )
           // // // 全国
           if(pData.code==='0'){
             console.log('')
           }else if(pData.province && pData.city ){//省+市
-            this.select.province.value = pData.province
-            this.select.city.value = pData.city
+            vm.select.province.value = pData.province
+            vm.select.city.value = pData.city
             // 设置code
           }else if(pData.province && !pData.city){//全省
-            this.select.province.value = pData.province
+            vm.select.province.value = pData.province
           }else{
             console.log('')
           }
-          this.ruleForm.id = initData.id
-          this.ruleForm.startTime = initData.startTime
+          vm.ruleForm.id = initData.id
+          vm.ruleForm.startTime = initData.startTime
 
-          this.ruleForm.activityRule = initData.activityRule
-          this.ruleForm.expiredTime = initData.expiredTime
-          this.ruleForm.templateNo = initData.templateNo
-          this.ruleForm.activityName = initData.activityName
+          vm.ruleForm.activityRule = initData.activityRule
+          vm.ruleForm.expiredTime = initData.expiredTime
+          vm.ruleForm.templateNo = initData.templateNo
+          vm.ruleForm.activityName = initData.activityName
 
           // 处理settings 中的数据
           let takeNumValue
@@ -671,12 +647,11 @@ export default {
             }
           })
 
-          this.ruleForm.settings = [
+          vm.ruleForm.settings = [
                 {id:areaCodeId,key:'areaCode', value:pcObj},
                 {id:takeNumId,key:'takeNum', value:takeNumValue},
                 {id:verifyCodeTypeId, key:'verifyCodeType', value:'IMAGE'},
           ]
-          // console.log('action')
           // 处理prize settings 中的数据
           let arr = []
           initData.prizeSettings.forEach(function(item) {
@@ -684,35 +659,44 @@ export default {
             let obj = {id,name,category,price,number,weight}
             arr.push(obj)
           })
-          this.ruleForm.prizeSettings = arr
+          vm.ruleForm.prizeSettings = arr
           let psLen = arr.length
-          this.setTepData(psLen)
+          vm.setTepData(psLen)
 
-          console.log('change', this.ruleForm)
+          console.log('change', vm.ruleForm)
+          next()
         }else{// 如果数据请求不成功,返回活动管理标签
-          this.setIsSubmit(true)
+          vm.setIsSubmit(true)
           console.log('else')
-          // this.$router.push({ path: `/management/`,})
-          this.$message({
+          // vm.$router.push({ path: `/management/`,})
+          vm.$message({
               message: '请稍后尝试',
               type: 'error',
               duration: 2* 1000
           });
         }
-        this.loading.close()
+        vm.loading.close()
       }).catch((error)=>{
-          console.log('catch',error)
-        this.loading.close()
-        this.setIsSubmit(true)
-        // this.$router.push({ path: `/management/`,})
-        this.$message({
+        vm.loading.close()
+        vm.setIsSubmit(true)
+        // vm.$router.push({ path: `/management/`,})
+        vm.$message({
               message: '请稍后尝试',
               type: 'error',
               duration: 2* 1000
             });
       })
+    })
 
-    }else{
+  },
+  created () {
+    // 如果路由有query参数 那么是编辑活动
+    this.queryId = this.$route.query.id
+    if(this.queryId){
+      console.log('this', this.ruleForm)
+
+    }
+    else{
         let type = this.$route.meta.type
         this.currentItemFromRouter = type
         if(this.currentItemFromRouter !== 'slyder'){
