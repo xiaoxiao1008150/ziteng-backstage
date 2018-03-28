@@ -147,7 +147,7 @@ export const asyncRouterMap = [
     children:[
        {  path: 'index', component: _import('projectVerify/index'),
           name: 'project-verify',
-          meta: { 
+          meta: {
             title: '活动审核',
             roles: ['admin']
           }

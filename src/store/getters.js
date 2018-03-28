@@ -22,6 +22,7 @@ const getters = {
   isCreate: state => state.lottery.isCreate,
   preparePath: state => state.lottery.preparePath,
   isSubmit: state => state.lottery.isSubmit,
+  pass: state => state.lottery.pass,
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters
   // errorLogs: state => state.errorLog.logs

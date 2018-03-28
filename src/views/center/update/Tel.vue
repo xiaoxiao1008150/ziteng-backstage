@@ -6,6 +6,8 @@
     </div>
     <div class="" slot="body">
     <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
+       <el-form-item label="密码" prop="password">
+        <el-input v-model="ruleForm.password" placeholder="请输入登录密码" auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="手机号码" prop="tel">
         <el-input v-model="ruleForm.tel" placeholder="请输入新手机号码" auto-complete="off"></el-input>
@@ -46,10 +48,14 @@
           flag: true,
           loading:false,
           ruleForm: {
+            password:'',
             tel: '',
             captcha: ''
           },
           rules: {
+            password: [
+              { required: true, message: '请输入登录密码', trigger: 'blur' },
+            ],
             tel: [
               { required: true, message: '请输入手机号码', trigger: 'blur' },
               { pattern: /^1[34578]\d{9}$/, message: '手机号码输入不正确',trigger: 'blur'}

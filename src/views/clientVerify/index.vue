@@ -75,7 +75,8 @@
                     size="mini"
                     type="primary"
                     plain
-                    @click="startEdit(scope.row.id, scope.row.status,scope.row.start_time,)"
+                    @click="startEdit(scope.row.id, scope.row.status,scope.row.start_time)"
+                    :disabled="scope.row.status!== '1'"
                     >编辑</el-button>
                 </template>
               </el-table-column>

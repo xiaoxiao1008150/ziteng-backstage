@@ -28,14 +28,7 @@
                     <p >{{ scope.row.expiredTime }}</p>
                   </template> 
                 </el-table-column>
-                <el-table-column label="用户参与详情" 
-                  align="center" width="100">
-                  <template slot-scope="scope">
-                  <span
-                      class="look"
-                      >查看</span>
-                  </template>
-                </el-table-column>
+   
                 <el-table-column label="操作" 
                   align="center" width="220">
                   <template slot-scope="scope">
@@ -83,6 +76,16 @@
                  <template slot-scope="scope">
                   {{changeText(scope.row.status)}}
                 </template>
+                </el-table-column>
+                <el-table-column label="用户参与详情" 
+                  align="center" width="100">
+                  <template slot-scope="scope">
+                  <span
+                      class="look"
+                      @click="goToInfo(scope.row)"
+                      :class="{active: scope.row.status==='3' || scope.row.status==='6'}"
+                      >查看</span>
+                  </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="220">
                   <template slot-scope="scope">
@@ -226,7 +229,7 @@
         showModal:false,
         hasCreated:true,
         // tabHelp: true,
-        filters: [{text: '未发布',value: '0'},{text: '未开始',value: '2'},{text: '进行中',value: '3'},{text: '禁用',value: '4'},{text: '未通过',value: '5'},{text: '已结束',value: '6'}]
+        filters: [{text: '未发布',value: '0'},{text: '未开始',value: '2'},{text: '进行中',value: '3'},{text: '暂停',value: '4'},{text: '未通过',value: '5'},{text: '已结束',value: '6'}]
       }
     },
     computed: {
@@ -302,7 +305,7 @@
             result = '进行中'
             break;
           case '4':
-            result = '禁用'
+            result = '暂停'
             break;
           case '5':
             result = '未通过'
@@ -391,6 +394,11 @@
         this.reject = false
         this.start = false
         this.pause = false
+      },
+      goToInfo (item) {//这里应该是带着活动的id的
+        if(item.status==='3' || item.status ==='6'){
+         this.$router.push({ path: `/management/info/1` })
+        }
       },
       openChange(flag, item) {
         if(flag === 'pass') {

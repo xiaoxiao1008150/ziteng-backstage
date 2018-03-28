@@ -16,7 +16,8 @@ const lottery = {
     currentLotteryItem: {},
     isCreate: false,
     preparePath:'',// 设置离开时候点击的url地址
-    isSubmit:false
+    isSubmit:false,
+    pass:false
   },
 
   mutations: {
@@ -36,6 +37,9 @@ const lottery = {
     },
     setIsSubmit: (state, item) => {
       state.isSubmit = item
+    },
+    setPass: (state, item) => {
+      state.pass = item
     }
   }
 }

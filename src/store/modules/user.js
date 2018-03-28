@@ -1,6 +1,7 @@
 import { login, logout } from 'api/login'
 import { getToken, setToken, removeToken , handleCookie} from 'utils/auth'
-setToken({name:'cui',code:'1',status:'login'})
+setToken({name:'cui',code:'1',status:'login',roles:['de']})
+
 let data = {
         "id": "7317106a-b6f6-4193-81a3-bf5b1b3aa081",
         "login_name": "13029499224",
@@ -28,7 +29,7 @@ const user = {
     code: handleCookie('code'),
     token: getToken(),
     name: handleCookie('name'),
-    roles: ['admin'],
+    roles: handleCookie('roles'),
     // flag: true,
     info:{}
   },
@@ -47,7 +48,7 @@ const user = {
       state.name = name
     },
     SET_ROLES: (state, roles) => {
-      state.roles = roles
+      state.roles = state.roles.push(roles)
     },
     // SET_FLAG: (state, flag) => {
     //   state.flag = flag
@@ -58,6 +59,9 @@ const user = {
     // setFlag({ commit }, flag) {
     //   commit('SET_FLAG', flag)
     // },
+    setRouters({ commit }, role){
+      commit('SET_ROLES', role)
+    },
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
@@ -70,7 +74,13 @@ const user = {
                    // 用户登录之后获取status  设置
                 commit('SET_STATUS', 'login')
                 commit('SET_CODE', data.status)
-                setToken({id:data.id,name:data.contact_name,code:data.status,status:state.status})
+                // let  initRole = authorities[0].authority
+                let  initRole = data.authorities[0].authority
+                if(initRole) {
+                  let role = initRole.split('_')[1].toLowerCase()
+                  commit('SET_ROLES',role)
+                }
+                setToken({id:data.id,name:data.contact_name,code:data.status,status:state.status,roles:state.roles})
                 localStorage.setItem('USER_INFO', data)
                 commit('SET_TOKEN', {id:data.id,name:data.contact_name})
                 // document.cookie="SESSION=" + session

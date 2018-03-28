@@ -18,11 +18,12 @@ function hasPermission(roles, permissionRoles) {
 let flag = true
 const whiteList = ['/login']// no redirect whitelist
 router.beforeEach((to, from, next) => {
+
   NProgress.start() // start progress bar
   next()
   NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
 
-  if (true) { 
+  if (getToken()) {
     // has token 如果已经登录,去login页面，即是本项目的首页，导向创建活动页面
     if (to.path === '/login') {
         next({ path: '/create-project' });
@@ -31,19 +32,26 @@ router.beforeEach((to, from, next) => {
         if(flag) {
           flag = false
           let roles = ['admin']
+          // let roles = store.getters.roles
           store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
-
+            console.log('rute', store.getters.addRouters)
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
           })
         }
-        if(to.name === 'template'){
-          // 判断是否具有资格创建活动
-          if(store.getters.code ==='1'){
-            next()
-          }else{
-            next({ path: '/create-project' });
+          if(to.name === 'template'){
+            // 判断是否具有资格创建活动
+            if(store.getters.code ==='1'){
+              next()
+            }else{
+              next({ path: '/create-project' });
+            }
           }
-      }
+          // 活动审核和客户审核 权限
+          if (hasPermission(store.getters.roles, to.meta.roles)) {
+            next()//
+          } else {
+             next({ path: '/create-project' });
+          }
     }
   } else {
     /* has no token*/

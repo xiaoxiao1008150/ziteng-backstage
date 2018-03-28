@@ -45,7 +45,7 @@
             align="center" 
             width="130">
             <template slot-scope="scope">
-              <span @click="goToInfo" class="look">查看</span>
+              <span @click="goToInfo(scope.row)" class="look">查看</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="270">
@@ -110,7 +110,7 @@
         title:'超级大转盘',
         num:'01',
         hasCreated:true,
-        filters: [{text: '未发布',value: '0'}, {text: '审核中',value: '1'}, {text: '未开始',value: '2'},{text: '进行中',value: '3'},{text: '未通过',value: '5'}],
+        filters: [{text: '暂停',value: '4'},{text: '未发布',value: '0'}, {text: '审核中',value: '1'}, {text: '未开始',value: '2'},{text: '进行中',value: '3'},{text: '未通过',value: '5'},{text: '已结束',value: '6'}],
         value: '',
         listLoading:false,
         loading:false,
@@ -121,14 +121,16 @@
     computed: {
   // 使用对象展开运算符将 getter 混入 computed 对象中
       ...mapGetters([
-        'manageList'
+        'manageList',
+        'pass'
       ])
     },
     methods:{
       ...mapMutations([
       'setCurrentLottery',
       'setManageList',
-      'manageUpdate'
+      'manageUpdate',
+      'setPass'
     ]),
       editLottery (item) {
         //item携带了项目的所有信息 获取id -》获取全部信息到 创建活动页面 展示该项目的全部数据
@@ -161,7 +163,13 @@
           case '3':
             result = '进行中'
             break;
+          case '4':
+            result = '已暂停'
+            break;
           case '5':
+            result = '已结束'
+            break;
+          case '6':
             result = '未通过'
             break;
           default:
@@ -194,14 +202,17 @@
         this.showModal = false
       },
       openDialog (item) {
+        console.log('ite', item)
         this.showModal = true
         this.currentActivity  = item
       },
       handleCommand(command) {
         this.$message('click on item ' + command);
       },
-      goToInfo () {//这里应该是带着活动的id的
-        this.$router.push({ path: `/management/info/1` })
+      goToInfo (item) {//这里应该是带着活动的id的
+        if(item.status==='3' || item.status ==='6'){
+         this.$router.push({ path: `/management/info/1` })
+        }
       },
       filterTag(value, row) {
         return row.status === value;
@@ -240,7 +251,12 @@
     },
     activated () {
       // 获取活动审核 待审核列表
-      this.activityManageList()
+      if(!this.pass){
+        console.log(1111)
+        this.activityManageList()
+      }else{
+        this.setPass(false)
+      }
     },
     components:{
       Modal,

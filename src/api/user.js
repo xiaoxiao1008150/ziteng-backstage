@@ -1,3 +1,4 @@
+import http from 'utils/axios'
 // 用户注册
 export function createUser(data) {
   return http({

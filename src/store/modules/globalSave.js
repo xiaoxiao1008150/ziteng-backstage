@@ -11,7 +11,7 @@ const save = {
     },
     setBarActive: (state, value) => {
       state.barActive = value
-      localStorage.set
+      // localStorage.set
     }
   }
 }

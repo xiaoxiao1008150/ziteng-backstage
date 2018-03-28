@@ -97,7 +97,7 @@
                   <td class="spc-width">
                   <el-select :disabled="item['category'] ? false : true" v-show="item.name!=='谢谢参与'" v-model="item['price']" placeholder="请选择" @change="change1">
                     <el-option
-                        v-for="item2 in tableData.denomination[currentSelectOption]"
+                        v-for="item2 in tableData.denomination[currentSelectOption[index]]"
                         :key="item2.value"
                         :label="item2.label"
                         :value="item2.value"
@@ -217,7 +217,7 @@ export default {
       tableData:tableData,
       activeName2: 'first',
       textarea: '',
-      currentSelectOption: '话费',
+      currentSelectOption: [],
       lotteryList:null,
       position:0,//默认从一等奖开始选择
       help:0,
@@ -250,7 +250,8 @@ export default {
       'currentLotteryItem',
       'hasClickSave',
       'isCreate',
-      'preparePath'
+      'preparePath',
+      'pass'
     ])
   },
 
@@ -258,7 +259,8 @@ export default {
     ...mapMutations([
       'setClickSave', // 将 `this.increment()` 映射为 `this.$store.commit('increment')`
       'setLotteryStatus',
-      'setIsSubmit'
+      'setIsSubmit',
+      'setPass'
     ]),
     close () {
       // this.dialogVisible = false
@@ -285,10 +287,11 @@ export default {
         this.middle = true //开启省市变化
       }
       this.select.province = value
+      console.log('province', value)
     },
     selectCity(value) {
       this.select.city = value
-
+      console.log('city', value)
     },
     getAllCities (cities) {
       for (let key in cities) {
@@ -361,11 +364,15 @@ export default {
       this.validate(len, item)
     },
     change (value) {
+      console.log('vale', value)
       // 根据种类 设置奖品面额 的type
       // 每次点击种类，清空 面额数据 重新选择面额
       // this.position 索引
       this.ruleForm.prizeSettings[this.position].price = ''
-      this.currentSelectOption = value
+      // 根据选择的key 值 找出索引
+
+      this.currentSelectOption[this.position] = value
+      console.log('cu', this.currentSelectOption)
       if(value){
         //在这里处理奖品 种类
         this.category = value
@@ -574,21 +581,22 @@ export default {
         });
     }
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm =>{
-      // let vm = vm
-      vm.start = true
-      let type = vm.$route.meta.type
-      vm.currentItemFromRouter = type
+  created () {
+    // 如果路由有query参数 那么是编辑活动
+    this.queryId = this.$route.query.id
+    if(this.queryId){
+      this.start = true
+      let type = this.$route.meta.type
+      this.currentItemFromRouter = type
       if(type !== 'slyder'){
-          vm.autoDefinie = true
+          this.autoDefinie = true
       }else{
-          vm.autoDefinie = false
+          this.autoDefinie = false
       }
-      let activityId = vm.queryId
-      vm.setLoading('正在拉取数据中...')
+      let activityId = this.queryId
+      this.setLoading('正在拉取数据中...')
       let initData
-      activityEdit(activityId).then((res) =>{
+      activityEdit().then((res) =>{
         let data = res.data
         if(data.code ==='ok'){
           initData = data.data
@@ -611,21 +619,21 @@ export default {
           if(pData.code==='0'){
             console.log('')
           }else if(pData.province && pData.city ){//省+市
-            vm.select.province.value = pData.province
-            vm.select.city.value = pData.city
+            this.select.province.value = pData.province
+            this.select.city.value = pData.city
             // 设置code
           }else if(pData.province && !pData.city){//全省
-            vm.select.province.value = pData.province
+            this.select.province.value = pData.province
           }else{
             console.log('')
           }
-          vm.ruleForm.id = initData.id
-          vm.ruleForm.startTime = initData.startTime
+          this.ruleForm.id = initData.id
+          this.ruleForm.startTime = initData.startTime
 
-          vm.ruleForm.activityRule = initData.activityRule
-          vm.ruleForm.expiredTime = initData.expiredTime
-          vm.ruleForm.templateNo = initData.templateNo
-          vm.ruleForm.activityName = initData.activityName
+          this.ruleForm.activityRule = initData.activityRule
+          this.ruleForm.expiredTime = initData.expiredTime
+          this.ruleForm.templateNo = initData.templateNo
+          this.ruleForm.activityName = initData.activityName
 
           // 处理settings 中的数据
           let takeNumValue
@@ -647,7 +655,7 @@ export default {
             }
           })
 
-          vm.ruleForm.settings = [
+          this.ruleForm.settings = [
                 {id:areaCodeId,key:'areaCode', value:pcObj},
                 {id:takeNumId,key:'takeNum', value:takeNumValue},
                 {id:verifyCodeTypeId, key:'verifyCodeType', value:'IMAGE'},
@@ -659,41 +667,33 @@ export default {
             let obj = {id,name,category,price,number,weight}
             arr.push(obj)
           })
-          vm.ruleForm.prizeSettings = arr
+          this.ruleForm.prizeSettings = arr
           let psLen = arr.length
-          vm.setTepData(psLen)
+          this.setTepData(psLen)
 
-          console.log('change', vm.ruleForm)
-          next()
+          console.log('change', this.ruleForm)
         }else{// 如果数据请求不成功,返回活动管理标签
-          vm.setIsSubmit(true)
-          console.log('else')
-          // vm.$router.push({ path: `/management/`,})
-          vm.$message({
+          this.setIsSubmit(true)
+          this.setPass(true)
+          this.$router.push({ path: `/management/`,})
+          this.$message({
               message: '请稍后尝试',
               type: 'error',
               duration: 2* 1000
           });
         }
-        vm.loading.close()
+        this.loading.close()
       }).catch((error)=>{
-        vm.loading.close()
-        vm.setIsSubmit(true)
-        // vm.$router.push({ path: `/management/`,})
-        vm.$message({
+        this.loading.close()
+        this.setIsSubmit(true)
+        this.setPass(true)
+        this.$router.push({ path: `/management/`,})
+        this.$message({
               message: '请稍后尝试',
               type: 'error',
               duration: 2* 1000
             });
       })
-    })
-
-  },
-  created () {
-    // 如果路由有query参数 那么是编辑活动
-    this.queryId = this.$route.query.id
-    if(this.queryId){
-      console.log('this', this.ruleForm)
 
     }
     else{
