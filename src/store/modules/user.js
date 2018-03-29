@@ -1,6 +1,6 @@
 import { login, logout } from 'api/login'
 import { getToken, setToken, removeToken , handleCookie} from 'utils/auth'
-setToken({name:'cui',code:'1',status:'login',roles:['de']})
+// setToken({name:'cui',code:'1',status:'login',roles:['admin']})
 
 let data = {
         "id": "7317106a-b6f6-4193-81a3-bf5b1b3aa081",
@@ -30,7 +30,6 @@ const user = {
     token: getToken(),
     name: handleCookie('name'),
     roles: handleCookie('roles'),
-    // flag: true,
     info:{}
   },
 
@@ -49,16 +48,10 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = state.roles.push(roles)
-    },
-    // SET_FLAG: (state, flag) => {
-    //   state.flag = flag
-    // }
+    }
   },
 
   actions: {
-    // setFlag({ commit }, flag) {
-    //   commit('SET_FLAG', flag)
-    // },
     setRouters({ commit }, role){
       commit('SET_ROLES', role)
     },
@@ -83,7 +76,6 @@ const user = {
                 setToken({id:data.id,name:data.contact_name,code:data.status,status:state.status,roles:state.roles})
                 localStorage.setItem('USER_INFO', data)
                 commit('SET_TOKEN', {id:data.id,name:data.contact_name})
-                // document.cookie="SESSION=" + session
               }
               // 数据传到页面中
               resolve(res)

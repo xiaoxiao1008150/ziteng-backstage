@@ -68,11 +68,21 @@ export default {
           this.list = result
           // 将异步获取的数据 放到vuex全局
           this.initLotteryData(result)
-          console.log('template', result)
-
+          this.loading.close()
+        }else{
+         this.$message({
+            message: '请稍后尝试',
+            type: 'error',
+            duration: 2* 1000
+          });
           this.loading.close()
         }
       }).catch((res) =>{
+        this.$message({
+          message: '请稍后尝试',
+          type: 'error',
+          duration: 2* 1000
+        });
         this.loading.close()
       })
     },

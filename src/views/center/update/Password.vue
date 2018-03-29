@@ -65,6 +65,8 @@
             callback(new Error(message));
           }else if (value==='') {
             callback(new Error('请输入验证码'))
+          }else if(this.test === '验证码错误') {
+              callback(new Error('验证码错误'))
           }else {
             callback();
           }
@@ -138,9 +140,14 @@
       goToConfirmPassword(formName) {
         this.$refs[formName].validate((valid) => {
           if(valid) {
-            if(this.showInfo) {
-              this.showInfo = false
-              this.$refs[formName].resetFields();
+            if(true){
+              this.test = '验证码错误'
+            }
+            else{
+              if(this.showInfo) {
+                this.showInfo = false
+                this.$refs[formName].resetFields();
+              }
             }
           }
         })
@@ -148,7 +155,15 @@
       close () {
         this.$emit('close')
         this.countDown = false
-        this.$refs.ruleForm.resetFields();
+        if(this.showInfo){
+          this.$refs.ruleForm.resetFields()
+        }else{
+          this.$refs.ruleForm1.resetFields();
+        }
+        this.showInfo = true
+        console.log('rest', this.$refs.ruleForm)
+        // this.$refs.ruleForm.resetFields()
+        // this.$refs.ruleForm1.resetFields();
       },
       submitForm(formName) {
         // this.$router.push({ path: '/create-project/index' })

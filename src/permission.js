@@ -48,7 +48,7 @@ router.beforeEach((to, from, next) => {
           }
           // 活动审核和客户审核 权限
           if (hasPermission(store.getters.roles, to.meta.roles)) {
-            next()//
+            next()
           } else {
              next({ path: '/create-project' });
           }

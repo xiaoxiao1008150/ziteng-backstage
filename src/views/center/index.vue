@@ -55,7 +55,7 @@
         <span class="label-text">安全</span>
         <span class="may-change" @click="change('password')">修改登录密码</span>
       </div>
-      <tel v-show="showModalTel" @close="close"></tel>
+      <tel :userInfo="userInfo"  v-show="showModalTel" @close="close"></tel>
       <contact v-show="showModalContact" @close="close"></contact>
       <password v-show="showModalPassword" @close="close"></password>
     </div>

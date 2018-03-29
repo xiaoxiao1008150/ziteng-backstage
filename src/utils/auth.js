@@ -4,6 +4,10 @@ const TokenKey = 'Admin-Token'
 // const TokenKey = 'SESSION'
 
 export function getToken() {
+  let cookie = Cookies.get(TokenKey)
+  if(!cookie) {
+    return false
+  }
   return Cookies.get(TokenKey)
 }
 
@@ -16,6 +20,8 @@ export function removeToken() {
 }
 export function handleCookie(key) {
   let token = getToken()
-  let obj = JSON.parse(token)
-  return obj[key]
+  if(token) {
+    let obj = JSON.parse(token)
+    return obj[key]
+  }
 }

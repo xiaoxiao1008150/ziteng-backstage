@@ -25,21 +25,36 @@
 <script>
   import Modal from 'components/Modal'
   import  Captcha from 'components/Captcha'
-  import {getCaptcha} from 'api/login'
+  import {changeTelCaptcha} from 'api/user'
   import {updateTel} from 'api/user'
+  import qs from 'qs'
 
    export default {
+     props:{
+      userInfo:{
+        type:Object,
+        default: function () {
+          return {}
+        }
+      }
+     },
      data () {
       var validatePass3 = (rule, value, callback) => {
-        this.$refs.ruleForm.validateField('tel' ,message => {
-          if (message==='请输入手机号码') {
-            callback(new Error('请先输入手机号码'));
-          }else if (message==='手机号码输入不正确') {
-            callback(new Error(message));
-          }else if (value==='') {
-            callback(new Error('请输入验证码'))
-          }else {
-            callback();
+        this.$refs.ruleForm.validateField('password' ,message => {
+          if (message==='请输入登录密码') {
+            callback(new Error('请先输入登录密码'));
+          }else{
+            this.$refs.ruleForm.validateField('tel' ,message => {
+              if (message==='请输入手机号码') {
+                callback(new Error('请先输入手机号码'));
+              }else if (message==='手机号码输入不正确') {
+                callback(new Error(message));
+              }else if (value==='') {
+                callback(new Error('请输入验证码'))
+              }else {
+                callback();
+              }
+            })
           }
         })
       };
@@ -79,9 +94,16 @@
               this.flag = false
               this.countDown = true
               //在这里post短信验证码，data mobileNumber
-              let data = this.ruleForm.tel
+              // let data = this.ruleForm.tel
               // let data = qs.stringify(phoneNum)
-              getCaptcha(data).then((res)=>{
+              // 处理数据
+              let phoneNumber = this.userInfo && this.userInfo.mobile_number
+              let newPhoneNumber = this.ruleForm.tel
+              let oldPassword = this.ruleForm.password
+              let obj = {phoneNumber,newPhoneNumber,oldPassword}
+              let data = qs.stringify(obj)
+              changeTelCaptcha(data).then((res)=>{
+                console.log('res', res)
                 if(res.data && res.data.code==='ok'){
                   // 证实后台已经发送验证码 开始倒计时
                   this.countDown = true
@@ -110,20 +132,24 @@
           if (valid) {
             this.countDown = false
             this.loading = true
-            // this.isDisabled = true
-            // let init = this.ruleForm
-            // let data = qs.stringify(init) //测试不用
+            // 处理参数
+            let id = this.userInfo.id
+            let mobileNumber = this.ruleForm.tel
+            let verifyCode = this.ruleForm.captcha
+            let obj = {id,mobileNumber,verifyCode}
+            let data = qs.stringify(obj)
             updateTel(data).then((res) =>{
-              // 重新获取一遍用户数据
-              let data = res.code
-              if(data.code === 'ok'){
+                console.log('修改手机号', res)
+                // 重新获取一遍用户数据
+                let data = res.code
+                if(data.code === 'ok'){
+                  this.loading = false
+                }else{
+                  this.loading = false
+                }
+              }).catch(() =>{
                 this.loading = false
-              }else{
-                this.loading = false
-              }
-            }).catch(() =>{
-              this.loading = false
-            })
+              })
           } else {
             console.log('error submit!!')
             return false

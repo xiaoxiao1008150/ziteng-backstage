@@ -25,7 +25,7 @@ export function updateContact(data) {
 // 个人中心 修改手机号码 需要对
 export function updateTel(data) {
   return http({
-    url: `/marketing/api/register/send?phoneNumber=${data}`,
+    url: `/marketing/userClient/updateMobile?${data}`,
     method: 'post',
   })
 }
@@ -34,6 +34,14 @@ export function updateTel(data) {
 export function updatePassword(data) {
   return http({
     url: `/marketing/api/register/send?phoneNumber=${data}`,
+    method: 'post',
+  })
+}
+
+//修改手机号码 验证码
+export function changeTelCaptcha(data) {
+  return http({
+    url: `/api/updateMobile/send?${data}`,
     method: 'post',
   })
 }
