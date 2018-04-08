@@ -1,6 +1,6 @@
 import { login, logout } from 'api/login'
 import { getToken, setToken, removeToken , handleCookie} from 'utils/auth'
-// setToken({name:'cui',code:'1',status:'login',roles:['admin']})
+setToken({name:'cui',code:'1',status:'login',roles:['admin']})
 
 let data = {
         "id": "7317106a-b6f6-4193-81a3-bf5b1b3aa081",

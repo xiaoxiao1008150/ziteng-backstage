@@ -126,6 +126,8 @@ export default {
           console.log('template', result)
 
           this.loading.close()
+        }else{
+          this.loading.close()
         }
       }).catch((res) =>{
         this.loading.close()
