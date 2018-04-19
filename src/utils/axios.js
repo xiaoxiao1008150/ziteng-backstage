@@ -9,8 +9,8 @@ var CancelToken = axios.CancelToken;
 var cancel;
 
 const service = axios.create({
-  // baseURL: 'http://47.93.236.101:8888', // api的base_url
-  baseURL: 'http://192.168.111.114:8888', // api的base_url
+  baseURL: 'http://47.93.236.101:8888', // api的base_url
+  // baseURL: 'http://192.168.111.114:8888', // api的base_url
   // baseURL: 'http://192.168.88.224:8888', // api的base_url
   timeout: 5000,// request timeout
   cancelToken: new CancelToken(function executor(c) {

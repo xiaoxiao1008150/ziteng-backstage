@@ -7,7 +7,7 @@
   <div class="" slot="body">
     <el-form status-icon :model="ruleForm" :rules="rules"  ref="ruleForm"  label-width="80px" label-position ="left">
       <el-form-item label="企业名称" prop="contractName">
-        <el-input v-model="ruleForm.contractName" placeholder="请输入购买合同中的企业名称" auto-complete="off"></el-input>
+        <el-input v-model.trim="ruleForm.contractName" placeholder="请输入购买合同中的企业名称" auto-complete="off"></el-input>
       </el-form-item>
        <el-form-item label="联系人" prop="contactName">
         <el-input v-model="ruleForm.contactName" placeholder="请输入联系人" auto-complete="off"></el-input>

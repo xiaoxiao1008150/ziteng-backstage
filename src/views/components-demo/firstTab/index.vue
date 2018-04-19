@@ -83,8 +83,10 @@
                     <el-select
                       v-show="item.name!=='谢谢参与'" 
                       v-model="item['category']"  
-                      placeholder="请选择" 
-                      @change="change">
+                      placeholder="请选择"
+                      data-id="index"
+                      ref="test"
+                      @change="change($event,index)">
                       <el-option
                         v-for="item1 in tableData.type"
                         :key="item1.value"
@@ -287,11 +289,9 @@ export default {
         this.middle = true //开启省市变化
       }
       this.select.province = value
-      console.log('province', value)
     },
     selectCity(value) {
       this.select.city = value
-      console.log('city', value)
     },
     getAllCities (cities) {
       for (let key in cities) {
@@ -363,16 +363,21 @@ export default {
       this.setTepData(len)
       this.validate(len, item)
     },
-    change (value) {
-      console.log('vale', value)
+    change (value, index) {
+      this.position = index
+      // let index = el.dataset.id
+      console.log('value', value)
+      console.log('this.position', this.position)
+      // console.log('index', index)
       // 根据种类 设置奖品面额 的type
       // 每次点击种类，清空 面额数据 重新选择面额
       // this.position 索引
-      this.ruleForm.prizeSettings[this.position].price = ''
+      if(this.position){
+        this.ruleForm.prizeSettings[this.position].price = ''
+      }
       // 根据选择的key 值 找出索引
 
       this.currentSelectOption[this.position] = value
-      console.log('cu', this.currentSelectOption)
       if(value){
         //在这里处理奖品 种类
         this.category = value
@@ -385,6 +390,7 @@ export default {
     },
     setPosition (index,name) {
       // 确定是几等奖
+      // console.log('index', index)
       this.position = index
     },
     switchKeyName (value) {
@@ -442,8 +448,10 @@ export default {
       this.setlotteryData()
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields()
+      console.log('重置之前form', this.ruleForm);
+      // this.ruleForm = {};
       // Object.assign(this[formName], this.$options.data()[formName])
+      // this.$refs[formName].resetFields()
     },
     submitForm(formName) {
         let valid = false
@@ -456,52 +464,52 @@ export default {
         // this.$refs[formName].validate((valid) => {
         let data = this.ruleForm
         //除”奖项设置“之外区域的验证
-        for (var prop in data) {
-          if(!data[prop]){
-            let label = this.switchKeyName(prop)
-            // if(label===!'暂无'){
-            //   this.setAlert(`${label}未填写`)
-            //   return
-            // }
-            this.setAlert(`${label}未填写`)
-            return
-          }
-        }
-        // 判断日期填写是否正确
-        if(this.ruleForm.startTime > this.ruleForm.expiredTime){
-          this.setAlert(`开始时间不能大于结束时间`)
-          return
-        }
-        //不选默认是全国
-        if(!this.select.province){
-          this.setAlert('手机号区域未填写')
-          return
-        }
-        //”奖项设置“ 验证，借助 this.tep的值
-        this.setlotteryData()
-        let len = this.tep.length
-        let changeData = this.ruleForm.prizeSettings
-        let changeAll = 0
-        for(let i=0; i<len ;i++){
-          if(!this.tep[i]){
-            this.setAlert(`奖项设置第${i+1}行未填写完整======`)
-            return
-          }
-          // changeAll += parseInt(changeData[i].weight)
-        }
-        // 填写完整了，验证数量是否输入负数，数量最小值为1
-        for(let i=0; i<len ;i++){
-          if(this.tep[i] && changeData[i].number<1){
-            this.setAlert(`奖项设置第${i+1}行数量必须大于0`)
-            return
-          }
-          changeAll += parseInt(changeData[i].weight)
-        }
-        //验证概率之和
-        if(changeAll!==100){
-          this.setAlert(`中奖概率之和必须是100`)
-          return
-        }
+        // for (var prop in data) {
+        //   if(!data[prop]){
+        //     let label = this.switchKeyName(prop)
+        //     // if(label===!'暂无'){
+        //     //   this.setAlert(`${label}未填写`)
+        //     //   return
+        //     // }
+        //     this.setAlert(`${label}未填写`)
+        //     return
+        //   }
+        // }
+        // // 判断日期填写是否正确
+        // if(this.ruleForm.startTime > this.ruleForm.expiredTime){
+        //   this.setAlert(`开始时间不能大于结束时间`)
+        //   return
+        // }
+        // //不选默认是全国
+        // if(!this.select.province){
+        //   this.setAlert('手机号区域未填写')
+        //   return
+        // }
+        // //”奖项设置“ 验证，借助 this.tep的值
+        // this.setlotteryData()
+        // let len = this.tep.length
+        // let changeData = this.ruleForm.prizeSettings
+        // let changeAll = 0
+        // for(let i=0; i<len ;i++){
+        //   if(!this.tep[i]){
+        //     this.setAlert(`奖项设置第${i+1}行未填写完整======`)
+        //     return
+        //   }
+        //   // changeAll += parseInt(changeData[i].weight)
+        // }
+        // // 填写完整了，验证数量是否输入负数，数量最小值为1
+        // for(let i=0; i<len ;i++){
+        //   if(this.tep[i] && changeData[i].number<1){
+        //     this.setAlert(`奖项设置第${i+1}行数量必须大于0`)
+        //     return
+        //   }
+        //   changeAll += parseInt(changeData[i].weight)
+        // }
+        // //验证概率之和
+        // if(changeAll!==100){
+        //   this.setAlert(`中奖概率之和必须是100`)
+        //   return
+        // }
         //验证数据完毕，开始提交数据
         valid = true
         if(valid) {
@@ -548,7 +556,6 @@ export default {
             object.prizeSettings = JSON.stringify(object.prizeSettings)
             // 处理模板标号 templateNo
             let data = qs.stringify(object)
-            console.log('创建活动数据', object)
             // 判断是新建还是更新用
             if(this.queryId) {
               this.handle(updateActivity,data,formName)
@@ -596,11 +603,10 @@ export default {
       let activityId = this.queryId
       this.setLoading('正在拉取数据中...')
       let initData
-      activityEdit().then((res) =>{
+      activityEdit(activityId).then((res) =>{
         let data = res.data
         if(data.code ==='ok'){
           initData = data.data
-          console.log('id init', initData)
           // 处理settings 格式
           initData.settings = JSON.parse(initData.settings)
           initData.prizeSettings = JSON.parse(initData.prizeSettings)
@@ -617,7 +623,6 @@ export default {
           })
           // // // 全国
           if(pData.code==='0'){
-            console.log('')
           }else if(pData.province && pData.city ){//省+市
             this.select.province.value = pData.province
             this.select.city.value = pData.city
@@ -625,7 +630,6 @@ export default {
           }else if(pData.province && !pData.city){//全省
             this.select.province.value = pData.province
           }else{
-            console.log('')
           }
           this.ruleForm.id = initData.id
           this.ruleForm.startTime = initData.startTime
@@ -666,12 +670,12 @@ export default {
             let {id,name,category,price,number,weight} = item
             let obj = {id,name,category,price,number,weight}
             arr.push(obj)
+            this.currentSelectOption.push(category)
           })
           this.ruleForm.prizeSettings = arr
           let psLen = arr.length
           this.setTepData(psLen)
 
-          console.log('change', this.ruleForm)
         }else{// 如果数据请求不成功,返回活动管理标签
           this.setIsSubmit(true)
           this.setPass(true)
@@ -704,10 +708,19 @@ export default {
         this.ruleForm.prizeSettings.push(baseData)
           this.autoDefinie = true
         }else{
-          this.ruleForm.prizeSettings.concat(slyderData)
-          for(let i in slyderData){
-            this.$set(this.ruleForm.prizeSettings, i , slyderData[i]);
-          }
+          let baseData = JSON.parse( JSON.stringify(slyderData))
+          // this.ruleForm.prizeSettings.concat(slyderData)
+          console.log('baseData', baseData)
+            // this.$set(this.ruleForm.prizeSettings, baseData);
+          this.ruleForm.prizeSettings = baseData
+
+            console.log('settings设置前',this.ruleForm.prizeSettings)
+          // for(let i =0; i<slyderData.length; i++){
+          //   this.$set(this.ruleForm.prizeSettings, i , slyderData[i]);
+          //   console.log('settings设置后', this.ruleForm.prizeSettings)
+          //   this.ruleForm.prizeSettings[i] =  slyderData[i];
+          // }
+          console.log('初始化之form设置后', this.ruleForm.prizeSettings)
           this.autoDefinie = false
         }
         this.change('')
